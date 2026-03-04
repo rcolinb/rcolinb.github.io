@@ -52,6 +52,8 @@
     z-index: 9999;
   }
 
+  /* ═══ NAVIGATION ═══ */
+
   nav {
     position: fixed;
     top: 0;
@@ -134,6 +136,8 @@
     margin: 5px 0;
     transition: all 0.3s ease;
   }
+
+  /* ═══ PAGES ═══ */
 
   .page {
     display: none;
@@ -369,6 +373,16 @@
     color: var(--ink);
   }
 
+  .pub-title a {
+    color: var(--ink);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .pub-title a:hover {
+    color: var(--clay);
+  }
+
   .pub-venue {
     font-family: var(--serif);
     font-style: italic;
@@ -391,6 +405,22 @@
     line-height: 1.6;
   }
 
+  .pub-link {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mist);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    margin-left: 0.5rem;
+  }
+
+  .pub-link:hover {
+    color: var(--clay);
+  }
+
+  /* Project cards */
   .projects-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -665,8 +695,7 @@
     <p class="hero-descriptor">Poet &nbsp;·&nbsp; Nurse &nbsp;·&nbsp; Essayist</p>
     <div class="hero-line"></div>
     <p class="hero-highlight">
-      "Camera Review" forthcoming in <em>Massachusetts Review</em>, May 2026<br>
-      "The Body Knows First" forthcoming in <em>American Journal of Nursing</em>, May 2026<br>
+      "Camera Review" forthcoming in <em>Massachusetts Review</em><br>
       "Mechanism of Action" forthcoming in <em>JAMA</em>, April 2026
     </p>
     <div class="home-subscribe">
@@ -700,31 +729,32 @@
         <div class="publication-item fade-in delay-1">
           <span class="pub-title">"Camera Review"</span> ·
           <span class="pub-venue">Massachusetts Review</span>
-          <span class="pub-year"> · May 2026</span>
+          <span class="pub-year"> · In Press, 2026</span>
         </div>
 
         <div class="publication-item fade-in delay-1">
           <span class="pub-title">"The Body Knows First"</span> ·
           <span class="pub-venue">American Journal of Nursing</span>
+          <span class="pub-year"> · May 2026</span>
+        </div>
+
+        <div class="publication-item fade-in delay-2">
+          <span class="pub-title">"Mechanism of Action"</span> ·
+          <span class="pub-venue">JAMA</span>
           <span class="pub-year"> · April 2026</span>
         </div>
 
         <div class="publication-item fade-in delay-2">
-          <span class="pub-title">"The Thread You Follow"</span> ·
+          <span class="pub-title"><a href="https://www.westtradereview.com/onlineexclusiveW25Blenis.html" target="_blank" rel="noopener">"The Thread You Follow"</a></span> ·
           <span class="pub-venue">West Trade Review</span>
-          <span class="pub-year"> · 2024</span>
+          <span class="pub-year"> · January 2026</span>
+          <a class="pub-link" href="https://www.westtradereview.com/onlineexclusiveW25Blenis.html" target="_blank" rel="noopener">Read →</a>
         </div>
 
         <div class="publication-item fade-in delay-3">
-          <span class="pub-title">"Rung"</span> ·
-          <span class="pub-venue">Panorama: The Journal of Intelligent Travel</span>
-          <span class="pub-year"> · 2024</span>
-        </div>
-
-        <div class="publication-item">
-          <span class="pub-title">"TUESDAYS"</span> ·
-          <span class="pub-venue">Heavy Feather Review</span>
-          <span class="pub-year"> · 2024</span>
+          <span class="pub-title">"Archeological Inheritance"</span> ·
+          <span class="pub-venue">Flyway: Journal of Writing & Environment</span>
+          <span class="pub-year"> · In Press, 2026</span>
         </div>
       </div>
 
@@ -732,27 +762,47 @@
         <h3 class="work-category-title">Poetry</h3>
 
         <div class="publication-item">
-          <span class="pub-title">"morning coffee"</span> ·
+          <span class="pub-title"><a href="https://panoramajournal.org/issues/issue-16-encounters/encounters-rung/" target="_blank" rel="noopener">"Rung"</a></span> ·
+          <span class="pub-venue">Panorama: Journal of Travel, Place, and Nature</span>
+          <span class="pub-year"> · January 2026</span>
+          <a class="pub-link" href="https://panoramajournal.org/issues/issue-16-encounters/encounters-rung/" target="_blank" rel="noopener">Read →</a>
+        </div>
+
+        <div class="publication-item">
+          <span class="pub-title"><a href="https://heavyfeatherreview.org/2026/01/14/tuesdays/" target="_blank" rel="noopener">"TUESDAYS"</a></span> ·
+          <span class="pub-venue">Heavy Feather Review</span>
+          <span class="pub-year"> · January 2026</span>
+          <a class="pub-link" href="https://heavyfeatherreview.org/2026/01/14/tuesdays/" target="_blank" rel="noopener">Read →</a>
+        </div>
+
+        <div class="publication-item">
+          <span class="pub-title"><a href="https://thedewdrop.org/2025/11/24/dewdrops-autumn-week-8-2/" target="_blank" rel="noopener">"stepping away now"</a></span> ·
+          <span class="pub-venue">The Dewdrop</span>
+          <span class="pub-year"> · November 2025</span>
+          <a class="pub-link" href="https://thedewdrop.org/2025/11/24/dewdrops-autumn-week-8-2/" target="_blank" rel="noopener">Read →</a>
+        </div>
+
+        <div class="publication-item">
+          <span class="pub-title"><a href="https://wildwillowmagazine.com/wp-content/uploads/2025/11/wwm-issue-4-6.pdf" target="_blank" rel="noopener">"Sigyn's Bowl"</a></span> ·
+          <span class="pub-venue">Wild Willow Magazine</span>
+          <span class="pub-year"> · Issue 4, 2025</span>
+          <a class="pub-link" href="https://wildwillowmagazine.com/wp-content/uploads/2025/11/wwm-issue-4-6.pdf" target="_blank" rel="noopener">Read in Issue 4, p. 25 (PDF) →</a>
+        </div>
+
+        <!-- TODO: Add link when Presence 83 is published at https://haikupresence.org/presence-83/ -->
+        <div class="publication-item">
+          <span class="pub-title">[Haiku]</span> ·
           <span class="pub-venue">Presence</span>
-          <span class="pub-year"> · 2026</span>
+          <span class="pub-year"> · Forthcoming, Issue 83</span>
         </div>
 
         <div class="publication-item">
-          <span class="pub-title">"wildfire smoke / the realtor says / mountain views"</span> ·
+          <span class="pub-title">"wildfire smoke"</span> ·
           <span class="pub-venue">Modern Haiku</span>
-          <span class="pub-year"> · 2026</span>
+          <span class="pub-year"> · Forthcoming, Issue 57.2</span>
         </div>
       </div>
 
-      <div class="work-category">
-        <h3 class="work-category-title">Essays & Scholarship</h3>
-
-        <div class="publication-item">
-          <span class="pub-title">"Tiotropium for asthma: A summary of current guidelines and a case study"</span> ·
-          <span class="pub-venue">Journal of the American Association of Nurse Practitioners</span>
-          <span class="pub-year"> · 2018</span>
-        </div>
-      </div>
     </div>
 
     <!-- BOOKS IN PROGRESS -->
@@ -767,7 +817,17 @@
             when clinical vocabulary fails.
           </p>
         </div>
-        
+
+        <div class="project-card fade-in delay-2">
+          <h4 class="project-title">The Kudzu Gospel</h4>
+          <p class="project-genre">Narrative Poetry</p>
+          <p class="project-description">
+            A reckoning with the South — its overgrowth and erasure, its inherited faith
+            and stubborn grace. Poems that move between red clay and meditation cushion,
+            asking what a pilgrim owes the place that made him.
+          </p>
+        </div>
+
       </div>
     </div>
   </section>
@@ -781,11 +841,11 @@
 
   <section class="about-content">
     <p>
-      Before I was a nurse, I was a researcher. Before I was a researcher, I was a kid in Georgia who read too much and asked questions that made adults uncomfortable. The through-line has always been the same: I want to understand how people make sense of suffering — their own and others' — and what it means to show up for someone when understanding isn't possible.
+      Before I was a nurse, I was a researcher. Before I was a researcher, I was a kid in Georgia who read too much and asked questions that made adults uncomfortable. The through-line has always been the same: I want to understand how people make sense of suffering, their own and others', and what it means to show up for someone when understanding isn't possible.
     </p>
 
     <p>
-      I studied psychology at Georgia Tech and developmental psychology at Cornell, where I spent years in a memory lab studying how people construct the stories they tell about their lives. Eventually I left the PhD to do the thing I kept writing about — to sit at bedsides rather than behind data sets. I earned my nursing degree from Emory and started my clinical life in a Level I trauma center emergency department.
+      I studied psychology at Georgia Tech and developmental psychology at Cornell, where I spent years in a memory lab studying how people construct the stories they tell about their lives. Eventually I left the PhD to do the thing I kept writing about: sit at bedsides rather than behind data sets. I earned my nursing degree from Emory and started my clinical life in a Level I trauma center emergency department.
     </p>
 
     <p>
@@ -793,12 +853,12 @@
     </p>
 
     <div class="about-epigraph">
-      Where can I do the most good?
-      <span class="attribution">— the question that keeps returning</span>
+      Attention is the beginning of devotion.
+      <span class="attribution">— Mary Oliver</span>
     </div>
 
     <p>
-      I teach psychiatric mental health nursing now, which means I spend my days helping students develop the kind of attention that clinical work demands — the capacity to sit with someone in crisis and remain present, curious, and useful. My "Narrative Nursing" workshop brings medical humanities into nursing education, exploring how close reading and reflective writing can deepen clinical reasoning and sustain the practitioner's inner life.
+      The word <em>patient</em> comes from the Latin <em>patiens</em>: to endure suffering. <em>Compassion</em> means to suffer with. Nursing lives in that narrow space between the two, and so does writing. I teach psychiatric mental health nursing now, which means I spend my days helping students develop the kind of attention that clinical work demands: the capacity to sit with someone in crisis and remain present, curious, and useful. My "Narrative Nursing" workshop brings medical humanities into nursing education, exploring how close reading and reflective writing can deepen clinical reasoning and sustain the practitioner's inner life.
     </p>
 
     <p>
@@ -806,11 +866,7 @@
     </p>
 
     <p>
-      My work has appeared in <em>Massachusetts Review</em>, <em>JAMA</em>, <em>American Journal of Nursing</em>, <em>Heavy Feather Review</em>, <em>Fourth Genre</em>, <em>Contemporary Buddhism</em>, <em>West Trade Review</em>, <em>Modern Haiku</em>, <em>Panorama</em>, and elsewhere. I live in Atlanta with my wife, where we train together in weightlifting and yoga and talk about books probably more than is reasonable.
-    </p>
-
-    <p>
-      I write under <strong>R.C. Blenis</strong> for literary work and under <strong>Colin Blenis</strong> in professional life. Same questions, different registers.
+      My work has appeared in <em>Massachusetts Review</em>, <em>JAMA</em>, <em>American Journal of Nursing</em>, <em>Heavy Feather Review</em>, <em>Flyway</em>, <em>Wild Willow Magazine</em>, <em>The Dewdrop</em>, <em>West Trade Review</em>, <em>Modern Haiku</em>, <em>Presence</em>, <em>Panorama</em>, and elsewhere. I live in Atlanta with my wife, where we train together in weightlifting and yoga and talk about books probably more than is reasonable.
     </p>
   </section>
 </div>
@@ -823,7 +879,7 @@
       For publication inquiries, readings, collaboration,
       or just a conversation worth having.
     </p>
-    <a class="contact-email" href="mailto:your.email@example.com">your.email@example.com</a>
+    <a class="contact-email" href="mailto:colinblenis@gmail.com">colinblenis@gmail.com</a>
 
     <div class="contact-divider-line"></div>
 
