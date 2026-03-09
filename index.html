@@ -875,7 +875,7 @@
         For publication inquiries, readings, collaboration,
         or just a conversation worth having.
       </p>
-      <a class="contact-email" href="mailto:colinblenis@gmail.com">colinblenis@gmail.com</a>
+      <a class="contact-email" id="contact-email" href="#"></a>
 
       <div class="contact-divider-line"></div>
 
@@ -958,6 +958,15 @@
       }
     });
   }, { threshold: 0.15 });
+
+  // Email obfuscation (prevents bot harvesting)
+  (function() {
+    var u = 'colinblenis';
+    var d = 'gmail.com';
+    var el = document.getElementById('contact-email');
+    el.href = 'mai' + 'lto:' + u + '@' + d;
+    el.textContent = u + '@' + d;
+  })();
 
   reveals.forEach(el => observer.observe(el));
 </script>
