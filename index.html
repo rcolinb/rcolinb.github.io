@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>R.C. Blenis — Poet, Nurse, Essayist</title>
 <meta name="description" content="R.C. Blenis is a poet, nurse, and essayist based in Atlanta. Work in Massachusetts Review, JAMA, American Journal of Nursing, Heavy Feather Review, Flyway, Modern Haiku, and elsewhere.">
+<link rel="canonical" href="https://www.rcblenis.com">
+
+<!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 
 <!-- Open Graph -->
 <meta property="og:title" content="R.C. Blenis — Poet, Nurse, Essayist">
@@ -20,6 +26,47 @@
 <meta name="twitter:description" content="Poetry, creative nonfiction, and essays at the intersection of nursing, contemplative practice, and the ethics of attention.">
 <meta name="twitter:image" content="https://www.rcblenis.com/og-image.jpg">
 
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "R.C. Blenis",
+  "alternateName": "Colin Blenis",
+  "url": "https://www.rcblenis.com",
+  "sameAs": [
+    "https://rcblenis.substack.com",
+    "https://instagram.com/hillbillypilgrim"
+  ],
+  "jobTitle": "Poet, Nurse, Essayist",
+  "description": "Poet, nurse, and essayist based in Atlanta. Work explores suffering, compassion, and clinical witness.",
+  "image": "https://www.rcblenis.com/author-photo.jpg",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Atlanta",
+    "addressRegion": "GA",
+    "addressCountry": "US"
+  },
+  "alumniOf": [
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "Georgia Institute of Technology"
+    },
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "Cornell University"
+    },
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "Emory University"
+    }
+  ],
+  "knowsAbout": ["Poetry", "Nursing", "Creative Nonfiction", "Buddhist Practice", "Medical Humanities"]
+}
+</script>
+
+<!-- Fonts: preload critical weights then load full set -->
+<link rel="preload" href="https://fonts.gstatic.com/s/ebgaramond/v27/SlGDmQSNjdsmc35JDF1K5E55YMjF_7DPuGi-6_RUA4V-e6yHgQ.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
@@ -665,6 +712,34 @@
     .about-epigraph { padding: 1.5rem 1.8rem; }
     .about-photo { max-width: 300px; }
     .contact-email { font-size: 1.3rem; }
+  }
+  /* ═══ PRINT ═══ */
+
+  @media print {
+    body { background: white; font-size: 12pt; }
+    body::before { display: none; }
+    nav, .scroll-indicator, .home-subscribe, .hero-line,
+    .section-divider, .contact-social, .subscribe-btn,
+    .contact-subscribe, .contact-divider-line, footer { display: none; }
+    #home { min-height: auto; padding: 2rem 0; }
+    .hero-name { font-size: 24pt; }
+    .hero-descriptor { font-size: 10pt; margin-bottom: 1rem; }
+    .hero-highlight { font-size: 11pt; }
+    #work, #projects, #about, #contact { padding-top: 2rem; padding-bottom: 1rem; }
+    .section-title { font-size: 18pt; }
+    .publication-item { padding: 0.4rem 0; }
+    .publication-item:hover { padding-left: 0; }
+    .pub-link { display: none; }
+    .project-card { border-left: 2px solid #A0522D; break-inside: avoid; }
+    .about-photo { max-width: 240px; }
+    .about-photo img { filter: none; }
+    .about-content p { font-size: 11pt; line-height: 1.6; }
+    .about-epigraph { border-left: 1px solid #A0522D; }
+    .contact-email { font-size: 12pt; color: black; }
+    .reveal { opacity: 1; transform: none; }
+    a { color: inherit; text-decoration: none; }
+    a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 8pt; color: #6B6560; }
+    .pub-title a[href]::after { display: none; }
   }
 </style>
 </head>
