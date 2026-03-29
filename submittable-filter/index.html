@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Submittable Filter — Clean up your Discover feed</title>
+<meta name="description" content="A free tool for writers to filter spam and irrelevant listings from Submittable's Discover page.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --cream: #FAF7F2; --linen: #F5F0E8; --clay: #A0522D; --clay-dk: #8B4513;
+    --ink: #1A1A1A; --sage: #7A8B7A; --mist: #9E9890; --parch: #EDE7DA;
+    --red: #B85450; --red-lt: #F5E6E5; --grn: #5B8C5A; --grn-lt: #E8F0E8;
+  }
+
+  body {
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    background: var(--cream); color: var(--ink);
+    line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 620px; margin: 0 auto; padding: 0 20px; }
+
+  /* ── Header ────────────────────────────────────────────────── */
+  header {
+    background: var(--linen); border-bottom: 1px solid var(--parch);
+    padding: 36px 20px 28px; text-align: center;
+  }
+  header h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 28px; font-weight: 700; color: var(--clay);
+    letter-spacing: -0.03em; margin-bottom: 8px;
+  }
+  header p {
+    font-size: 16px; color: var(--mist); max-width: 440px; margin: 0 auto;
+  }
+
+  /* ── Install section ───────────────────────────────────────── */
+  .install {
+    padding: 32px 0;
+    text-align: center;
+  }
+  .install h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 20px; color: var(--ink); margin-bottom: 16px;
+  }
+
+  /* The draggable bookmarklet link */
+  .bookmarklet-link {
+    display: inline-block;
+    padding: 14px 32px;
+    background: var(--clay);
+    color: var(--cream);
+    font-size: 17px;
+    font-weight: 700;
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    text-decoration: none;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(160,82,45,0.25);
+    cursor: grab;
+    transition: transform 0.1s, box-shadow 0.1s;
+    -webkit-user-drag: element;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .bookmarklet-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 18px rgba(160,82,45,0.3);
+  }
+  .bookmarklet-link:active { cursor: grabbing; transform: scale(0.97); }
+
+  .install-hint {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--mist);
+  }
+  .install-hint strong { color: var(--ink); }
+
+  .divider {
+    border: none; border-top: 1px solid var(--parch);
+    margin: 0;
+  }
+
+  /* ── Mobile instructions ───────────────────────────────────── */
+  .mobile-section {
+    padding: 28px 0;
+  }
+  .mobile-section h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 18px; color: var(--ink); margin-bottom: 14px;
+  }
+  .steps { list-style: none; counter-reset: steps; }
+  .steps li {
+    counter-increment: steps;
+    padding: 12px 14px 12px 48px;
+    position: relative;
+    background: var(--linen);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    border: 1px solid var(--parch);
+  }
+  .steps li::before {
+    content: counter(steps);
+    position: absolute; left: 14px; top: 12px;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--clay); color: var(--cream);
+    text-align: center; line-height: 24px;
+    font-size: 13px; font-weight: 700;
+  }
+  .steps li strong { color: var(--clay); }
+
+  .copy-btn {
+    display: block; width: 100%; padding: 12px;
+    background: var(--clay); color: var(--cream);
+    border: none; border-radius: 8px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    margin: 12px 0;
+  }
+  .copy-btn:active { background: var(--clay-dk); }
+  .copy-ok {
+    display: none; text-align: center;
+    font-size: 13px; font-weight: 600; color: var(--grn);
+    padding: 6px; background: var(--grn-lt); border-radius: 6px;
+    margin-bottom: 8px;
+  }
+
+  /* ── Features ──────────────────────────────────────────────── */
+  .features-section {
+    padding: 28px 0;
+  }
+  .features-section h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 18px; color: var(--ink); margin-bottom: 14px;
+  }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 480px) { .feature-grid { grid-template-columns: 1fr; } }
+  .feature-card {
+    background: var(--linen);
+    border: 1px solid var(--parch);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .feature-card h3 {
+    font-size: 14px; font-weight: 700; color: var(--clay);
+    margin-bottom: 4px;
+  }
+  .feature-card p { font-size: 13px; color: var(--mist); line-height: 1.5; }
+
+  /* ── Footer ────────────────────────────────────────────────── */
+  footer {
+    padding: 24px 20px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--mist);
+    border-top: 1px solid var(--parch);
+    margin-top: 20px;
+  }
+  footer a { color: var(--clay); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── Desktop vs mobile ─────────────────────────────────────── */
+  .desktop-only { display: block; }
+  .mobile-only { display: none; }
+  @media (max-width: 768px) {
+    .desktop-only { display: none; }
+    .mobile-only { display: block; }
+    header h1 { font-size: 24px; }
+    header p { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Submittable Filter</h1>
+  <p>A free tool for writers to filter spam and irrelevant listings from Submittable's Discover page.</p>
+</header>
+
+<div class="wrap">
+
+  <!-- Desktop install -->
+  <div class="install desktop-only">
+    <h2>Drag this to your bookmarks bar</h2>
+    <a class="bookmarklet-link" id="bookmarklet"
+       href="javascript:void(document.head.appendChild(document.createElement('script')).src='https://rcolinb.github.io/submittable-filter/filter.js?v='+Date.now())">
+      Submittable Filter
+    </a>
+    <p class="install-hint">
+      Then visit <a href="https://manager.submittable.com/opportunities/discover" target="_blank" style="color:var(--clay)">Submittable Discover</a> and click the bookmark. That's it.
+    </p>
+  </div>
+
+  <!-- Mobile install -->
+  <div class="install mobile-only">
+    <h2>Setup (takes 30 seconds)</h2>
+    <ol class="steps">
+      <li>Tap the button below to <strong>copy the filter code</strong></li>
+      <li>Bookmark this page (or any page). Name it <strong>"Submittable Filter"</strong></li>
+      <li>Edit that bookmark and <strong>replace the URL</strong> with the code you copied</li>
+      <li>Go to <a href="https://manager.submittable.com/opportunities/discover" style="color:var(--clay)">Submittable Discover</a>, open the bookmark from your address bar, done</li>
+    </ol>
+    <button class="copy-btn" id="copy-btn">Copy Filter Code</button>
+    <div class="copy-ok" id="copy-ok">Copied to clipboard</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- How it works -->
+  <div class="features-section">
+    <h2>What it does</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>Detects spam</h3>
+        <p>Auto-identifies publications by name and counts how many listings each one posts. The worst offenders float to the top.</p>
+      </div>
+      <div class="feature-card">
+        <h3>One-click blocking</h3>
+        <p>Block individual publications or nuke everything with 3+ or 5+ listings at once. Hover/tap any listing for a quick-block button.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Flags new listings</h3>
+        <p>Green "NEW" badges on listings that appeared since your last visit, so you can quickly spot what's fresh.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Keyword filtering</h3>
+        <p>Hide entire genres (screenwriting, journalism, etc.) and submission types (grants, contests) with toggles.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Saves automatically</h3>
+        <p>Your block lists and settings persist between visits. No account needed, nothing to configure.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Shareable</h3>
+        <p>Export your block list as JSON and share it with other writers. They can import it in one click.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="features-section">
+    <h2>Tips</h2>
+    <p style="font-size: 14px; color: var(--mist); line-height: 1.7;">
+      The first time you use it, scroll through a few pages of Discover listings. The filter auto-collects publication names and counts as you scroll. Then open the filter panel (the circle button at the bottom right) and check the <strong style="color:var(--ink)">Frequency</strong> tab to see which publications are flooding the feed. Block the worst ones individually or use the bulk buttons. Your settings save automatically and will be there next time.
+    </p>
+  </div>
+
+</div>
+
+<footer>
+  Made by <a href="https://rcblenis.com" target="_blank">R.C. Blenis</a> · <a href="https://github.com/rcolinb/rcolinb.github.io" target="_blank">GitHub</a> · Free and open source
+</footer>
+
+<script>
+  // The tiny bookmarklet loader
+  var LOADER = "javascript:void(document.head.appendChild(document.createElement('script')).src='https://rcolinb.github.io/submittable-filter/filter.js?v='+Date.now())";
+
+  // Mobile copy button
+  document.getElementById('copy-btn').addEventListener('click', function() {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(LOADER).then(showOk).catch(fallback);
+    } else {
+      fallback();
+    }
+  });
+
+  function fallback() {
+    var ta = document.createElement('textarea');
+    ta.value = LOADER;
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showOk();
+  }
+
+  function showOk() {
+    var ok = document.getElementById('copy-ok');
+    var btn = document.getElementById('copy-btn');
+    ok.style.display = 'block';
+    btn.textContent = 'Copied!';
+    setTimeout(function() {
+      ok.style.display = 'none';
+      btn.textContent = 'Copy Filter Code';
+    }, 2000);
+  }
+
+  // Prevent the bookmarklet from executing when clicked on this page
+  document.getElementById('bookmarklet').addEventListener('click', function(e) {
+    e.preventDefault();
+    alert('Drag this button to your bookmarks bar — don\'t click it here!');
+  });
+</script>
+</body>
+</html>
