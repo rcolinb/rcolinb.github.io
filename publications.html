@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Analytics -->
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X88EXVCJZJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-X88EXVCJZJ');
+</script>
+
+<title>Publications — R.C. Blenis</title>
+<meta name="theme-color" content="#16161C">
+<meta name="description" content="Complete list of poetry and creative nonfiction by R.C. Blenis, with work in the Massachusetts Review, JAMA, River Teeth, Fourth Genre, the American Journal of Nursing, Pulse, and elsewhere.">
+<link rel="canonical" href="https://www.rcblenis.com/publications.html">
+
+<!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Publications — R.C. Blenis">
+<meta property="og:description" content="Poetry and creative nonfiction at the intersection of nursing, contemplative practice, and the ethics of attention.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.rcblenis.com/publications.html">
+<meta property="og:site_name" content="R.C. Blenis">
+<meta property="og:image" content="https://www.rcblenis.com/og-image.jpg">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Source+Sans+3:wght@300;400&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ═══ NAVIGATION ═══ -->
+
+<nav id="mainNav">
+  <a class="nav-name" href="index.html">R.C. Blenis</a>
+  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="publications.html" class="active">Publications</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ═══ PUBLICATIONS ═══ -->
+
+<main id="work" class="pubpage-main">
+  <div class="section-content">
+    <div class="pubpage-header reveal">
+      <a class="back-home" href="index.html">&larr; Home</a>
+      <h1 class="section-title">Publications</h1>
+      <p class="section-subtitle">Poetry &amp; creative nonfiction</p>
+    </div>
+
+    <!-- Full record renders here from the shared data source -->
+    <div id="pub-list-full"></div>
+  </div>
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+
+<footer>
+  &copy; 2026 R.C. Blenis. All rights reserved.
+</footer>
+
+<!-- ═══ DATA ═══ -->
+
+<script src="publications.js"></script>
+
+<!-- ═══ JAVASCRIPT ═══ -->
+
+<script>
+  // Render the full publication list
+  renderFullList();
+
+  // Navbar scroll effect
+  window.addEventListener('scroll', () => {
+    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // Mobile nav toggle
+  function toggleNav() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.getElementById('navLinks').classList.remove('open');
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.15 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
