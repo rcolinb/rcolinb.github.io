@@ -1,0 +1,4 @@
+exclude:
+  - _incantations.json
+  - _scripts
+  - README.md

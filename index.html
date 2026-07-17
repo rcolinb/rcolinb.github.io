@@ -39,7 +39,7 @@
 <meta name="twitter:image" content="https://www.rcblenis.com/og-image.jpg">
 
 <!-- Structured Data -->
-<script type="application/ld+json">
+<script type="application/ld+json" id="person-jsonld">
 {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -74,7 +74,13 @@
       "name": "Emory University"
     }
   ],
-  "knowsAbout": ["Poetry", "Nursing", "Creative Nonfiction", "Buddhist Practice", "Medical Humanities"]
+  "knowsAbout": [
+    "Poetry",
+    "Nursing",
+    "Creative Nonfiction",
+    "Buddhist Practice",
+    "Medical Humanities"
+  ]
 }
 </script>
 
@@ -91,11 +97,13 @@
 
 <nav id="mainNav">
   <a class="nav-name" href="#home">R.C. Blenis</a>
-  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">
+  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
     <span></span><span></span><span></span>
   </button>
   <ul class="nav-links" id="navLinks">
     <li><a href="#work">Work</a></li>
+    <!-- INCANTATIONS_NAV:START -->
+    <!-- INCANTATIONS_NAV:END -->
     <li><a href="publications.html">Publications</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -137,18 +145,21 @@
   </div>
 </section>
 
+<!-- INCANTATIONS_FEATURE:START -->
+<!-- INCANTATIONS_FEATURE:END -->
+
 <!-- ═══ BOOKS IN PROGRESS ═══ -->
 
 <section id="projects">
   <div class="section-content">
     <div class="projects-header reveal">
       <div class="section-divider" style="margin-bottom: 3rem;"></div>
-      <h3 class="projects-title">Book in Progress</h3>
+      <h2 class="projects-title">Book in Progress</h2>
     </div>
 
     <div class="projects-grid">
       <div class="project-card reveal">
-        <h4 class="project-title">Listen for Water</h4>
+        <h3 class="project-title">Listen for Water</h3>
         <p class="project-genre">Poetry Collection</p>
         <p class="project-description">
           Poems written from the bedside: ICU, psychiatric unit, emergency department.
@@ -264,13 +275,17 @@
 
   // Mobile nav toggle
   function toggleNav() {
-    document.getElementById('navLinks').classList.toggle('open');
+    const links = document.getElementById('navLinks');
+    const button = document.querySelector('.nav-toggle');
+    const isOpen = links.classList.toggle('open');
+    button.setAttribute('aria-expanded', String(isOpen));
   }
 
   // Close mobile nav on link click
   document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
       document.getElementById('navLinks').classList.remove('open');
+      document.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false');
     });
   });
 

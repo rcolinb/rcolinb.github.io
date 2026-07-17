@@ -45,11 +45,13 @@
 
 <nav id="mainNav">
   <a class="nav-name" href="index.html">R.C. Blenis</a>
-  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">
+  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
     <span></span><span></span><span></span>
   </button>
   <ul class="nav-links" id="navLinks">
     <li><a href="index.html">Home</a></li>
+    <!-- INCANTATIONS_NAV:START -->
+    <!-- INCANTATIONS_NAV:END -->
     <li><a href="publications.html" class="active">Publications</a></li>
     <li><a href="index.html#about">About</a></li>
     <li><a href="index.html#contact">Contact</a></li>
@@ -65,6 +67,9 @@
       <h1 class="section-title">Publications</h1>
       <p class="section-subtitle">Poetry &amp; creative nonfiction</p>
     </div>
+
+    <!-- INCANTATIONS_AWARDS:START -->
+    <!-- INCANTATIONS_AWARDS:END -->
 
     <!-- Full record renders here from the shared data source -->
     <div id="pub-list-full"></div>
@@ -94,11 +99,15 @@
 
   // Mobile nav toggle
   function toggleNav() {
-    document.getElementById('navLinks').classList.toggle('open');
+    const links = document.getElementById('navLinks');
+    const button = document.querySelector('.nav-toggle');
+    const isOpen = links.classList.toggle('open');
+    button.setAttribute('aria-expanded', String(isOpen));
   }
   document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
       document.getElementById('navLinks').classList.remove('open');
+      document.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false');
     });
   });
 

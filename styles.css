@@ -45,6 +45,12 @@
     will-change: transform;
   }
 
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--clay-light);
+    outline-offset: 4px;
+  }
+
   /* ═══ NAVIGATION ═══ */
 
   nav {
@@ -337,6 +343,12 @@
     font-size: 0.78rem;
     color: var(--mist);
     letter-spacing: 0.05em;
+  }
+
+  .pub-citation {
+    font-family: var(--serif);
+    color: var(--stone);
+    font-size: 1rem;
   }
 
   .pub-note {
@@ -745,4 +757,290 @@
     color: var(--mist);
     letter-spacing: 0.05em;
     margin-top: 0.6rem;
+  }
+
+  /* ═══ INCANTATIONS ═══ */
+
+  .essay-feature-section {
+    padding: 4rem 0 1rem;
+  }
+
+  .essay-feature {
+    background: var(--linen);
+    border-left: 3px solid var(--clay);
+    padding: 2.5rem;
+  }
+
+  .essay-kicker {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    line-height: 1.6;
+    text-transform: uppercase;
+    color: var(--clay);
+    margin-bottom: 0.8rem;
+  }
+
+  .essay-feature-title {
+    font-family: var(--serif);
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 0.8rem;
+  }
+
+  .essay-feature-title a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .essay-feature-title a:hover {
+    color: var(--clay);
+  }
+
+  .essay-feature-text {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    color: var(--stone);
+    line-height: 1.8;
+    max-width: 610px;
+  }
+
+  .essay-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1.6rem;
+  }
+
+  .essay-action {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--clay-light);
+    color: var(--clay);
+    font-family: var(--sans);
+    font-size: 0.76rem;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .essay-action:hover {
+    background: var(--clay);
+    color: var(--cream);
+  }
+
+  .recognition-section {
+    margin-bottom: 3.5rem;
+  }
+
+  .award-entry {
+    padding: 1.2rem 0 1.4rem;
+    border-bottom: 1px solid rgba(233, 228, 217, 0.09);
+  }
+
+  .award-title {
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.12rem;
+    font-weight: 500;
+  }
+
+  .award-work {
+    color: var(--stone);
+    font-family: var(--serif);
+    font-size: 1rem;
+    margin-top: 0.3rem;
+  }
+
+  .award-work a {
+    color: var(--clay);
+    text-decoration: none;
+  }
+
+  .award-work a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .essay-page {
+    min-height: calc(100vh - 82px);
+    padding: 10rem 0 6rem;
+  }
+
+  .essay-page-content {
+    max-width: 720px;
+  }
+
+  .essay-page-header {
+    text-align: center;
+  }
+
+  .essay-page-header h1 {
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 3.4rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1.15;
+  }
+
+  .essay-byline {
+    color: var(--mist);
+    font-family: var(--sans);
+    font-size: 0.76rem;
+    letter-spacing: 0.14em;
+    margin: 0.8rem 0 2rem;
+    text-transform: uppercase;
+  }
+
+  .essay-page-header .section-divider {
+    margin-bottom: 2rem;
+  }
+
+  .essay-status {
+    color: var(--clay);
+    font-family: var(--serif);
+    font-size: 1.18rem;
+  }
+
+  .essay-publication-status {
+    color: var(--stone);
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    margin-top: 0.15rem;
+  }
+
+  .essay-description {
+    color: var(--charcoal);
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    line-height: 1.9;
+    margin: 2.4rem auto 0;
+    max-width: 610px;
+  }
+
+  .essay-page-header .essay-actions {
+    justify-content: center;
+  }
+
+  .essay-detail {
+    border-top: 1px solid var(--parchment);
+    margin-top: 4rem;
+    padding-top: 2.5rem;
+  }
+
+  .essay-detail h2,
+  .essay-follow h2 {
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 1.55rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+  }
+
+  .essay-citation,
+  .essay-prose p {
+    color: var(--charcoal);
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    line-height: 1.9;
+  }
+
+  .essay-prose p + p {
+    margin-top: 1.2rem;
+  }
+
+  .judge-quote {
+    border-left: 2px solid var(--clay-light);
+    color: var(--stone);
+    font-family: var(--serif);
+    font-size: 1.08rem;
+    font-style: italic;
+    line-height: 1.9;
+    padding-left: 1.6rem;
+  }
+
+  .judge-quote p + p {
+    margin-top: 1rem;
+  }
+
+  .judge-quote cite {
+    color: var(--mist);
+    display: block;
+    font-family: var(--sans);
+    font-size: 0.76rem;
+    font-style: normal;
+    letter-spacing: 0.12em;
+    margin-top: 1rem;
+    text-transform: uppercase;
+  }
+
+  .essay-follow {
+    border-top: 1px solid var(--parchment);
+    margin-top: 4rem;
+    padding-top: 3rem;
+    text-align: center;
+  }
+
+  .essay-follow p {
+    color: var(--stone);
+    font-family: var(--serif);
+    margin: 0 auto 1.5rem;
+    max-width: 460px;
+  }
+
+  @media (max-width: 768px) {
+    .essay-feature-section {
+      padding-top: 3rem;
+    }
+
+    .essay-feature {
+      padding: 1.8rem;
+    }
+
+    .essay-feature-title {
+      font-size: 1.7rem;
+    }
+
+    .essay-page {
+      padding: 8rem 0 4rem;
+    }
+
+    .essay-page-header h1 {
+      font-size: 2.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  @media print {
+    .essay-actions,
+    .essay-follow .subscribe-btn {
+      display: none;
+    }
+
+    .essay-page,
+    .essay-feature-section {
+      padding: 2rem 0;
+    }
+
+    .essay-feature {
+      border-left: 2px solid #A0522D;
+    }
   }

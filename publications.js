@@ -31,6 +31,8 @@ window.PUBLICATIONS = [
   { genre:'poetry', status:'published', title:'stepping away now', venue:'The Dewdrop', date:'November 2025', url:'https://thedewdrop.org/2025/11/24/dewdrops-autumn-week-8-2/', form:'haiku' },
 
   // ── Creative Nonfiction ──
+  // INCANTATIONS_PUBLICATION:START
+  // INCANTATIONS_PUBLICATION:END
   { genre:'cnf', status:'forthcoming', title:'Without Identifiable Antecedent', venue:'Fourth Genre: Explorations in Nonfiction', date:'Forthcoming' },
   { genre:'cnf', status:'forthcoming', selected:true, title:'The Net', venue:'River Teeth: A Journal of Nonfiction Narrative', date:'Forthcoming' },
   { genre:'cnf', status:'forthcoming', title:'Holding', venue:'American Journal of Nursing', date:'Forthcoming', note:'Reflections' },
@@ -43,10 +45,14 @@ window.PUBLICATIONS = [
 function pubItem(p){
   const div = document.createElement('div');
   div.className = 'publication-item';
+  const titleEnd = p.citation ? '.&rdquo;' : '&rdquo;';
   const titleHtml = p.url
-    ? '<span class="pub-title"><a href="' + p.url + '" target="_blank" rel="noopener">&ldquo;' + p.title + '&rdquo;</a></span>'
-    : '<span class="pub-title">&ldquo;' + p.title + '&rdquo;</span>';
-  let html = titleHtml + ' &middot;\n      <span class="pub-venue">' + p.venue + '</span>\n      <span class="pub-year"> &middot; ' + p.date + '</span>';
+    ? '<span class="pub-title"><a href="' + p.url + '" target="_blank" rel="noopener">&ldquo;' + p.title + titleEnd + '</a></span>'
+    : '<span class="pub-title">&ldquo;' + p.title + titleEnd + '</span>';
+  const publicationHtml = p.citation
+    ? '<span class="pub-citation">' + p.citation + '</span>'
+    : '<span class="pub-venue">' + p.venue + '</span>\n      <span class="pub-year"> &middot; ' + p.date + '</span>';
+  let html = titleHtml + (p.citation ? ' ' : ' &middot;\n      ') + publicationHtml;
   if (p.note) { html += '<div class="pub-note">' + p.note + '</div>'; }
   if (p.url) {
     const lt = p.linkText || 'Read &rarr;';
@@ -90,7 +96,7 @@ function renderFullList(){
     if (!items.length) return;
     const cat = document.createElement('div');
     cat.className = 'work-category reveal';
-    cat.innerHTML = '<h3 class="work-category-title">' + g.label + '</h3>';
+    cat.innerHTML = '<h2 class="work-category-title">' + g.label + '</h2>';
     statuses.forEach(function(s){
       const sItems = items.filter(function(p){ return p.status === s.key; });
       if (!sItems.length) return;
