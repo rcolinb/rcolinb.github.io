@@ -17,7 +17,7 @@
 
 window.PUBLICATIONS = [
   // ── Poetry ──
-  { genre:'poetry', status:'forthcoming', title:'Asterixis', venue:'Stone Circle Review', date:'Forthcoming, 2026' },
+  { genre:'poetry', status:'published', title:'Asterixis', venue:'Stone Circle Review', date:'July 2026', url:'https://stonecirclereview.com/asterixis/' },
   { genre:'poetry', status:'forthcoming', title:'Perseveration', venue:'The Examined Life Journal', date:'Forthcoming, 2026' },
   { genre:'poetry', status:'forthcoming', title:'morning coffee', venue:'Presence', date:'Forthcoming, Issue 83', form:'haiku' },
   { genre:'poetry', status:'forthcoming', title:'wildfire smoke', venue:'Modern Haiku', date:'Forthcoming, Issue 57.2', form:'haiku' },
