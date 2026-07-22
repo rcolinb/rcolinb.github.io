@@ -34,7 +34,7 @@ window.PUBLICATIONS = [
 
   // ── Creative Nonfiction ──
   // INCANTATIONS_PUBLICATION:START
-  {"genre":"cnf","status":"forthcoming","title":"Incantations","awardNote":"Winner of the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay","venue":"Indiana Review","date":"Forthcoming"},
+  {"genre":"cnf","status":"forthcoming","title":"Incantations","awardNote":"Winner of the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay","venue":"Indiana Review","date":"Forthcoming","announcementUrl":"https://www.instagram.com/p/DbGP1PPkadH/?img_index=1"},
   // INCANTATIONS_PUBLICATION:END
   { genre:'cnf', status:'forthcoming', title:'Without Identifiable Antecedent', venue:'Fourth Genre: Explorations in Nonfiction', date:'Forthcoming' },
   { genre:'cnf', status:'forthcoming', selected:true, title:'The Net', venue:'River Teeth: A Journal of Nonfiction Narrative', date:'Forthcoming' },
