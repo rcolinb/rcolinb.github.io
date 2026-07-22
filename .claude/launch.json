@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "author-site",
+      "runtimeExecutable": "/usr/bin/python3",
+      "runtimeArgs": [
+        "/private/tmp/rcb-site-preview/_scripts/serve.py",
+        "4173"
+      ],
+      "port": 4173
+    }
+  ]
+}

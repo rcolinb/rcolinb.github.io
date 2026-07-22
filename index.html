@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>document.documentElement.classList.add('js');</script>
 
 <!-- Google Analytics -->
 <link rel="preconnect" href="https://www.googletagmanager.com">
@@ -16,8 +17,8 @@
 
 <title>R.C. Blenis — Poet, Nurse, Essayist</title>
 <meta name="theme-color" content="#16161C">
-<meta name="description" content="R.C. Blenis is a poet, nurse, and essayist based in Atlanta. Work in the Massachusetts Review, JAMA, River Teeth, Fourth Genre, the American Journal of Nursing, Pulse, Heavy Feather Review, and elsewhere.">
-<link rel="canonical" href="https://www.rcblenis.com">
+<meta name="description" id="site-description" content="R.C. Blenis is a poet, nurse, and essayist whose essay “Incantations” won the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay.">
+<link rel="canonical" href="https://rcblenis.com">
 
 <!-- Favicon -->
 <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -26,26 +27,26 @@
 
 <!-- Open Graph -->
 <meta property="og:title" content="R.C. Blenis — Poet, Nurse, Essayist">
-<meta property="og:description" content="Poetry, creative nonfiction, and essays at the intersection of nursing, contemplative practice, and the ethics of attention.">
+<meta property="og:description" id="og-description" content="R.C. Blenis is a poet, nurse, and essayist whose essay “Incantations” won the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://www.rcblenis.com">
+<meta property="og:url" content="https://rcblenis.com">
 <meta property="og:site_name" content="R.C. Blenis">
-<meta property="og:image" content="https://www.rcblenis.com/og-image.jpg">
+<meta property="og:image" content="https://rcblenis.com/og-image.jpg">
 
 <!-- Twitter/X Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="R.C. Blenis — Poet, Nurse, Essayist">
-<meta name="twitter:description" content="Poetry, creative nonfiction, and essays at the intersection of nursing, contemplative practice, and the ethics of attention.">
-<meta name="twitter:image" content="https://www.rcblenis.com/og-image.jpg">
+<meta name="twitter:description" id="twitter-description" content="R.C. Blenis is a poet, nurse, and essayist whose essay “Incantations” won the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay.">
+<meta name="twitter:image" content="https://rcblenis.com/og-image.jpg">
 
 <!-- Structured Data -->
-<script type="application/ld+json">
+<script type="application/ld+json" id="person-jsonld">
 {
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "R.C. Blenis",
   "alternateName": "Colin Blenis",
-  "url": "https://www.rcblenis.com",
+  "url": "https://rcblenis.com",
   "sameAs": [
     "https://rcblenis.substack.com",
     "https://instagram.com/hillbillypilgrim",
@@ -53,7 +54,7 @@
   ],
   "jobTitle": "Poet, Nurse, Essayist",
   "description": "Poet, nurse, and essayist based in Atlanta. Work explores suffering, compassion, and clinical witness.",
-  "image": "https://www.rcblenis.com/author-photo.jpg",
+  "image": "https://rcblenis.com/author-photo.jpg",
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "Atlanta",
@@ -74,12 +75,18 @@
       "name": "Emory University"
     }
   ],
-  "knowsAbout": ["Poetry", "Nursing", "Creative Nonfiction", "Buddhist Practice", "Medical Humanities"]
+  "knowsAbout": [
+    "Poetry",
+    "Nursing",
+    "Creative Nonfiction",
+    "Buddhist Practice",
+    "Medical Humanities"
+  ],
+  "award": "Winner of the 2026 Indiana Review Creative Nonfiction Prize"
 }
 </script>
 
 <!-- Fonts: load only used weights -->
-<link rel="preload" href="https://fonts.gstatic.com/s/ebgaramond/v27/SlGDmQSNjdsmc35JDF1K5E55YMjF_7DPuGi-6_RUA4V-e6yHgQ.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Source+Sans+3:wght@300;400&display=swap" rel="stylesheet">
@@ -91,11 +98,13 @@
 
 <nav id="mainNav">
   <a class="nav-name" href="#home">R.C. Blenis</a>
-  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">
+  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
     <span></span><span></span><span></span>
   </button>
   <ul class="nav-links" id="navLinks">
     <li><a href="#work">Work</a></li>
+    <!-- INCANTATIONS_NAV:START -->
+    <!-- INCANTATIONS_NAV:END -->
     <li><a href="publications.html">Publications</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -108,9 +117,16 @@
   <h1 class="hero-name">R.C. Blenis</h1>
   <p class="hero-descriptor">Poet &nbsp;·&nbsp; Nurse &nbsp;·&nbsp; Essayist</p>
   <div class="hero-line"></div>
-  <p class="hero-highlight" id="hero-highlight"></p>
+  <!-- INCANTATIONS_HERO:START -->
+<div class="hero-prize">
+    <h2 class="hero-prize-title">&ldquo;Incantations&rdquo;</h2>
+    <p class="hero-prize-award">Winner of the 2026 Indiana Review Creative Nonfiction Prize</p>
+    <p class="hero-prize-status">Selected by Ross Gay <span aria-hidden="true">&middot;</span> Forthcoming in <em>Indiana Review</em></p>
+  </div>
+  <!-- INCANTATIONS_HERO:END -->
   <div class="home-subscribe">
     <a href="https://rcblenis.substack.com" target="_blank" rel="noopener">Follow the work</a>
+    <a href="#contact">Get in touch</a>
   </div>
   <div class="scroll-indicator">
     <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -122,8 +138,8 @@
 <section id="work">
   <div class="section-content">
     <div class="section-header reveal">
-      <h2 class="section-title">Work</h2>
-      <p class="section-subtitle">Selected work</p>
+      <h2 class="section-title">Selected Work</h2>
+      <p class="section-subtitle">Essays &amp; poetry</p>
     </div>
 
     <!-- A short curated selection; the full record lives on the publications page -->
@@ -143,12 +159,20 @@
   <div class="section-content">
     <div class="projects-header reveal">
       <div class="section-divider" style="margin-bottom: 3rem;"></div>
-      <h3 class="projects-title">Book in Progress</h3>
+      <h2 class="projects-title">Books in Progress</h2>
     </div>
 
     <div class="projects-grid">
       <div class="project-card reveal">
-        <h4 class="project-title">Listen for Water</h4>
+        <h3 class="project-title">The Net</h3>
+        <p class="project-genre">Essay Collection</p>
+        <p class="project-description">
+          Essays on the work of care: triage, restraint, recovery, and the hours
+          the chart doesn't record. The title essay is forthcoming in River Teeth.
+        </p>
+      </div>
+      <div class="project-card reveal">
+        <h3 class="project-title">Listen for Water</h3>
         <p class="project-genre">Poetry Collection</p>
         <p class="project-description">
           Poems written from the bedside: ICU, psychiatric unit, emergency department.
@@ -170,29 +194,28 @@
     </div>
 
     <div class="about-photo reveal">
-      <img src="author-photo.jpg" alt="R.C. Blenis in a pine forest" loading="lazy">
+      <img src="author-photo.jpg" alt="R.C. Blenis in a pine forest, holding a small dog" loading="lazy">
     </div>
 
     <div class="about-content reveal">
       <p>
-        Before I was a nurse, I was a researcher. Before I was a researcher, I was a kid in Georgia who read too much and asked questions that made adults uncomfortable. The through-line is the same: I want to understand how people make sense of suffering, their own and others', and what it means to show up for someone when fixing isn't possible.
+        Before I was a nurse, I was a researcher. Before I was a researcher, I was a kid in a Georgia pew with more questions than the sermon had answers for. The through-line is the same: I want to understand how people make sense of suffering, their own and others', and what it means to show up for someone when fixing isn't possible.
       </p>
 
       <p>
-        I studied psychology at Georgia Tech and developmental psychology at Cornell, where I spent years in a memory lab studying how people construct the stories they tell about their lives. I left the PhD to sit at bedsides rather than behind data sets. I earned my nursing degree from Emory and went to work in an emergency department.
-      </p>
-
-      <p>
-        What followed was an education no classroom could have given me. I worked a COVID ICU in Brooklyn during the first wave of the pandemic. I managed pediatric and adult psychiatric units, learning what it looks like when systems meant to hold people instead break them. I carried what I saw into notebooks, and into poems and essays that tried to be honest about the gap between what we promise patients and what we can actually deliver.
+        I studied psychology at Georgia Tech and developmental psychology at Cornell, where I spent years in a memory lab studying how people construct the stories they tell about their lives.
       </p>
 
       <div class="about-epigraph">
-        Attention is the beginning of devotion.
-        <span class="attribution">— Mary Oliver</span>
+        I left the PhD to sit at bedsides rather than behind data sets.
       </div>
 
       <p>
-        The word <em>patient</em> comes from the Latin <em>patiens</em>: to endure suffering. <em>Compassion</em> means to suffer with. Nursing bridges the two. So does writing.
+        I earned my nursing degree from Emory and took a job in an emergency department. I worked a COVID ICU in Brooklyn during the first wave of the pandemic. I managed pediatric and adult psychiatric units, learning what it looks like when systems meant to hold people instead break them. I carried what I saw into notebooks, and into poems and essays that tried to be honest about the gap between what we promise patients and what we can actually deliver.
+      </p>
+
+      <p>
+        The word <em>patient</em> comes from the Latin <em>patiens</em>: one who endures. <em>Compassion</em> means to suffer with. Nursing bridges the two. So does writing.
       </p>
 
       <p>
@@ -200,9 +223,26 @@
       </p>
 
       <p>
-        I live in Atlanta with my wife and two dogs, where we train together in weightlifting and yoga and argue about whose turn it is to pick the YouTube video.
+        These days I teach nursing as an assistant professor in Atlanta, where I live with my wife and two dogs. We train together in weightlifting and yoga and argue about whose turn it is to pick the YouTube video.
       </p>
     </div>
+
+    <!-- INCANTATIONS_EDITOR_RESOURCES:START -->
+<section class="editor-resources reveal" id="short-bio" aria-labelledby="editor-resources-heading">
+      <!-- Add the supplied RCBlenis_headshot_4x5_crop.png picture and download link here after web derivatives are created. -->
+      <h3 id="editor-resources-heading">For Editors &amp; Press</h3>
+      <p class="short-bio-text" id="short-bio-text">R.C. Blenis is a nurse, poet, essayist, and assistant professor of nursing in Atlanta. His essay &ldquo;Incantations&rdquo; won the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay. His poetry and nonfiction appear or are forthcoming in <em>JAMA</em>, <em>The Massachusetts Review</em>, <em>Fourth Genre</em>, <em>River Teeth</em>, and <em>American Journal of Nursing</em>. He has worked in emergency, intensive care, and psychiatric settings. His writing explores what care asks of us, what clinical language obscures, and what remains when repair is no longer possible.</p>
+      <div class="copy-bio-row">
+        <button class="copy-bio-button" id="copy-short-bio" type="button">Copy short bio</button>
+        <span class="copy-bio-status" id="copy-bio-status" role="status" aria-live="polite"></span>
+      </div>
+      <nav class="editor-resource-links" aria-label="Editor and press resources">
+        <a href="#short-bio">Short bio</a>
+        <a href="publications.html">Publications</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </section>
+    <!-- INCANTATIONS_EDITOR_RESOURCES:END -->
   </div>
 </section>
 
@@ -214,10 +254,11 @@
       <div class="section-divider" style="margin-bottom: 3rem;"></div>
       <h2 class="section-title" style="margin-bottom: 2rem;">Get in Touch</h2>
       <p class="contact-intro">
-        For publication inquiries, readings, collaboration,
-        or just a conversation worth having.
+        For publication and representation inquiries, readings,
+        collaboration, or just a conversation worth having.
       </p>
       <a class="contact-email" id="contact-email" href="#"></a>
+      <noscript><span class="contact-email">colinblenis [at] gmail.com</span></noscript>
 
       <div class="contact-divider-line"></div>
 
@@ -264,13 +305,17 @@
 
   // Mobile nav toggle
   function toggleNav() {
-    document.getElementById('navLinks').classList.toggle('open');
+    const links = document.getElementById('navLinks');
+    const button = document.querySelector('.nav-toggle');
+    const isOpen = links.classList.toggle('open');
+    button.setAttribute('aria-expanded', String(isOpen));
   }
 
   // Close mobile nav on link click
   document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
       document.getElementById('navLinks').classList.remove('open');
+      document.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false');
     });
   });
 
@@ -318,6 +363,22 @@
     var el = document.getElementById('contact-email');
     el.href = 'mai' + 'lto:' + u + '@' + d;
     el.textContent = u + '@' + d;
+  })();
+
+  // Copy the editor-ready biography when that section is present.
+  (function() {
+    const button = document.getElementById('copy-short-bio');
+    if (!button) return;
+    const bio = document.getElementById('short-bio-text');
+    const status = document.getElementById('copy-bio-status');
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(bio.innerText.trim());
+        status.textContent = 'Copied';
+      } catch {
+        status.textContent = 'Select the bio text and copy it manually';
+      }
+    });
   })();
 
   reveals.forEach(el => observer.observe(el));

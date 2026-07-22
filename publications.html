@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>document.documentElement.classList.add('js');</script>
 
 <!-- Google Analytics -->
 <link rel="preconnect" href="https://www.googletagmanager.com">
@@ -16,8 +17,8 @@
 
 <title>Publications — R.C. Blenis</title>
 <meta name="theme-color" content="#16161C">
-<meta name="description" content="Complete list of poetry and creative nonfiction by R.C. Blenis, with work in the Massachusetts Review, JAMA, River Teeth, Fourth Genre, the American Journal of Nursing, Pulse, and elsewhere.">
-<link rel="canonical" href="https://www.rcblenis.com/publications.html">
+<meta name="description" content="Complete list of creative nonfiction, poetry, and fiction by R.C. Blenis, with work in the Massachusetts Review, JAMA, River Teeth, Fourth Genre, the American Journal of Nursing, Pulse, and elsewhere.">
+<link rel="canonical" href="https://rcblenis.com/publications.html">
 
 <!-- Favicon -->
 <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -26,11 +27,11 @@
 
 <!-- Open Graph -->
 <meta property="og:title" content="Publications — R.C. Blenis">
-<meta property="og:description" content="Poetry and creative nonfiction at the intersection of nursing, contemplative practice, and the ethics of attention.">
+<meta property="og:description" content="Creative nonfiction, poetry, and fiction at the intersection of nursing, contemplative practice, and the ethics of attention.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://www.rcblenis.com/publications.html">
+<meta property="og:url" content="https://rcblenis.com/publications.html">
 <meta property="og:site_name" content="R.C. Blenis">
-<meta property="og:image" content="https://www.rcblenis.com/og-image.jpg">
+<meta property="og:image" content="https://rcblenis.com/og-image.jpg">
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,12 +46,14 @@
 
 <nav id="mainNav">
   <a class="nav-name" href="index.html">R.C. Blenis</a>
-  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">
+  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
     <span></span><span></span><span></span>
   </button>
   <ul class="nav-links" id="navLinks">
     <li><a href="index.html">Home</a></li>
-    <li><a href="publications.html" class="active">Publications</a></li>
+    <!-- INCANTATIONS_NAV:START -->
+    <!-- INCANTATIONS_NAV:END -->
+    <li><a href="publications.html" class="active" aria-current="page">Publications</a></li>
     <li><a href="index.html#about">About</a></li>
     <li><a href="index.html#contact">Contact</a></li>
   </ul>
@@ -63,11 +66,135 @@
     <div class="pubpage-header reveal">
       <a class="back-home" href="index.html">&larr; Home</a>
       <h1 class="section-title">Publications</h1>
-      <p class="section-subtitle">Poetry &amp; creative nonfiction</p>
+      <p class="section-subtitle">Creative nonfiction, poetry &amp; fiction</p>
     </div>
 
-    <!-- Full record renders here from the shared data source -->
-    <div id="pub-list-full"></div>
+    <!-- The full record is generated here from publications.js for crawlability. -->
+    <div id="pub-list-full">
+      <!-- PUBLICATIONS_LIST:START -->
+    <section class="work-category reveal" aria-labelledby="cnf-heading">
+      <h2 class="work-category-title" id="cnf-heading">Creative Nonfiction</h2>
+      <p class="pub-status-label">Forthcoming</p>
+      <div class="publication-item">
+        <span class="pub-title">&ldquo;Incantations&rdquo;</span> &middot;
+        <span class="pub-venue">Indiana Review</span>
+        <span class="pub-year"> &middot; Forthcoming</span>
+        <div class="pub-note pub-award-note">Winner of the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay</div>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title">&ldquo;Without Identifiable Antecedent&rdquo;</span> &middot;
+        <span class="pub-venue">Fourth Genre: Explorations in Nonfiction</span>
+        <span class="pub-year"> &middot; Forthcoming</span>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title">&ldquo;The Net&rdquo;</span> &middot;
+        <span class="pub-venue">River Teeth: A Journal of Nonfiction Narrative</span>
+        <span class="pub-year"> &middot; Forthcoming</span>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title">&ldquo;Holding&rdquo;</span> &middot;
+        <span class="pub-venue">American Journal of Nursing</span>
+        <span class="pub-year"> &middot; Forthcoming</span>
+        <div class="pub-note">Reflections</div>
+      </div>
+      <p class="pub-status-label">Published</p>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://journals.lww.com/ajnonline/citation/2026/05000/the_body_knows_first.14.aspx" target="_blank" rel="noopener">&ldquo;The Body Knows First&rdquo;</a></span> &middot;
+        <span class="pub-venue">American Journal of Nursing</span>
+        <span class="pub-year"> &middot; Vol. 126.5, May 2026</span>
+        <a class="pub-link" href="https://journals.lww.com/ajnonline/citation/2026/05000/the_body_knows_first.14.aspx" target="_blank" rel="noopener">Read &rarr;</a>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://www.westtradereview.com/onlineexclusiveW25Blenis.html" target="_blank" rel="noopener">&ldquo;The Thread You Follow&rdquo;</a></span> &middot;
+        <span class="pub-venue">West Trade Review</span>
+        <span class="pub-year"> &middot; January 2026</span>
+        <a class="pub-link" href="https://www.westtradereview.com/onlineexclusiveW25Blenis.html" target="_blank" rel="noopener">Read &rarr;</a>
+      </div>
+    </section>
+    <section class="work-category reveal" aria-labelledby="poetry-heading">
+      <h2 class="work-category-title" id="poetry-heading">Poetry</h2>
+      <p class="pub-status-label">Forthcoming</p>
+      <div class="publication-item">
+        <span class="pub-title">&ldquo;Perseveration&rdquo;</span> &middot;
+        <span class="pub-venue">The Examined Life Journal</span>
+        <span class="pub-year"> &middot; Forthcoming, 2026</span>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title">&ldquo;morning coffee&rdquo;</span> &middot;
+        <span class="pub-venue">Presence</span>
+        <span class="pub-year"> &middot; Forthcoming, Issue 83</span>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title">&ldquo;wildfire smoke&rdquo;</span> &middot;
+        <span class="pub-venue">Modern Haiku</span>
+        <span class="pub-year"> &middot; Forthcoming, Issue 57.2</span>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title">&ldquo;Archeological Inheritance&rdquo;</span> &middot;
+        <span class="pub-venue">Flyway: Journal of Writing &amp; Environment</span>
+        <span class="pub-year"> &middot; Forthcoming, 2026</span>
+      </div>
+      <p class="pub-status-label">Published</p>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://stonecirclereview.com/asterixis/" target="_blank" rel="noopener">&ldquo;Asterixis&rdquo;</a></span> &middot;
+        <span class="pub-venue">Stone Circle Review</span>
+        <span class="pub-year"> &middot; July 2026</span>
+        <a class="pub-link" href="https://stonecirclereview.com/asterixis/" target="_blank" rel="noopener">Read &rarr;</a>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://massreview.org/issue/volume-67-issue-2" target="_blank" rel="noopener">&ldquo;Camera Review&rdquo;</a></span> &middot;
+        <span class="pub-venue">Massachusetts Review</span>
+        <span class="pub-year"> &middot; Vol. 67.2, 2026</span>
+        <a class="pub-link" href="https://massreview.org/issue/volume-67-issue-2" target="_blank" rel="noopener">View issue &rarr;</a>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://doi.org/10.1001/jama.2026.1799" target="_blank" rel="noopener">&ldquo;Mechanism of Action&rdquo;</a></span> &middot;
+        <span class="pub-venue">JAMA</span>
+        <span class="pub-year"> &middot; April 2026</span>
+        <a class="pub-link" href="https://doi.org/10.1001/jama.2026.1799" target="_blank" rel="noopener">Read &rarr;</a>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://pulsevoices.org/poems/disaster-north/" target="_blank" rel="noopener">&ldquo;Disaster North&rdquo;</a></span> &middot;
+        <span class="pub-venue">Pulse: Voices from the Heart of Medicine</span>
+        <span class="pub-year"> &middot; April 2026</span>
+        <a class="pub-link" href="https://pulsevoices.org/poems/disaster-north/" target="_blank" rel="noopener">Read &rarr;</a>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://panoramajournal.org/issues/issue-16-encounters/encounters-rung/" target="_blank" rel="noopener">&ldquo;Rung&rdquo;</a></span> &middot;
+        <span class="pub-venue">Panorama: Journal of Travel, Place, and Nature</span>
+        <span class="pub-year"> &middot; January 2026</span>
+        <a class="pub-link" href="https://panoramajournal.org/issues/issue-16-encounters/encounters-rung/" target="_blank" rel="noopener">Read &rarr;</a>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://heavyfeatherreview.org/2026/01/14/tuesdays/" target="_blank" rel="noopener">&ldquo;TUESDAYS&rdquo;</a></span> &middot;
+        <span class="pub-venue">Heavy Feather Review</span>
+        <span class="pub-year"> &middot; January 2026</span>
+        <a class="pub-link" href="https://heavyfeatherreview.org/2026/01/14/tuesdays/" target="_blank" rel="noopener">Read &rarr;</a>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://wildwillowmagazine.com/wp-content/uploads/2025/11/wwm-issue-4-6.pdf" target="_blank" rel="noopener">&ldquo;Sigyn's Bowl&rdquo;</a></span> &middot;
+        <span class="pub-venue">Wild Willow Magazine</span>
+        <span class="pub-year"> &middot; Issue 4, 2025</span>
+        <a class="pub-link" href="https://wildwillowmagazine.com/wp-content/uploads/2025/11/wwm-issue-4-6.pdf" target="_blank" rel="noopener">Read in Issue 4, p. 25 (PDF) &rarr;</a>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://thedewdrop.org/2025/11/24/dewdrops-autumn-week-8-2/" target="_blank" rel="noopener">&ldquo;stepping away now&rdquo;</a></span> &middot;
+        <span class="pub-venue">The Dewdrop</span>
+        <span class="pub-year"> &middot; November 2025</span>
+        <a class="pub-link" href="https://thedewdrop.org/2025/11/24/dewdrops-autumn-week-8-2/" target="_blank" rel="noopener">Read &rarr;</a>
+      </div>
+    </section>
+    <section class="work-category reveal" aria-labelledby="fiction-heading">
+      <h2 class="work-category-title" id="fiction-heading">Fiction</h2>
+      <p class="pub-status-label">Forthcoming</p>
+      <div class="publication-item">
+        <span class="pub-title">&ldquo;Applied Encounter Design&rdquo;</span> &middot;
+        <span class="pub-venue">Feign</span>
+        <span class="pub-year"> &middot; Forthcoming</span>
+      </div>
+    </section>
+      <!-- PUBLICATIONS_LIST:END -->
+    </div>
   </div>
 </main>
 
@@ -94,21 +221,26 @@
 
   // Mobile nav toggle
   function toggleNav() {
-    document.getElementById('navLinks').classList.toggle('open');
+    const links = document.getElementById('navLinks');
+    const button = document.querySelector('.nav-toggle');
+    const isOpen = links.classList.toggle('open');
+    button.setAttribute('aria-expanded', String(isOpen));
   }
   document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
       document.getElementById('navLinks').classList.remove('open');
+      document.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false');
     });
   });
 
-  // Scroll reveal
+  // Scroll reveal. The publication categories are tall, so use a low
+  // threshold: with 0.15 a long list stays hidden until well into view.
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) entry.target.classList.add('visible');
     });
-  }, { threshold: 0.15 });
+  }, { threshold: 0.05 });
   reveals.forEach(el => observer.observe(el));
 </script>
 
