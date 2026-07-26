@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cardiac Cycle &amp; ECG Simulator</title>
+<meta name="description" content="An interactive teaching simulator linking the cardiac cycle, the conduction system and the ECG, for prelicensure nursing and health-professional students.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23FAF7F2'/%3E%3Cpath d='M2 20h5l3-9 4 16 4-13 3 6h9' fill='none' stroke='%23A0522D' stroke-width='2.2' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
+<!--STYLES-->
+</head>
+<body>
+<a class="skip-link" href="#stage">Skip to the simulator</a>
+
+<div class="app">
+
+  <header class="topbar">
+    <h1 class="brand">Cardiac Cycle &amp; ECG<small>Interactive teaching simulator</small></h1>
+
+    <div class="segmented" role="group" aria-label="Learner mode">
+      <button type="button" id="modeBasic" aria-pressed="true" title="Introductory: one rhythm lead">Basic</button>
+      <button type="button" id="modeAdvanced" aria-pressed="false" title="Advanced: full 12-lead, conditions and haemodynamics">Advanced</button>
+    </div>
+
+    <div class="field">
+      <label for="rhythmSelect">Rhythm</label>
+      <select id="rhythmSelect"></select>
+    </div>
+
+    <div class="field" id="conditionField">
+      <label for="conditionSelect">Condition</label>
+      <select id="conditionSelect"></select>
+    </div>
+
+    <span class="topbar-spacer"></span>
+
+    <div class="segmented" role="group" aria-label="ECG view" id="viewToggle" hidden>
+      <button type="button" id="viewSingle" aria-pressed="false">Single lead</button>
+      <button type="button" id="viewTwelve" aria-pressed="true">12-lead</button>
+    </div>
+
+    <button type="button" class="btn btn-ghost btn-icon" id="sizeToggle" aria-pressed="false"
+            title="Classroom text size" aria-label="Toggle classroom text size">Aa</button>
+    <button type="button" class="btn btn-ghost btn-icon" id="themeToggle"
+            title="Light or dark" aria-label="Toggle light or dark theme">◐</button>
+    <button type="button" class="btn btn-ghost" id="aboutBtn">About<span class="wide-only">this model</span></button>
+  </header>
+
+  <main class="stage" id="stage" data-view="single" data-rail="open">
+
+    <section class="panel heart-pane" aria-labelledby="heartPanelTitle">
+      <div class="panel-head">
+        <h2 class="panel-title" id="heartPanelTitle">The heart</h2>
+        <span class="topbar-spacer"></span>
+        <div class="field">
+          <label for="focusSelect" class="sr-only">Focus</label>
+          <select id="focusSelect" aria-label="What to show in the heart">
+            <option value="anatomy">Anatomy</option>
+            <option value="conduction">Conduction</option>
+            <option value="contraction">Contraction</option>
+            <option value="flow">Blood flow</option>
+            <option value="integrated">All together</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="labelSelect" class="sr-only">Labels</label>
+          <select id="labelSelect" aria-label="Which labels to show">
+            <option value="none">No labels</option>
+            <option value="chambers">Chambers</option>
+            <option value="valves">Valves</option>
+            <option value="vessels">Vessels</option>
+            <option value="conduction">Conduction</option>
+          </select>
+        </div>
+      </div>
+      <div class="heart-holder" id="heartHolder"></div>
+    </section>
+
+    <section class="panel ecg-pane" aria-labelledby="ecgPanelTitle">
+      <div class="panel-head">
+        <h2 class="panel-title" id="ecgPanelTitle">The tracing</h2>
+        <span class="topbar-spacer"></span>
+        <div class="field" id="leadField">
+          <label for="leadSelect" class="sr-only">Lead</label>
+          <select id="leadSelect" aria-label="Which lead to show"></select>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="ecg-canvas-wrap ecg-strip-wrap" id="stripWrap">
+          <canvas id="stripCanvas" aria-label="Rhythm strip"></canvas>
+        </div>
+        <div class="ecg-canvas-wrap ecg-detail-wrap" id="detailWrap">
+          <canvas id="detailCanvas" aria-label="One complex magnified, with each wave named and the intervals marked"></canvas>
+        </div>
+        <div class="ecg-canvas-wrap ecg-twelve-wrap" id="twelveWrap" hidden>
+          <canvas id="twelveCanvas" aria-label="Twelve-lead electrocardiogram, all leads recorded at the same moment"></canvas>
+        </div>
+        <div class="lens-row" id="lensRow" hidden>
+          <div class="lens-canvas">
+            <canvas id="lensCanvas" aria-label="The heart's net electrical vector during the QRS, with the limb-lead axes"></canvas>
+          </div>
+          <p class="lens-note" id="lensNote"></p>
+        </div>
+        <div class="timeline" id="timelineHost"></div>
+        <dl class="readout-row" id="readouts"></dl>
+        <div class="wave-explainer" id="waveExplainer" hidden>
+          <div class="wave-explainer-head">
+            <h3 id="waveTitle"></h3>
+            <button type="button" class="btn btn-ghost btn-icon" id="waveClose" aria-label="Close this explanation">✕</button>
+          </div>
+          <dl id="waveBody"></dl>
+        </div>
+        <p class="illustrative" id="illustrativeNote">
+          Illustrative teaching model — generated waveforms, not a diagnosis.
+          <span class="hint-inline">Click any part of the complex to pause there and see what it means.</span>
+        </p>
+      </div>
+    </section>
+
+    <aside class="panel rail" id="rail" aria-label="Teaching panel">
+      <div class="rail-tabs" role="tablist" aria-label="Teaching panel sections">
+        <button type="button" role="tab" id="tab-rhythm" aria-controls="pane-rhythm" aria-selected="true">Rhythm</button>
+        <button type="button" role="tab" id="tab-why" aria-controls="pane-why" aria-selected="false">Why</button>
+        <button type="button" role="tab" id="tab-setup" aria-controls="pane-setup" aria-selected="false">Set&nbsp;up</button>
+        <button type="button" role="tab" id="tab-quiz" aria-controls="pane-quiz" aria-selected="false">Quiz</button>
+        <button type="button" role="tab" id="tab-learn" aria-controls="pane-learn" aria-selected="false">Learn</button>
+      </div>
+      <div class="rail-panes">
+        <div class="rail-pane" role="tabpanel" id="pane-rhythm" aria-labelledby="tab-rhythm" tabindex="0"></div>
+        <div class="rail-pane" role="tabpanel" id="pane-why" aria-labelledby="tab-why" tabindex="0" hidden></div>
+        <div class="rail-pane" role="tabpanel" id="pane-setup" aria-labelledby="tab-setup" tabindex="0" hidden></div>
+        <div class="rail-pane" role="tabpanel" id="pane-quiz" aria-labelledby="tab-quiz" tabindex="0" hidden></div>
+        <div class="rail-pane" role="tabpanel" id="pane-learn" aria-labelledby="tab-learn" tabindex="0" hidden></div>
+      </div>
+    </aside>
+
+  </main>
+
+  <footer class="transport">
+    <button type="button" class="btn btn-icon" id="restartBtn" title="Restart at the teaching start point" aria-label="Restart">⟲</button>
+    <button type="button" class="btn btn-icon" id="prevBtn" title="Previous event" aria-label="Previous event">◀◀</button>
+    <button type="button" class="btn btn-primary btn-icon" id="playBtn" aria-label="Play" aria-pressed="false">▶</button>
+    <button type="button" class="btn btn-icon" id="nextBtn" title="Next event" aria-label="Next event">▶▶</button>
+
+    <div class="speed-wrap">
+      <label for="speedRange" class="sr-only">Animation speed</label>
+      <input type="range" id="speedRange" min="0" max="100" value="35" aria-describedby="speedVal">
+      <span class="speed-val" id="speedVal">0.25×</span>
+    </div>
+
+    <span class="event-chip" id="eventChip"><span class="dot"></span><span id="eventText">Paused before the SA node fires</span></span>
+
+    <span class="spacer"></span>
+
+    <button type="button" class="btn btn-ghost" id="railToggle" aria-pressed="true">Hide panel</button>
+    <button type="button" class="btn btn-ghost btn-icon" id="fullscreenBtn" title="Fullscreen" aria-label="Fullscreen">⛶</button>
+  </footer>
+
+</div>
+
+<div class="modal-backdrop" id="aboutModal" hidden role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="aboutTitle">About this model</h2>
+      <button type="button" class="btn btn-ghost btn-icon" id="aboutClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="aboutBody"></div>
+  </div>
+</div>
+
+<p aria-live="polite" class="sr-only" id="liveRegion"></p>
+<p class="sr-only" id="stateSummary"></p>

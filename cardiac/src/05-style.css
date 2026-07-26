@@ -1,0 +1,825 @@
+/* 05-style.css — visual system.
+   Tokens follow the build specification. Muted and quiet colours never carry
+   meaning on their own; every state that matters also has a shape, an icon or a
+   word attached to it. */
+
+:root {
+  --ink: #1A1A1A;
+  --cream: #FAF7F2;
+  --paper: #F5F0E8;
+  --white: #FFFFFF;
+  --accent: #A0522D;
+  --accent-soft: #C08A6E;
+  /* Text colour that sits ON --accent. Light theme wants white; the dark theme
+     accent is a light peach, where white text falls to 2.8:1 — it needs ink. */
+  --on-accent: #FFFFFF;
+  --sage: #5E7059;
+  --muted: #5F5A55;
+  --quiet: #8A847C;
+  --danger: #9B1C1C;
+  --warn: #8A5A11;
+  --rule: #DED7CC;
+  --rule-strong: #C8BFB1;
+
+  --flow-ox: #A84F39;
+  --flow-deox: #3D7F91;
+  --conduction: #C98A08;
+  --conduction-bright: #EDB52E;
+
+  --ecg-paper: #FFFCFA;
+  --ecg-trace: #1A1A1A;
+  --ecg-grid-minor: #F3D6D1;
+  --ecg-grid-major: #E9AAA0;
+  --wave-highlight: rgba(237, 181, 46, 0.26);
+
+  --myo: #D8C4B4;
+  --myo-edge: #A98B76;
+  --blood-ox: #C4674C;
+  --blood-deox: #4E8EA1;
+
+  --font-ui: "Aptos", "Calibri", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s6: 24px; --s8: 32px; --s12: 48px;
+  --radius: 8px;
+  --shadow: 0 1px 2px rgba(26, 22, 18, .06), 0 6px 18px rgba(26, 22, 18, .06);
+}
+
+:root[data-theme="dark"], html.dark {
+  --ink: #EDE7DE;
+  --cream: #16150F;
+  --paper: #1E1D16;
+  --white: #24231B;
+  --accent: #D9915F;
+  --accent-soft: #A9714F;
+  --on-accent: #17140E;
+  --sage: #94A88C;
+  --muted: #ADA69B;
+  --quiet: #857E73;
+  --danger: #E2837D;
+  --warn: #D9A94E;
+  --rule: #34322A;
+  --rule-strong: #47443A;
+
+  --flow-ox: #D9765A;
+  --flow-deox: #5FB0C6;
+  --conduction: #EDB52E;
+  --conduction-bright: #FFD35E;
+
+  --ecg-paper: #14140F;
+  --ecg-trace: #F2EDE4;
+  --ecg-grid-minor: #38251F;
+  --ecg-grid-major: #55322A;
+  --wave-highlight: rgba(237, 181, 46, 0.20);
+
+  --myo: #4A4034;
+  --myo-edge: #6E6050;
+  --blood-ox: #8E4433;
+  --blood-deox: #2F5F70;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #EDE7DE; --cream: #16150F; --paper: #1E1D16; --white: #24231B;
+    --accent: #D9915F; --accent-soft: #A9714F; --on-accent: #17140E; --sage: #94A88C;
+    --muted: #ADA69B; --quiet: #857E73; --danger: #E2837D; --warn: #D9A94E;
+    --rule: #34322A; --rule-strong: #47443A;
+    --flow-ox: #D9765A; --flow-deox: #5FB0C6;
+    --conduction: #EDB52E; --conduction-bright: #FFD35E;
+    --ecg-paper: #14140F; --ecg-trace: #F2EDE4;
+    --ecg-grid-minor: #38251F; --ecg-grid-major: #55322A;
+    --wave-highlight: rgba(237, 181, 46, 0.20);
+    --myo: #4A4034; --myo-edge: #6E6050; --blood-ox: #8E4433; --blood-deox: #2F5F70;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+
+* { box-sizing: border-box; }
+
+/* Several hidden elements are flex or grid containers, whose display would
+   otherwise win over the [hidden] default. */
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  background: var(--cream); color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 16px; line-height: 1.45;
+  -webkit-text-size-adjust: 100%;
+}
+
+body { overflow: hidden; }
+@media (max-width: 1023px) { body { overflow: auto; } }
+
+button, select, input { font: inherit; color: inherit; }
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.skip-link {
+  position: absolute; left: var(--s3); top: -60px; z-index: 200;
+  background: var(--accent); color: var(--on-accent); padding: var(--s2) var(--s4);
+  border-radius: var(--radius); transition: top .15s;
+}
+.skip-link:focus { top: var(--s3); }
+
+/* ------------------------------------------------------------------ shell */
+
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh; height: 100dvh;
+}
+
+.topbar {
+  display: flex; align-items: center; gap: var(--s2);
+  padding: var(--s2) var(--s3);
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
+  min-height: 52px;
+  flex-wrap: wrap;
+  row-gap: var(--s2);
+}
+.topbar .field { min-width: 0; }
+.topbar .field select { max-width: 200px; text-overflow: ellipsis; }
+@media (max-width: 1560px) {
+  .topbar .brand small { display: none; }
+  .wide-only { display: none; }
+  .brand { font-size: 15px; }
+  .topbar .field select { max-width: 168px; font-size: 13px; padding-left: 9px; }
+  .segmented button { padding: 7px 12px; font-size: 13px; }
+}
+@media (max-width: 1240px) {
+  .topbar .field > label { display: none; }
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-size: 17px; font-weight: 600; letter-spacing: .01em;
+  white-space: nowrap; margin: 0;
+}
+.brand small {
+  display: block; font-family: var(--font-ui); font-weight: 500;
+  font-size: 11px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase;
+}
+
+.topbar-spacer { flex: 1; }
+
+/* Segmented control — the primary mode switch */
+.segmented {
+  display: inline-flex; background: var(--white);
+  border: 1px solid var(--rule-strong); border-radius: 999px; padding: 3px;
+  gap: 2px;
+}
+.segmented button {
+  appearance: none; border: 0; background: transparent; cursor: pointer;
+  padding: 7px 15px; border-radius: 999px; font-size: 14px; font-weight: 600;
+  color: var(--muted); white-space: nowrap;
+}
+.segmented button[aria-pressed="true"] {
+  background: var(--accent); color: var(--on-accent);
+}
+.segmented button:hover:not([aria-pressed="true"]) { background: var(--paper); color: var(--ink); }
+
+.btn {
+  appearance: none; cursor: pointer;
+  background: var(--white); color: var(--ink);
+  border: 1px solid var(--rule-strong); border-radius: var(--radius);
+  padding: 8px 13px; font-size: 14px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 7px;
+  min-height: 40px;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn[aria-pressed="true"], .btn.is-active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.btn-primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.btn-primary:hover { background: var(--accent-soft); border-color: var(--accent-soft); color: var(--on-accent); }
+.btn-ghost { background: transparent; border-color: transparent; }
+#aboutBtn { gap: 5px; }
+.btn-ghost:hover { background: var(--white); }
+.btn-icon { padding: 8px; min-width: 40px; justify-content: center; }
+.btn:disabled { opacity: .42; cursor: not-allowed; }
+
+.field { display: inline-flex; flex-direction: column; gap: 3px; min-width: 0; }
+.field > label { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.field select {
+  appearance: none; background: var(--white) no-repeat right 9px center;
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-size: 5px 5px, 5px 5px; background-position: calc(100% - 15px) 50%, calc(100% - 10px) 50%;
+  border: 1px solid var(--rule-strong); border-radius: var(--radius);
+  padding: 8px 30px 8px 11px; min-height: 40px; font-size: 14px; font-weight: 600;
+  cursor: pointer; max-width: 100%;
+}
+
+/* ------------------------------------------------------------------ stage */
+
+.stage {
+  display: grid;
+  grid-template-columns: minmax(320px, 46fr) minmax(360px, 54fr) minmax(300px, 340px);
+  gap: var(--s3); padding: var(--s3);
+  min-height: 0; overflow: hidden;
+}
+.stage[data-view="twelve"] { grid-template-columns: minmax(230px, 300px) minmax(420px, 1fr) minmax(300px, 340px); }
+.stage[data-rail="closed"] { grid-template-columns: minmax(320px, 46fr) minmax(360px, 54fr); }
+.stage[data-rail="closed"][data-view="twelve"] { grid-template-columns: minmax(250px, 340px) 1fr; }
+
+.panel {
+  background: var(--white); border: 1px solid var(--rule);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  display: flex; flex-direction: column; min-height: 0; min-width: 0;
+  overflow: hidden;
+}
+.panel-head {
+  display: flex; align-items: center; gap: var(--s2);
+  padding: var(--s2) var(--s3); border-bottom: 1px solid var(--rule);
+  background: var(--paper); flex: 0 0 auto;
+}
+.panel-title {
+  font-size: 11px; font-weight: 700; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--muted); margin: 0;
+}
+.panel-body { flex: 1 1 auto; min-height: 0; overflow: auto; padding: var(--s3); }
+.panel-body.flush { padding: 0; }
+
+/* --------------------------------------------------------------- heart pane */
+
+.heart-pane { position: relative; }
+/* The heart column narrows sharply in 12-lead mode, so its heading takes a row
+   of its own rather than squeezing the two selects into initials. */
+.heart-pane .panel-head { flex-wrap: wrap; row-gap: var(--s2); }
+.heart-pane .panel-title { flex: 1 0 100%; }
+.heart-pane .panel-head .field { flex: 1 1 44%; min-width: 0; }
+.heart-pane .panel-head .field select { width: 100%; }
+.heart-pane .topbar-spacer { display: none; }
+.heart-holder {
+  flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center;
+  padding: var(--s2);
+}
+.heart-svg { width: 100%; height: 100%; max-height: 100%; display: block; }
+
+.layer { transition: opacity .16s ease; }
+
+.vessel { stroke-linejoin: round; }
+.vessel-deox { stroke: var(--blood-deox); }
+.vessel-ox { stroke: var(--blood-ox); }
+.vessel-edge { stroke: var(--myo-edge); stroke-linejoin: round; opacity: 1; }
+
+.myo { fill: var(--myo); stroke: var(--myo-edge); stroke-width: 1.2; }
+/* Oxygenated and deoxygenated differ by hue alone at close to equal luminance,
+   which is invisible to a red-green colour-blind viewer and in greyscale. The
+   hatch pattern on the deoxygenated side carries the same distinction without
+   colour, and the labels name the chambers regardless. */
+/* The cavity is drawn empty and the blood fills it to a level that tracks
+   volume, so filling and ejection are things a learner watches happen rather
+   than a silhouette that quietly changes size. */
+/* An empty cavity should read as a chamber holding little blood, not as a hole
+   punched through the heart, so it keeps a faint tint of what fills it. */
+.cavity { stroke: var(--myo-edge); stroke-width: 1; }
+.cavity-ox { fill: color-mix(in srgb, var(--blood-ox) 22%, var(--paper)); }
+.cavity-deox { fill: color-mix(in srgb, var(--blood-deox) 20%, var(--paper)); }
+.blood-ox { fill: var(--blood-ox); }
+.blood-deox { fill: url(#deoxHatch); }
+.blood-surface { stroke: var(--ink); stroke-width: 2; opacity: .38; }
+
+/* Depolarising atrial muscle, in place of arcs drawn through the cavity. */
+.atrial-glow {
+  stroke: var(--conduction-bright); stroke-width: 7;
+  filter: url(#condGlow); pointer-events: none;
+}
+.atrial-glow.is-chaotic { stroke-dasharray: 3 6; }
+.av-junction { fill: var(--myo); stroke: var(--myo-edge); stroke-width: 1.2; }
+/* The outflow tract is the same blood as the ventricle it leaves, so the route
+   out of the chamber reads as continuous rather than as an artery that happens
+   to start nearby. */
+.outflow { stroke: var(--myo-edge); stroke-width: 1.2; }
+.outflow-ox { fill: var(--blood-ox); opacity: .82; }
+.outflow-deox { fill: var(--blood-deox); opacity: .78; }
+
+/* Endocardial detail. Trabeculae stop the cavity reading as a flat cut-out;
+   the papillary muscles and chordae are what make contraction legible as
+   something the tissue does rather than a shape that changes size. */
+.auricle { fill: var(--myo); stroke: var(--myo-edge); stroke-width: 1.2; }
+.auricle-ox { fill: color-mix(in srgb, var(--blood-ox) 55%, var(--myo)); }
+.auricle-deox { fill: color-mix(in srgb, var(--blood-deox) 50%, var(--myo)); }
+/* The papillary muscles now sit against a pale empty cavity rather than a
+   solid blood fill, so they need their own muscle tone to stay distinct from
+   both the wall behind them and the chamber around them. */
+.papillary { fill: color-mix(in srgb, var(--myo) 72%, var(--myo-edge)); stroke: var(--myo-edge); stroke-width: 1.3; }
+.trabecula { stroke: var(--myo-edge); stroke-width: 2; opacity: .38; stroke-linecap: round; }
+.chorda { stroke: #EFE6D8; stroke-width: 1.1; opacity: .62; }
+.chorda.is-taut { stroke-width: 1.5; opacity: .92; }
+:root[data-theme="dark"] .chorda, html.dark .chorda { stroke: #D7CDBC; }
+
+/* Radiating sinus-node fibres and the internodal tracts. */
+.cond-radial {
+  stroke: var(--conduction); stroke-width: 2.2; stroke-linecap: round;
+  opacity: calc(.4 + var(--lvl, 0) * .6);
+}
+.cond-tract { stroke-width: calc(3.4px + var(--lvl, 0) * 3.4px); }
+.cond-fascicle { stroke-width: calc(2.6px + var(--lvl, 0) * 2.6px); opacity: calc(.44 + var(--lvl, 0) * .56); }
+.cond-purkinje-1 { stroke-width: 2.6; }
+.cond-purkinje-2 { stroke-width: 1.9; }
+.cond-purkinje-3 { stroke-width: 1.3; opacity: calc(.42 + var(--lvl, 0) * .58); }
+
+.chamber.is-hypertrophied .myo { fill: color-mix(in srgb, var(--myo) 78%, var(--accent)); }
+
+/* Leaflets need to read against pale myocardium in the light theme and against
+   dark myocardium in the dark one, so they take their colour from the wall edge
+   rather than being a fixed near-white. */
+.leaflet { stroke: var(--myo-edge); stroke-width: 3.6; stroke-linecap: round; fill: none; }
+:root[data-theme="dark"] .leaflet, html.dark .leaflet { stroke: #E4DCCB; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .leaflet { stroke: #E4DCCB; } }
+.valve-dot { fill: var(--ink); opacity: .5; }
+.valve.is-open .leaflet { stroke: var(--sage); }
+
+/* The conduction system is anatomy in its own right, so it stays clearly drawn
+   at rest and brightens when it carries an impulse. Previously the resting
+   pathway sat at 22% opacity on a 3 px line, which is close to invisible on a
+   projector and unreadable at speed. */
+.cond-track, .cond-purkinje {
+  stroke: var(--conduction);
+  stroke-linecap: round; stroke-linejoin: round;
+  opacity: calc(.52 + var(--lvl, 0) * .48);
+}
+.cond-track {
+  stroke-width: calc(5px + var(--lvl, 0) * 5px);
+  paint-order: stroke;
+}
+/* The two bundle branches run close together down opposite faces of the septum,
+   so they need to stay thinner than the shared trunk above them. */
+.cond-bundle { stroke-width: calc(3.6px + var(--lvl, 0) * 3.4px); }
+.cond-track-shadow { stroke: var(--myo-edge); stroke-width: 9; opacity: .35; fill: none;
+  stroke-linecap: round; stroke-linejoin: round; }
+.cond-purkinje { stroke-width: 2.2; }
+.cond-track.is-active, .cond-purkinje.is-active { filter: url(#condGlow); stroke: var(--conduction-bright); }
+
+/* The travelling impulse. A moving marker reads instantly at any playback
+   speed, where a brightness change alone does not. */
+.wavefront { fill: var(--conduction-bright); stroke: var(--ink); stroke-width: 1.4; }
+.wavefront-group.is-held .wavefront { fill: var(--accent-soft); }
+.wavefront-group.is-blocked .wavefront { fill: var(--danger); }
+.wavefront-group.is-blocked .wavefront-halo { fill: var(--danger); }
+.wavefront-halo { fill: var(--conduction-bright); opacity: .28; }
+
+.node { fill: var(--conduction); stroke: var(--ink); stroke-width: 1.4; opacity: calc(.62 + var(--lvl, 0) * .38); }
+.node.is-active { fill: var(--conduction-bright); filter: url(#condGlow); }
+.node.is-delay { fill: var(--accent-soft); }
+.node.is-blocked { fill: var(--danger); stroke: var(--danger); opacity: 1; }
+
+.block-x { stroke: var(--danger); stroke-width: 4; stroke-linecap: round; }
+.ectopic-mark { fill: none; stroke: var(--danger); stroke-width: 3; stroke-dasharray: 4 4; }
+
+/* Flow arrows. A dark outline keeps them legible wherever they cross — a red
+   arrow over the red left ventricle, a blue one over the blue right — and gives
+   the two circulations a non-colour difference as well as a hue one. */
+.flow-arrow path { stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; paint-order: stroke; }
+.flow-ox path { fill: var(--flow-ox); }
+.flow-deox path { fill: var(--flow-deox); }
+:root[data-theme="dark"] .flow-arrow path, html.dark .flow-arrow path { stroke: #17140E; }
+
+.anno-line { stroke: var(--quiet); stroke-width: 1; fill: none; }
+.anno-dot { fill: var(--accent); }
+.anno-text { font: 600 13px var(--font-ui); fill: var(--ink); }
+.anno { transition: opacity .18s ease; }
+
+.heart-svg.has-spotlight .layer-chambers,
+.heart-svg.has-spotlight .layer-vessels { opacity: .34; }
+.heart-svg.has-spotlight [data-region].is-spotlit { opacity: 1 !important; }
+.heart-svg.has-spotlight .chamber.is-spotlit,
+.heart-svg.has-spotlight .valve.is-spotlit { filter: drop-shadow(0 0 7px var(--conduction-bright)); }
+
+/* ---------------------------------------------------------------- ecg pane */
+
+.ecg-pane .panel-body { display: flex; flex-direction: column; gap: var(--s2); padding: var(--s2); }
+.ecg-canvas-wrap { position: relative; flex: 1 1 auto; min-height: 130px; }
+.ecg-canvas-wrap canvas { width: 100%; height: 100%; display: block; border-radius: 5px; }
+.ecg-strip-wrap { flex: 0 0 auto; height: 168px; }
+.ecg-detail-wrap { flex: 1 1 auto; min-height: 150px; }
+.ecg-twelve-wrap { flex: 1 1 auto; min-height: 260px; }
+.stage[data-view="twelve"] .ecg-pane .panel-body { gap: var(--s1); }
+
+.lens-row {
+  display: flex; gap: var(--s3); align-items: center;
+  flex: 0 0 auto; padding: var(--s2);
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 6px;
+}
+.lens-canvas { flex: 0 0 132px; height: 132px; }
+.lens-canvas canvas { width: 100%; height: 100%; display: block; }
+.lens-note { margin: 0; font-size: 12.5px; color: var(--ink); }
+.lens-note b { display: block; font-size: 11px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+
+/* The explainer appears only when a wave is selected, directly under the
+   tracing it explains, so the text and the thing it describes are never far
+   apart. It replaces nothing permanently and adds nothing until asked for. */
+.wave-explainer {
+  flex: 0 0 auto; border: 1px solid var(--accent);
+  border-left-width: 4px; border-radius: 0 7px 7px 0;
+  background: color-mix(in srgb, var(--accent) 6%, var(--white));
+  padding: var(--s2) var(--s3);
+}
+.wave-explainer-head { display: flex; align-items: center; gap: var(--s2); }
+.wave-explainer h3 {
+  margin: 0; flex: 1; font-family: var(--font-display); font-size: 16px;
+}
+.wave-explainer dl { margin: var(--s2) 0 0; display: grid; gap: 5px; }
+.wave-explainer dt {
+  font-size: 10px; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--muted);
+}
+.wave-explainer dd { margin: 0 0 3px; font-size: 13.5px; line-height: 1.45; }
+.wave-explainer dd.caution { color: var(--ink); border-left: 3px solid var(--danger); padding-left: 9px; }
+.hint-inline { color: var(--accent); font-style: normal; font-weight: 600; }
+.ecg-canvas-wrap canvas.is-pickable { cursor: crosshair; }
+
+.readout-row {
+  display: flex; flex-wrap: wrap; gap: var(--s2);
+  flex: 0 0 auto;
+}
+.readout {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 4px 9px; min-width: 72px;
+}
+.readout dt { font-size: 9.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.readout dd { margin: 0; font-size: 15.5px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.25; }
+.readout dd small { font-size: 11px; font-weight: 600; color: var(--muted); }
+.readout[data-tone="warn"] { border-color: var(--warn); }
+.readout[data-tone="warn"] dd { color: var(--warn); }
+.readout[data-tone="critical"] { border-color: var(--danger); background: color-mix(in srgb, var(--danger) 8%, var(--paper)); }
+.readout[data-tone="critical"] dd { color: var(--danger); }
+
+.illustrative {
+  font-size: 11px; color: var(--muted); font-style: italic;
+}
+
+/* --------------------------------------------------------------- timeline */
+
+.timeline { flex: 0 0 auto; }
+.tl-wrap { position: relative; display: flex; flex-direction: column; gap: 3px; }
+.tl-track { display: flex; align-items: stretch; gap: var(--s2); min-height: 22px; }
+.tl-label {
+  flex: 0 0 66px; font-size: 10px; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--muted); align-self: center; text-align: right;
+}
+.tl-lane {
+  position: relative; flex: 1 1 auto; height: 22px;
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden;
+}
+.tl-block {
+  position: absolute; top: 2px; bottom: 2px;
+  border-radius: 3px; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: var(--ink);
+  white-space: nowrap;
+}
+.tl-block span { padding: 0 4px; overflow: hidden; text-overflow: ellipsis; }
+.t-p    { background: color-mix(in srgb, var(--conduction) 34%, var(--white)); }
+.t-av   { background: color-mix(in srgb, var(--accent-soft) 30%, var(--white)); }
+.t-qrs  { background: color-mix(in srgb, var(--conduction) 62%, var(--white)); }
+.t-t    { background: color-mix(in srgb, var(--sage) 34%, var(--white)); }
+.t-av.is-blocked {
+  background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--danger) 26%, var(--white)) 0 5px, var(--white) 5px 10px);
+  border: 1.5px solid var(--danger); color: var(--danger);
+}
+.m-atrial { background: color-mix(in srgb, var(--flow-deox) 26%, var(--white)); }
+.m-ivc    { background: color-mix(in srgb, var(--muted) 20%, var(--white)); }
+.m-eject  { background: color-mix(in srgb, var(--flow-ox) 40%, var(--white)); }
+.m-ivr    { background: color-mix(in srgb, var(--muted) 14%, var(--white)); }
+.m-fill   { background: color-mix(in srgb, var(--flow-deox) 15%, var(--white)); }
+/* The kick is a distinct phase, not a shade of filling: it is the part a
+   student loses in fibrillation and the part a stiff ventricle leans on. */
+.m-kick   { background: color-mix(in srgb, var(--flow-deox) 42%, var(--white)); }
+.m-none   { background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--danger) 18%, var(--white)) 0 6px, var(--white) 6px 12px); color: var(--danger); }
+
+.tl-cursor {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 2px;
+  background: var(--accent); pointer-events: none;
+  margin-left: 74px;
+}
+
+.tl-legend {
+  display: flex; flex-wrap: wrap; gap: var(--s1) var(--s3);
+  margin: 5px 0 0 74px; font-size: 10.5px; color: var(--muted);
+}
+.tl-key { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.tl-key i { width: 13px; height: 13px; border-radius: 2px; display: inline-block; border: 1px solid var(--rule-strong); }
+
+/* Timeline blocks must not rely on fill colour alone. Each family carries a
+   distinct edge treatment, which survives greyscale, colour-blindness and
+   Windows high-contrast mode. */
+.t-p    { border-left: 3px solid var(--conduction); }
+.t-av   { border-left: 3px dotted var(--accent); }
+.t-qrs  { border-left: 3px double var(--conduction); }
+.t-t    { border-left: 3px solid var(--sage); }
+.m-atrial { border-left: 3px solid var(--flow-deox); }
+.m-ivc, .m-ivr { border-left: 3px dashed var(--muted); }
+.m-eject  { border-left: 3px solid var(--flow-ox); }
+.m-fill   { border-left: 3px dotted var(--flow-deox); }
+.m-kick   { border-left: 3px solid var(--flow-deox); }
+.tl-key i.t-av, .tl-key i.m-fill { border-left-style: dotted; }
+.tl-key i.t-qrs { border-left-style: double; }
+.tl-key i.m-ivc { border-left-style: dashed; }
+
+/* Correctness in a prediction is stated in words, not only in green and red. */
+.quiz-option .verdict {
+  margin-left: auto; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .04em; white-space: nowrap;
+}
+.quiz-option.is-correct .verdict { color: var(--sage); }
+.quiz-option.is-wrong .verdict { color: var(--danger); }
+.quiz-option.is-correct .key::after { content: " ✓"; }
+.quiz-option.is-wrong .key::after { content: " ✕"; }
+
+/* ------------------------------------------------------------------- rail */
+
+.rail .panel-body { padding: 0; }
+.rail-tabs {
+  display: flex; border-bottom: 1px solid var(--rule); background: var(--paper); flex: 0 0 auto;
+}
+.rail-tabs button {
+  flex: 1; appearance: none; border: 0; background: transparent; cursor: pointer;
+  padding: 10px 4px; font-size: 12px; font-weight: 700; color: var(--muted);
+  border-bottom: 3px solid transparent; min-height: 44px;
+}
+.rail-tabs button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); background: var(--white); }
+
+.rail-panes { flex: 1 1 auto; min-height: 0; overflow: auto; }
+.rail-pane { padding: var(--s3); }
+.rail-pane[hidden] { display: none; }
+
+.eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 var(--s1);
+}
+.headline {
+  font-family: var(--font-display); font-size: 19px; line-height: 1.28;
+  margin: 0 0 var(--s3);
+}
+.rail-pane h4 {
+  font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--muted); margin: var(--s4) 0 var(--s2);
+}
+.rail-pane p { margin: 0 0 var(--s2); font-size: 14px; }
+.rail-pane ul { margin: 0 0 var(--s2); padding-left: 18px; font-size: 14px; }
+.rail-pane li { margin-bottom: 4px; }
+
+/* Feature table — the systematic strip read */
+.features { width: 100%; border-collapse: collapse; font-size: 13px; }
+.features th {
+  text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--muted); padding: 5px 8px 5px 0;
+  vertical-align: top; width: 84px; white-space: nowrap;
+}
+.features td { padding: 5px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+/* Causal chain — the core teaching object */
+.chain { list-style: none; margin: 0; padding: 0; counter-reset: chain; }
+.chain li { position: relative; padding-left: 30px; padding-bottom: var(--s3); }
+.chain li::before {
+  counter-increment: chain; content: counter(chain);
+  position: absolute; left: 0; top: 1px;
+  width: 21px; height: 21px; border-radius: 50%;
+  background: var(--accent); color: var(--on-accent);
+  font-size: 11px; font-weight: 700; display: grid; place-items: center;
+}
+.chain li:not(:last-child)::after {
+  content: ""; position: absolute; left: 10px; top: 25px; bottom: 3px;
+  width: 2px; background: var(--rule-strong);
+}
+.chain .layer-tag {
+  display: inline-block; font-size: 9px; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; padding: 2px 6px; border-radius: 3px; margin-bottom: 3px;
+  background: var(--paper); color: var(--muted); border: 1px solid var(--rule);
+}
+.chain .layer-trigger    { color: var(--muted); }
+.chain .layer-cellular   { color: #6C4E8C; border-color: #6C4E8C; }
+.chain .layer-conduction { color: var(--warn); border-color: var(--warn); }
+.chain .layer-ecg        { color: var(--accent); border-color: var(--accent); }
+.chain .layer-mechanical { color: var(--flow-deox); border-color: var(--flow-deox); }
+.chain .layer-clinical   { color: var(--danger); border-color: var(--danger); }
+.chain .chain-label { font-weight: 700; font-size: 13px; display: block; }
+.chain .chain-text { font-size: 13.5px; margin: 2px 0 0; color: var(--ink); }
+.chain .more {
+  appearance: none; background: none; border: 0; padding: 3px 0 0;
+  color: var(--accent); font-size: 12px; font-weight: 700; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.chain .detail {
+  margin: var(--s2) 0 0; padding: var(--s2) var(--s3);
+  background: var(--paper); border-left: 3px solid var(--accent);
+  border-radius: 0 5px 5px 0; font-size: 13px;
+}
+.chain li.is-current { }
+.chain li.is-current .chain-label { color: var(--accent); }
+
+.callout {
+  border: 1px solid var(--rule-strong); border-left: 4px solid var(--accent);
+  border-radius: 0 6px 6px 0; padding: var(--s2) var(--s3);
+  background: var(--paper); font-size: 13px; margin: 0 0 var(--s3);
+}
+.callout.limit { border-left-color: var(--danger); }
+.callout.limit strong { color: var(--danger); }
+.callout.variable { border-left-color: var(--warn); }
+.callout h5 { margin: 0 0 4px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+.pill-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: var(--s3); }
+.pill {
+  appearance: none; cursor: pointer;
+  font-size: 12px; font-weight: 600; padding: 5px 10px; min-height: 32px;
+  border: 1px solid var(--rule-strong); border-radius: 999px;
+  background: var(--white); color: var(--muted);
+}
+.pill:hover { border-color: var(--accent); color: var(--accent); }
+.pill[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+/* ---------------------------------------------------------------- transport */
+
+.transport {
+  display: flex; align-items: center; gap: var(--s2);
+  padding: var(--s2) var(--s4); border-top: 1px solid var(--rule);
+  background: var(--paper); flex-wrap: wrap;
+}
+.transport .btn-icon { min-width: 44px; min-height: 44px; flex: 0 0 auto; }
+.transport .spacer { flex: 0 0 var(--s2); }
+
+.event-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 14px; font-weight: 600; color: var(--ink);
+  background: var(--white); border: 1px solid var(--rule-strong);
+  border-radius: 999px; padding: 6px 15px; min-height: 36px;
+  flex: 1 1 auto; min-width: 0; max-width: 72ch;
+}
+.event-chip > span:last-child {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.event-chip .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--conduction); flex: 0 0 auto; }
+
+.speed-wrap { display: flex; align-items: center; gap: var(--s2); }
+.speed-wrap input[type="range"] { width: 116px; accent-color: var(--accent); height: 28px; }
+.speed-val { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 46px; }
+
+.slider-row { display: grid; grid-template-columns: 1fr auto; gap: var(--s1) var(--s2); align-items: center; margin-bottom: var(--s3); }
+.slider-row label { font-size: 13px; font-weight: 600; }
+.slider-row .val { font-size: 12px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.slider-row input[type="range"] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); height: 30px; }
+.slider-row .hint { grid-column: 1 / -1; font-size: 12px; color: var(--muted); margin: -4px 0 0; }
+
+/* ------------------------------------------------------------------ modal */
+
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(20, 16, 12, .5);
+  display: grid; place-items: center; padding: var(--s4); z-index: 100;
+}
+.modal-backdrop[hidden] { display: none; }
+.modal {
+  background: var(--white); border-radius: 10px; box-shadow: var(--shadow);
+  max-width: 720px; width: 100%; max-height: 86vh; overflow: auto;
+  border: 1px solid var(--rule-strong);
+}
+.modal-head {
+  display: flex; align-items: flex-start; gap: var(--s3);
+  padding: var(--s4) var(--s4) var(--s2); border-bottom: 1px solid var(--rule);
+}
+.modal-head h2 { font-family: var(--font-display); font-size: 21px; margin: 0; flex: 1; }
+.modal-body { padding: var(--s4); }
+.modal-body h3 { font-size: 13px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin: var(--s4) 0 var(--s2); }
+.modal-body p, .modal-body li { font-size: 14px; }
+.modal-body ol.refs { font-size: 12.5px; padding-left: 20px; }
+.modal-body ol.refs li { margin-bottom: 7px; }
+
+/* ------------------------------------------------------------------- quiz */
+
+.quiz-stem { font-size: 15px; font-weight: 600; margin: 0 0 var(--s3); line-height: 1.42; }
+.quiz-options { list-style: none; margin: 0 0 var(--s3); padding: 0; display: grid; gap: 7px; }
+.quiz-option {
+  display: flex; gap: var(--s2); align-items: flex-start; width: 100%; text-align: left;
+  padding: 11px 13px; min-height: 44px;
+  border: 1px solid var(--rule-strong); border-radius: 7px; background: var(--white);
+  cursor: pointer; font-size: 14px;
+}
+.quiz-option:hover { border-color: var(--accent); }
+.quiz-option .key {
+  flex: 0 0 22px; height: 22px; border-radius: 50%; background: var(--paper);
+  border: 1px solid var(--rule-strong); display: grid; place-items: center;
+  font-size: 11px; font-weight: 800;
+}
+.quiz-option[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--white)); }
+.quiz-option[aria-pressed="true"] .key { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.quiz-option.is-correct { border-color: var(--sage); background: color-mix(in srgb, var(--sage) 14%, var(--white)); }
+.quiz-option.is-correct .key { background: var(--sage); color: #fff; border-color: var(--sage); }
+.quiz-option.is-wrong { border-color: var(--danger); background: color-mix(in srgb, var(--danger) 9%, var(--white)); }
+.quiz-option.is-wrong .key { background: var(--danger); color: #fff; border-color: var(--danger); }
+.quiz-feedback {
+  border-left: 4px solid var(--sage); background: var(--paper);
+  padding: var(--s3); border-radius: 0 6px 6px 0; font-size: 13.5px; margin-bottom: var(--s3);
+}
+.quiz-feedback.is-wrong { border-left-color: var(--danger); }
+.quiz-meta { font-size: 11px; color: var(--muted); display: flex; gap: var(--s3); flex-wrap: wrap; margin-top: var(--s2); }
+.quiz-score { font-size: 13px; font-weight: 700; }
+
+/* --------------------------------------------------------------- lessons */
+
+.lesson-list { display: grid; gap: var(--s2); }
+.lesson-card {
+  text-align: left; width: 100%; padding: var(--s3);
+  border: 1px solid var(--rule-strong); border-radius: 7px; background: var(--white);
+  cursor: pointer;
+}
+.lesson-card:hover { border-color: var(--accent); }
+.lesson-card strong { display: block; font-size: 14.5px; margin-bottom: 3px; }
+.lesson-card span { font-size: 12.5px; color: var(--muted); }
+.lesson-card .done { color: var(--sage); font-weight: 700; }
+
+.step-head { display: flex; align-items: center; gap: var(--s2); margin-bottom: var(--s2); }
+.step-count { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .05em; }
+.step-dots { display: flex; gap: 4px; flex: 1; }
+.step-dot { width: 100%; height: 4px; border-radius: 2px; background: var(--rule-strong); }
+.step-dot.is-done { background: var(--accent-soft); }
+.step-dot.is-current { background: var(--accent); }
+.step-title { font-family: var(--font-display); font-size: 18px; margin: 0 0 var(--s2); }
+.step-text { font-size: 15px; line-height: 1.5; margin: 0 0 var(--s3); }
+.step-nav { display: flex; gap: var(--s2); margin-top: var(--s3); }
+
+.predict { border: 1px solid var(--accent); border-radius: 7px; padding: var(--s3); background: color-mix(in srgb, var(--accent) 5%, var(--white)); }
+.predict h5 { margin: 0 0 var(--s2); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.predict p { font-size: 14.5px; font-weight: 600; margin: 0 0 var(--s2); }
+
+/* --------------------------------------------------------- signal detection */
+
+.sdt-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s2); margin: var(--s3) 0; }
+.sdt-cell { border: 1px solid var(--rule); border-radius: 6px; padding: var(--s2); text-align: center; background: var(--paper); }
+.sdt-cell dt { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin: 0 0 2px; }
+.sdt-cell dd { margin: 0; font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.sdt-cell.hit dd { color: var(--sage); }
+.sdt-cell.fa dd { color: var(--danger); }
+
+/* ------------------------------------------------------------- responsive */
+
+@media (max-width: 1180px) {
+  .stage { grid-template-columns: 1fr 1fr; grid-template-rows: minmax(0,1fr) minmax(0,240px); }
+  .stage[data-view="twelve"] { grid-template-columns: 200px 1fr; }
+  .rail { grid-column: 1 / -1; }
+  /* With the rail hidden there is no second row to fill, and reserving one
+     leaves a 240 px band of dead space under the panels. */
+  .stage[data-rail="closed"] { grid-template-rows: minmax(0, 1fr); }
+  .stage[data-rail="closed"] .rail { display: none; }
+}
+
+@media (max-width: 900px) {
+  body { overflow: auto; }
+  .app { height: auto; min-height: 100vh; }
+  .stage {
+    grid-template-columns: 1fr; grid-template-rows: none;
+    overflow: visible;
+  }
+  .stage[data-view="twelve"] { grid-template-columns: 1fr; }
+  .heart-holder { min-height: 320px; }
+  .ecg-twelve-wrap { min-height: 420px; overflow-x: auto; }
+  .ecg-twelve-wrap canvas { min-width: 640px; }
+  .rail { max-height: none; }
+  .transport { position: sticky; bottom: 0; z-index: 20; }
+  .topbar { flex-wrap: wrap; }
+}
+
+@media (max-width: 560px) {
+  .brand { font-size: 15px; }
+  .transport { gap: 5px; padding: var(--s2); }
+  .event-chip { max-width: 100%; order: 10; flex-basis: 100%; }
+  .segmented button { padding: 7px 11px; font-size: 13px; }
+}
+
+/* Classroom projection: everything a size larger. */
+:root[data-size="large"] {
+  font-size: 19px;
+}
+:root[data-size="large"] .anno-text { font-size: 16px; }
+:root[data-size="large"] .readout dd { font-size: 21px; }
+:root[data-size="large"] .step-text { font-size: 18px; }
+:root[data-size="large"] .quiz-stem { font-size: 18px; }
+:root[data-size="large"] .quiz-option { font-size: 16px; }
+:root[data-size="large"] .chain .chain-text { font-size: 15.5px; }
+:root[data-size="large"] .rail-pane p, :root[data-size="large"] .rail-pane ul { font-size: 15.5px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+
+@media (forced-colors: active) {
+  .panel, .readout, .tl-lane, .quiz-option { border: 1px solid CanvasText; }
+  .segmented button[aria-pressed="true"], .btn.is-active { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  .cond-track.is-active, .node.is-active { stroke: Highlight; }
+}
+
+@media print {
+  .transport, .topbar, .rail { display: none; }
+  .app { height: auto; }
+}
