@@ -43,8 +43,103 @@
       highlightTags: [],
       spotlight: [],
       hideName: false,
-      tab: "rhythm"
+      tab: "rhythm",
+      display: "study"
     };
+  }
+
+  /* -------------------------------------------------------- display presets
+   *
+   * NOT a second mode axis. Basic/Advanced is a learner-level axis; this is a
+   * context axis, and crossing the two would give four states to design and
+   * test. Everything a projected session needs already existed as separate
+   * controls — the text-size toggle, label pinning, the rail collapse. What was
+   * missing was a way to set them together and have it stick. So these presets
+   * write existing settings and then get out of the way: change any of them
+   * afterwards and the change holds. */
+
+  var DISPLAY_PRESETS = {
+    study: {
+      label: "Study",
+      size: "normal",
+      // Labels off by default: hovering names a structure on demand, which
+      // keeps the drawing clean for someone working through it alone.
+      labels: "none",
+      railOpen: true
+    },
+    presenting: {
+      label: "Presenting",
+      size: "large",
+      // Pinned labels, because nobody is hovering a projected image, and the
+      // set follows whatever the focus mode is showing.
+      labels: "follow-focus",
+      railOpen: false
+    }
+  };
+
+  var LABELS_FOR_FOCUS = {
+    anatomy: "chambers", contraction: "chambers", integrated: "chambers",
+    conduction: "conduction", flow: "vessels"
+  };
+
+  function applyDisplay(name, opts) {
+    var p = DISPLAY_PRESETS[name] || DISPLAY_PRESETS.study;
+    app.state.display = DISPLAY_PRESETS[name] ? name : "study";
+
+    document.documentElement.setAttribute("data-size", p.size);
+    var sz = document.getElementById("sizeToggle");
+    if (sz) sz.setAttribute("aria-pressed", String(p.size === "large"));
+
+    api.setLabelSet(p.labels === "follow-focus"
+      ? (LABELS_FOR_FOCUS[app.state.focus] || "chambers")
+      : p.labels);
+    applyHeartFocus();            // size changed, so the viewBox may have too
+
+    setRail(p.railOpen);
+
+    /* Only remember a preset the user actually chose. Applying one from a
+     * shared link must not quietly reconfigure the machine it was opened on —
+     * a teacher who has set this laptop up for projection should still find it
+     * that way after following a student's link. */
+    if (!opts || opts.persist !== false) {
+      C.store.set("display", app.state.display);
+      C.store.set("size", p.size);
+    }
+    syncControls();
+    app._dirty = true;
+    if (!opts || !opts.quiet) {
+      api.announce(p.label + " display. " +
+        (p.railOpen ? "Teaching panel open." : "Teaching panel collapsed.") +
+        (p.size === "large" ? " Large text." : ""));
+    }
+  }
+
+  function setRail(open) {
+    var stage = document.getElementById("stage");
+    var btn = document.getElementById("railToggle");
+    stage.setAttribute("data-rail", open ? "open" : "closed");
+    document.getElementById("rail").hidden = !open;
+    if (btn) {
+      btn.setAttribute("aria-pressed", String(open));
+      btn.textContent = open ? "Hide panel" : "Show panel";
+    }
+  }
+
+  /* Restore the handful of display preferences worth remembering. Called
+   * BEFORE readUrl, so a shared link always wins over whatever this machine
+   * happens to have accumulated. */
+  function restorePreferences() {
+    if (/[?&]fresh=1\b/.test(location.search)) return;
+    var theme = C.store.get("theme");
+    if (theme === "dark" || theme === "light") {
+      document.documentElement.setAttribute("data-theme", theme);
+    }
+    var size = C.store.get("size");
+    if (size === "large" || size === "normal") {
+      document.documentElement.setAttribute("data-size", size);
+    }
+    var d = C.store.get("display");
+    if (DISPLAY_PRESETS[d]) app.state.display = d;
   }
 
   /* --------------------------------------------------------------- rebuild */
@@ -85,6 +180,213 @@
     });
   }
 
+  /* A throw during init() leaves a half-built page with no signal at all, and a
+   * rejected promise leaves no signal anywhere. Route both to the same banner. */
+  function wireGlobalErrors() {
+    window.addEventListener("error", function (e) {
+      C.diag.errors.push({ where: "window", message: String(e.message || e) });
+      showFailure(e.error || e.message || e);
+    });
+    window.addEventListener("unhandledrejection", function (e) {
+      C.diag.errors.push({ where: "promise", message: String(e.reason) });
+      showFailure(e.reason);
+    });
+  }
+
+  /* ---------------------------------------------------------- heart inspector
+   *
+   * Hover names a structure; click asks what it is doing right now and
+   * highlights the part of the tracing that structure's activity shows up in.
+   * Clicking a wave already spotlights the heart — this is the same link walked
+   * backwards, which is the point of having both. */
+
+  function wireHeartInspection() {
+    var host = document.getElementById("heartHolder");
+    var svg = host && host.querySelector("svg");
+    if (!svg) return;
+
+    svg.addEventListener("pointermove", function (e) {
+      // Touch has no hover state, so a tap must not leave a label stuck on.
+      if (e.pointerType === "touch") return;
+      var r = C.render.heart.resolveRegion(app.heartView, e);
+      if (r === app._hoverPart) return;
+      app._hoverPart = r;
+      C.render.heart.setHoverLabel(app.heartView, r);
+      svg.style.cursor = r ? "pointer" : "";
+      var p = r && C.content.parts[r];
+      svg.setAttribute("title", p ? p.label : "");
+    });
+
+    svg.addEventListener("pointerleave", function () {
+      app._hoverPart = null;
+      C.render.heart.setHoverLabel(app.heartView, null);
+      svg.style.cursor = "";
+    });
+
+    svg.addEventListener("click", function (e) {
+      var r = C.render.heart.resolveRegion(app.heartView, e);
+      if (r) selectPart(r, svg);
+    });
+
+    /* One tab stop, then arrow through the parts. Twenty-five tab stops would be
+     * hostile, and the heart had no keyboard or assistive-tech story at all. */
+    svg.setAttribute("tabindex", "0");
+    svg.addEventListener("keydown", function (e) {
+      var keys = inspectableKeys();
+      if (!keys.length) return;
+      var i = keys.indexOf(app._selectedPart);
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault(); e.stopPropagation();
+        selectPart(keys[(i + 1 + keys.length) % keys.length], svg);
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault(); e.stopPropagation();
+        selectPart(keys[(i - 1 + keys.length) % keys.length], svg);
+      } else if (e.key === "Escape" && app._selectedPart) {
+        e.stopPropagation(); selectPart(null, svg);
+      }
+    });
+  }
+
+  function inspectableKeys() {
+    if (app._inspectKeys) return app._inspectKeys;
+    var svg = document.querySelector(".heart-svg");
+    if (!svg) return [];
+    var seen = {}, out = [];
+    svg.querySelectorAll("[data-region]").forEach(function (n2) {
+      var k = C.render.heart.canonical(n2.getAttribute("data-region"));
+      if (k && !seen[k] && C.content.parts[k]) { seen[k] = 1; out.push(k); }
+    });
+    app._inspectKeys = out;
+    return out;
+  }
+
+  /* Reuses the wave explainer's panel rather than adding a second explaining
+   * surface competing for the same space. */
+  function selectPart(key, opener) {
+    app._selectedPart = key || null;
+    var box = document.getElementById("waveExplainer");
+    if (!key) {
+      box.hidden = true;
+      api.setSpotlight([]); api.setHighlight([]);
+      C.render.heart.setHoverLabel(app.heartView, null);
+      app._dirty = true;
+      return;
+    }
+    var part = C.content.parts[key];
+    if (!part) return;
+
+    api.pause();
+    app._waveOpener = opener || document.activeElement || null;
+    api.setSpotlight([key]);
+    C.render.heart.setHoverLabel(app.heartView, key);
+    // The reverse link: light the stretch of tracing this structure explains.
+    api.setHighlight([]);
+    app._selectedWave = null;
+
+    document.getElementById("waveTitle").textContent = part.label;
+    var body = document.getElementById("waveBody");
+    body.innerHTML = "";
+    var doing = C.engine.partState.describePart(key, app.frame || F.frameAt(app, app.tMs));
+    [["What it is", part.what, ""],
+     ["Right now", doing, ""],
+     ["Careful", part.caution, "caution"]].forEach(function (row) {
+      if (!row[1]) return;
+      body.appendChild(h("dt", { text: row[0] }));
+      body.appendChild(h("dd", { text: row[1], class: row[2] || null }));
+    });
+
+    if (part.ecg && part.ecg.length) {
+      var seeAlso = h("dd", { class: "part-ecg" });
+      part.ecg.forEach(function (wk) {
+        var g = C.content.waveGuide[wk];
+        if (!g) return;
+        var b2 = h("button", { class: "pill", type: "button", text: g.label });
+        b2.addEventListener("click", function () { jumpToWave(wk); });
+        seeAlso.appendChild(b2);
+      });
+      if (seeAlso.childNodes.length) {
+        body.appendChild(h("dt", { text: "On the tracing" }));
+        body.appendChild(seeAlso);
+      }
+    }
+
+    box.hidden = false;
+    if (box.scrollIntoView) box.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    var wt = document.getElementById("waveTitle");
+    if (wt) { wt.setAttribute("tabindex", "-1"); wt.focus({ preventScroll: true }); }
+    api.announce(part.label + ". " + doing);
+    app._dirty = true;
+  }
+
+  /* Walk the link the other way: from a structure to the wave it explains. */
+  function jumpToWave(waveKey) {
+    var layout = app._stripLayout;
+    var regions = layout
+      ? C.render.ecg.waveRegions(app.wave, app.schedule, layout.t0, layout.durMs)
+      : null;
+    if (regions) {
+      for (var i = 0; i < regions.length; i++) {
+        if (regions[i].key === waveKey) { selectWave(regions[i]); return; }
+      }
+    }
+    api.setHighlight((C.content.waveGuide[waveKey] || {}).tags || []);
+  }
+
+  /* A teacher wants to hand students the exact view they were just looking at.
+   * Deliberately a button rather than automatic history rewriting: pushState on
+   * a file:// origin throws in some browsers, and rewriting the URL on every
+   * control change floods the back button. */
+  function shareUrl() {
+    var q = ["mode=" + app.state.mode,
+             "rhythm=" + app.state.rhythm,
+             "condition=" + app.state.condition,
+             "lead=" + app.state.selectedLead,
+             "focus=" + app.state.focus,
+             "display=" + app.state.display,
+             "seed=" + app.state.seed];
+    return location.origin + location.pathname + "?" + q.join("&");
+  }
+
+  function copyShareLink(btn) {
+    var url = shareUrl();
+    var done = function () { btn.textContent = "Link copied"; api.announce("Link copied."); };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(url).then(done, function () { showLink(btn, url); });
+    } else {
+      // file:// is not a secure context, so the clipboard API is unavailable.
+      showLink(btn, url);
+    }
+  }
+
+  function showLink(btn, url) {
+    var box = document.getElementById("shareBox");
+    if (!box) {
+      box = document.createElement("input");
+      box.id = "shareBox";
+      box.className = "share-box";
+      box.readOnly = true;
+      box.setAttribute("aria-label", "Link to this view");
+      btn.parentNode.appendChild(box);
+    }
+    box.value = url;
+    box.select();
+    btn.textContent = "Copy from the box";
+  }
+
+  /* User-initiated, therefore always wanted. The per-frame description is never
+   * announced automatically — at 1x a beat changes phase seven times a second
+   * and narrating that is worse than silence. */
+  function describeNow() {
+    api.announce(app.state.hideName
+      ? "Rhythm challenge in progress. The rhythm name is hidden until you commit."
+      : F.describe(app, app.frame || F.frameAt(app, app.tMs)));
+  }
+
+  function setLabel(id, text) {
+    var n = document.getElementById(id);
+    if (n) n.setAttribute("aria-label", text);
+  }
+
   /* ------------------------------------------------------------------ loop */
 
   function tick() {
@@ -105,7 +407,47 @@
     if (app._dirty) { draw(); app._dirty = false; }
   }
 
+  /* An uncaught throw inside a requestAnimationFrame callback stops the loop
+   * with nothing on screen to say so — the heart keeps showing the last good
+   * frame while the ECG, timeline and readouts silently freeze. That has bitten
+   * this project already. Fail loudly, and stop rather than emit sixty errors a
+   * second. */
   function draw() {
+    try {
+      drawFrame();
+      app._drawFails = 0;
+    } catch (e) {
+      app._drawFails = (app._drawFails || 0) + 1;
+      C.diag.errors.push({ tMs: Math.round(app.tMs), rhythm: app.state.rhythm,
+                           condition: app.state.condition, message: String(e && e.message || e),
+                           stack: String(e && e.stack || "") });
+      if (window.console && console.error) console.error("cardiac draw() failed", e);
+      app.playing = false;
+      if (app._drawFails >= 3) {
+        if (app._raf) cancelAnimationFrame(app._raf);
+        app._raf = null;
+        showFailure(e);
+      }
+    }
+  }
+
+  /* Visible, not sr-only: if the simulation has stopped, a learner staring at a
+   * frozen picture needs to be told. */
+  function showFailure(e) {
+    var bar = document.getElementById("failBanner");
+    if (!bar) {
+      bar = document.createElement("div");
+      bar.id = "failBanner";
+      bar.className = "fail-banner";
+      bar.setAttribute("role", "alert");
+      document.body.appendChild(bar);
+    }
+    bar.textContent = "The simulation stopped: " + String(e && e.message || e)
+      + ". Reload the page to start again.";
+    bar.hidden = false;
+  }
+
+  function drawFrame() {
     var frame = F.frameAt(app, app.tMs);
     app.frame = frame;
 
@@ -146,9 +488,29 @@
     renderReadouts(frame);
     renderEventChip(frame);
 
-    document.getElementById("stateSummary").textContent = app.state.hideName
-      ? "Rhythm challenge in progress. The rhythm name and measurements are hidden until you commit."
-      : F.describe(app, frame);
+    /* This is the text a screen-reader user hears when they focus the tracing.
+     * It is rebuilt on every animation frame, so write it only when the state it
+     * describes actually changed — sixty rewrites a second churns the
+     * accessibility tree for nothing, and describe() itself is not free. */
+    var sig = [app.state.rhythm, app.state.condition, app.state.selectedLead,
+               app.state.hideName, frame.phase,
+               frame.leadEvent && frame.leadEvent.id,
+               frame.outputCategory && frame.outputCategory.label,
+               frame.perfusion, frame.arrest, frame.pulse].join("|");
+    if (sig !== app._summarySig) {
+      app._summarySig = sig;
+      var summary = app.state.hideName
+        ? "Rhythm challenge in progress. The rhythm name and measurements are hidden until you commit."
+        : F.describe(app, frame);
+      document.getElementById("stateSummary").textContent = summary;
+      // Keep the canvases' own names in step, so arrowing onto the strip says
+      // what is on it rather than just "Rhythm strip".
+      var short = app.state.hideName ? "hidden for the challenge"
+        : (C.content.rhythms[app.state.rhythm] || {}).label || app.state.rhythm;
+      setLabel("stripCanvas", "Rhythm strip, " + short + ", lead " + app.state.selectedLead);
+      setLabel("detailCanvas", "One complex magnified, " + short
+                               + ", lead " + app.state.selectedLead);
+    }
   }
 
   /* The lead-as-lens overlay: the net electrical vector drawn against the
@@ -204,8 +566,17 @@
       box.hidden = true;
       api.setHighlight([]);
       api.setSpotlight([]);
+      // Send focus back where it came from. Not a focus trap — this is an inline
+      // disclosure, not a modal — but leaving focus on a button that has just
+      // been hidden drops a keyboard user back to the top of the document.
+      if (app._waveOpener && document.contains(app._waveOpener)) app._waveOpener.focus();
+      app._waveOpener = null;
       app._dirty = true;
       return;
+    }
+    if (!app._waveOpener) {
+      app._waveOpener = (document.activeElement && document.activeElement !== document.body)
+        ? document.activeElement : null;
     }
     var g = C.content.waveGuide[region.key];
     if (!g) { box.hidden = true; return; }
@@ -231,6 +602,8 @@
     // The panel scrolls, so an explainer that opens below the fold reads as
     // nothing having happened.
     if (box.scrollIntoView) box.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    var wt = document.getElementById("waveTitle");
+    if (wt) { wt.setAttribute("tabindex", "-1"); wt.focus({ preventScroll: true }); }
     api.announce(g.label + ". " + g.mechanical);
     app._dirty = true;
   }
@@ -353,9 +726,18 @@
     get state() { return app.state; },
 
     announce: function (msg) {
+      // The clear-then-set trick forces a screen reader to re-read an identical
+      // string. Without holding the handle, two announcements inside the 30 ms
+      // window race and the survivor is not necessarily the later one — which
+      // applySetup triggers every time, since it sets rhythm and condition back
+      // to back.
       var live = document.getElementById("liveRegion");
+      if (app._announceTimer) clearTimeout(app._announceTimer);
       live.textContent = "";
-      setTimeout(function () { live.textContent = msg; }, 30);
+      app._announceTimer = setTimeout(function () {
+        live.textContent = msg;
+        app._announceTimer = null;
+      }, 30);
     },
 
     play: function () {
@@ -462,6 +844,11 @@
     },
 
     setFocus: function (f) {
+      // In Presenting the label set follows the focus, since nobody is hovering
+      // a projected image to find out what they are looking at.
+      if (app.state.display === "presenting" && LABELS_FOR_FOCUS[f]) {
+        app.state.labelSet = LABELS_FOR_FOCUS[f];
+      }
       app.state.focus = f;
       if (f === "conduction" && app.state.labelSet === "chambers") app.state.labelSet = "conduction";
       applyHeartFocus(); syncControls(); app._dirty = true;
@@ -551,6 +938,8 @@
   }
 
   function syncControls() {
+    var ds = document.getElementById("displaySelect");
+    if (ds) ds.value = app.state.display;
     var s = app.state;
 
     /* During the rhythm challenge the answer must not be readable anywhere on
@@ -706,9 +1095,47 @@
       "Space — play or pause",
       "Left and Right arrows — step to the previous or next event",
       "R — restart at the teaching start point",
+      "D — say what is happening right now",
       "1 to 5 — anatomy, conduction, contraction, flow, all together",
-      "L — switch between the single lead and the 12-lead view"
+      "L — switch between the single lead and the 12-lead view",
+      "Left and Right arrows on the teaching tabs — move between them",
+      "Escape — close the About box or an open wave explanation"
     ]));
+
+    /* Say plainly what is kept and what is not. "We remember some things" with
+     * no list is exactly the sentence that makes people distrust a tool they
+     * are asked to run on a shared machine. */
+    body.appendChild(h("h3", { text: "What this page remembers" }));
+    body.appendChild(P.list([
+      "On this computer: your theme, text size, and display preset.",
+      "Not kept anywhere: quiz answers, challenge scores, lesson progress — those " +
+        "last only while the page is open, so a shared machine never hands your " +
+        "work to the next person.",
+      "Nothing is sent anywhere. There is no account and no network call after the page loads."
+    ]));
+
+    var prefRow = h("div", { class: "about-actions" });
+    var copyBtn = h("button", { class: "btn", type: "button", text: "Copy link to this view" });
+    copyBtn.addEventListener("click", function () { copyShareLink(copyBtn); });
+    prefRow.appendChild(copyBtn);
+
+    var resetBtn = h("button", { class: "btn", type: "button", text: "Reset saved settings" });
+    resetBtn.addEventListener("click", function () {
+      C.store.clear();
+      document.documentElement.removeAttribute("data-theme");
+      document.documentElement.removeAttribute("data-size");
+      // persist:false, or "reset" would immediately write a fresh value back.
+      applyDisplay("study", { persist: false, quiet: true });
+      resetBtn.textContent = "Settings cleared";
+      api.announce("Saved settings cleared.");
+    });
+    prefRow.appendChild(resetBtn);
+    body.appendChild(prefRow);
+
+    if (!C.store.available()) {
+      body.appendChild(h("p", { class: "illustrative",
+        text: "This browser is not letting the page store anything, which is common when a file is opened directly from disk. Everything still works; your theme and text size simply reset when you reload." }));
+    }
 
     body.appendChild(h("h3", { text: "Sources" }));
     var ol = h("ol", { class: "refs" });
@@ -731,7 +1158,11 @@
     app.heartView = C.render.heart.create(document.getElementById("heartHolder"));
     app.timelineView = C.render.timeline.create(document.getElementById("timelineHost"));
 
+    restorePreferences();
     readUrl();
+    // Applied after readUrl so ?display= wins, and quietly because announcing
+    // on load would talk over a screen reader's own page summary.
+    applyDisplay(app.state.display, { quiet: true, persist: false });
     rebuild(false);
     applyHeartFocus();
     syncChrome(); syncControls(); syncPlayButton(); renderRail();
@@ -794,15 +1225,12 @@
       });
     });
 
-    on("railToggle", "click", function (e) {
-      var stage = document.getElementById("stage");
-      var open = stage.getAttribute("data-rail") !== "closed";
-      stage.setAttribute("data-rail", open ? "closed" : "open");
-      document.getElementById("rail").hidden = open;
-      e.target.setAttribute("aria-pressed", String(!open));
-      e.target.textContent = open ? "Show panel" : "Hide panel";
+    on("railToggle", "click", function () {
+      setRail(document.getElementById("stage").getAttribute("data-rail") === "closed");
       app._dirty = true;
     });
+
+    on("displaySelect", "change", function (e) { applyDisplay(e.target.value); });
 
     on("themeToggle", "click", function () {
       var root = document.documentElement;
@@ -810,6 +1238,7 @@
       var next = cur === "dark" ? "light" : cur === "light" ? "dark"
         : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "dark");
       root.setAttribute("data-theme", next);
+      C.store.set("theme", next);
       app._dirty = true;
     });
 
@@ -818,6 +1247,8 @@
       var big = root.getAttribute("data-size") === "large";
       root.setAttribute("data-size", big ? "normal" : "large");
       e.target.setAttribute("aria-pressed", String(!big));
+      C.store.set("size", big ? "normal" : "large");
+      applyHeartFocus();          // the labelled viewBox widens for large text
       app._dirty = true;
     });
 
@@ -893,6 +1324,8 @@
     });
 
     on("waveClose", "click", function () { selectWave(null); });
+    on("describeBtn", "click", function () { describeNow(); });
+    wireHeartInspection();
 
     document.addEventListener("keydown", function (e) {
       var tag = (e.target.tagName || "").toLowerCase();
@@ -916,6 +1349,7 @@
       else if (k === "ArrowRight") { e.preventDefault(); api.step(1); }
       else if (k === "ArrowLeft") { e.preventDefault(); api.step(-1); }
       else if (k === "r" || k === "R") { api.restart(); }
+      else if (k === "d" || k === "D") { describeNow(); }
       else if (k === "l" || k === "L") {
         if (app.state.mode === "advanced") api.setLeadView(app.state.leadView === "single" ? "twelve" : "single");
       }
@@ -925,6 +1359,7 @@
       else if (k === "Escape") {
         var m = document.getElementById("aboutModal");
         if (!m.hidden) { m.hidden = true; document.getElementById("aboutBtn").focus(); }
+        else if (!document.getElementById("waveExplainer").hidden) selectWave(null);
       }
     });
 
@@ -959,6 +1394,8 @@
     if (l && C.LEAD_ORDER.indexOf(l) >= 0) app.state.selectedLead = l;
     var f = q.get("focus");
     if (f && ["anatomy", "conduction", "contraction", "flow", "integrated"].indexOf(f) >= 0) app.state.focus = f;
+    var d = q.get("display");
+    if (d && DISPLAY_PRESETS[d]) app.state.display = d;
     if (app.state.leadView === "twelve") app.state.labelSet = "none";
     var seed = parseInt(q.get("seed"), 10);
     if (isFinite(seed) && seed >= 0) app.state.seed = seed >>> 0;

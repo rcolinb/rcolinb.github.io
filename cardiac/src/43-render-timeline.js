@@ -55,7 +55,8 @@
     legend.className = "tl-legend";
     [["t-p", "P"], ["t-av", "AV delay"], ["t-qrs", "QRS"], ["t-t", "T"],
      ["m-atrial", "Atrial squeeze"], ["m-ivc", "Isovolumetric"], ["m-eject", "Ejection"],
-     ["m-fill", "Passive filling"], ["m-kick", "Atrial kick"]].forEach(function (pair) {
+     ["m-fill", "Passive filling"], ["m-kick", "Atrial kick"],
+     ["m-ivr", "Isovolumetric relaxation"], ["m-none", "No effective output"]].forEach(function (pair) {
       var s = document.createElement("span");
       s.className = "tl-key";
       var sw = document.createElement("i");

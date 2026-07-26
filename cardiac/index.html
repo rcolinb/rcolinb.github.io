@@ -43,6 +43,8 @@
   --ecg-grid-major: #E9AAA0;
   --wave-highlight: rgba(237, 181, 46, 0.26);
 
+  --layer-cellular: #6C4E8C;
+
   --myo: #D8C4B4;
   --myo-edge: #A98B76;
   --blood-ox: #C4674C;
@@ -50,7 +52,6 @@
 
   --font-ui: "Aptos", "Calibri", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
   --font-display: Georgia, "Times New Roman", serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s6: 24px; --s8: 32px; --s12: 48px;
   --radius: 8px;
@@ -84,6 +85,8 @@
   --ecg-grid-major: #55322A;
   --wave-highlight: rgba(237, 181, 46, 0.20);
 
+  --layer-cellular: #B79AD4;
+
   --myo: #4A4034;
   --myo-edge: #6E6050;
   --blood-ox: #8E4433;
@@ -102,6 +105,7 @@
     --ecg-paper: #14140F; --ecg-trace: #F2EDE4;
     --ecg-grid-minor: #38251F; --ecg-grid-major: #55322A;
     --wave-highlight: rgba(237, 181, 46, 0.20);
+    --layer-cellular: #B79AD4;
     --myo: #4A4034; --myo-edge: #6E6050; --blood-ox: #8E4433; --blood-deox: #2F5F70;
     --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
   }
@@ -171,7 +175,13 @@ button, select, input { font: inherit; color: inherit; }
   .segmented button { padding: 7px 12px; font-size: 13px; }
 }
 @media (max-width: 1240px) {
-  .topbar .field > label { display: none; }
+  /* Clip rather than display:none. These two labels are the only accessible
+     name Rhythm and Condition have, and display:none removes the control's name
+     as well as its text in at least one major screen reader. */
+  .topbar .field > label {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
 }
 
 .brand {
@@ -196,6 +206,8 @@ button, select, input { font: inherit; color: inherit; }
   appearance: none; border: 0; background: transparent; cursor: pointer;
   padding: 7px 15px; border-radius: 999px; font-size: 14px; font-weight: 600;
   color: var(--muted); white-space: nowrap;
+  /* 44 would burst the 52px topbar this control lives in; 40 is the compromise. */
+  min-height: 40px;
 }
 .segmented button[aria-pressed="true"] {
   background: var(--accent); color: var(--on-accent);
@@ -208,7 +220,7 @@ button, select, input { font: inherit; color: inherit; }
   border: 1px solid var(--rule-strong); border-radius: var(--radius);
   padding: 8px 13px; font-size: 14px; font-weight: 600;
   display: inline-flex; align-items: center; gap: 7px;
-  min-height: 40px;
+  min-height: 44px;
 }
 .btn:hover { border-color: var(--accent); color: var(--accent); }
 .btn[aria-pressed="true"], .btn.is-active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
@@ -217,7 +229,7 @@ button, select, input { font: inherit; color: inherit; }
 .btn-ghost { background: transparent; border-color: transparent; }
 #aboutBtn { gap: 5px; }
 .btn-ghost:hover { background: var(--white); }
-.btn-icon { padding: 8px; min-width: 40px; justify-content: center; }
+.btn-icon { padding: 8px; min-width: 44px; justify-content: center; }
 .btn:disabled { opacity: .42; cursor: not-allowed; }
 
 .field { display: inline-flex; flex-direction: column; gap: 3px; min-width: 0; }
@@ -335,11 +347,9 @@ button, select, input { font: inherit; color: inherit; }
   stroke: var(--conduction); stroke-width: 2.2; stroke-linecap: round;
   opacity: calc(.4 + var(--lvl, 0) * .6);
 }
-.cond-tract { stroke-width: calc(3.4px + var(--lvl, 0) * 3.4px); }
-.cond-fascicle { stroke-width: calc(2.6px + var(--lvl, 0) * 2.6px); opacity: calc(.44 + var(--lvl, 0) * .56); }
-.cond-purkinje-1 { stroke-width: 2.6; }
-.cond-purkinje-2 { stroke-width: 1.9; }
-.cond-purkinje-3 { stroke-width: 1.3; opacity: calc(.42 + var(--lvl, 0) * .58); }
+/* Widths for the specific pathway classes live BELOW the general .cond-track /
+   .cond-purkinje rules — at equal specificity the later rule wins, and having
+   them here meant every one of them was silently dead. */
 
 .chamber.is-hypertrophied .myo { fill: color-mix(in srgb, var(--myo) 78%, var(--accent)); }
 
@@ -370,7 +380,22 @@ button, select, input { font: inherit; color: inherit; }
 .cond-bundle { stroke-width: calc(3.6px + var(--lvl, 0) * 3.4px); }
 .cond-track-shadow { stroke: var(--myo-edge); stroke-width: 9; opacity: .35; fill: none;
   stroke-linecap: round; stroke-linejoin: round; }
-.cond-purkinje { stroke-width: 2.2; }
+
+/* Internodal tracts stay thinner than the His trunk, and the left fascicles
+   thinner than the bundle they fan off. Both must come after the general rules
+   they refine. */
+.cond-tract { stroke-width: calc(3.4px + var(--lvl, 0) * 3.4px); }
+.cond-fascicle { stroke-width: calc(2.6px + var(--lvl, 0) * 2.6px); }
+
+/* The Purkinje network keeps the same 0.5 resting floor as the rest of the
+   pathway — it has to stay legible on a projector — and brightens and thickens
+   as the wavefront reaches each fibre. One ramp for all three orders; the order
+   distinction is carried by width, which does not fight the legibility floor. */
+.cond-purkinje { opacity: calc(.5 + var(--lvl, 0) * .5); }
+.cond-purkinje-1 { stroke-width: calc(2.6px + var(--lvl, 0) * 1.8px); }
+.cond-purkinje-2 { stroke-width: calc(1.9px + var(--lvl, 0) * 1.5px); }
+.cond-purkinje-3 { stroke-width: calc(1.3px + var(--lvl, 0) * 1.2px); }
+
 .cond-track.is-active, .cond-purkinje.is-active { filter: url(#condGlow); stroke: var(--conduction-bright); }
 
 /* The travelling impulse. A moving marker reads instantly at any playback
@@ -405,6 +430,18 @@ button, select, input { font: inherit; color: inherit; }
 .heart-svg.has-spotlight .layer-chambers,
 .heart-svg.has-spotlight .layer-vessels { opacity: .34; }
 .heart-svg.has-spotlight [data-region].is-spotlit { opacity: 1 !important; }
+
+/* ...except the conduction pathway, which encodes activation level IN opacity.
+   Forcing it to 1 flattens the very apex-first ramp a Purkinje spotlight exists
+   to show — and the QRS wave explainer and three lesson steps all spotlight it.
+   Those keep their ramp and take their emphasis from the glow instead. */
+.heart-svg.has-spotlight .cond-track.is-spotlit,
+.heart-svg.has-spotlight .cond-radial.is-spotlit,
+.heart-svg.has-spotlight .cond-purkinje.is-spotlit {
+  opacity: calc(.5 + var(--lvl, 0) * .5) !important;
+  filter: drop-shadow(0 0 6px var(--conduction-bright));
+}
+
 .heart-svg.has-spotlight .chamber.is-spotlit,
 .heart-svg.has-spotlight .valve.is-spotlit { filter: drop-shadow(0 0 7px var(--conduction-bright)); }
 
@@ -612,7 +649,7 @@ button, select, input { font: inherit; color: inherit; }
   background: var(--paper); color: var(--muted); border: 1px solid var(--rule);
 }
 .chain .layer-trigger    { color: var(--muted); }
-.chain .layer-cellular   { color: #6C4E8C; border-color: #6C4E8C; }
+.chain .layer-cellular   { color: var(--layer-cellular); border-color: var(--layer-cellular); }
 .chain .layer-conduction { color: var(--warn); border-color: var(--warn); }
 .chain .layer-ecg        { color: var(--accent); border-color: var(--accent); }
 .chain .layer-mechanical { color: var(--flow-deox); border-color: var(--flow-deox); }
@@ -820,6 +857,31 @@ button, select, input { font: inherit; color: inherit; }
 :root[data-size="large"] .chain .chain-text { font-size: 15.5px; }
 :root[data-size="large"] .rail-pane p, :root[data-size="large"] .rail-pane ul { font-size: 15.5px; }
 
+/* A label summoned by hovering rather than pinned by the label-set control.
+   Slightly quieter, so a pinned set still reads as the deliberate choice. */
+.anno.is-hover-label .anno-text { fill: var(--accent); }
+.anno.is-hover-label .anno-line { stroke: var(--accent); }
+.heart-svg { outline-offset: -3px; }
+
+/* Links from an inspected structure back to the stretch of tracing it explains. */
+.part-ecg { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 0; }
+
+.about-actions { display: flex; flex-wrap: wrap; gap: var(--s2); margin: var(--s3) 0 0; }
+.share-box {
+  flex: 1 1 100%; margin-top: var(--s2);
+  border: 1px solid var(--rule-strong); border-radius: var(--radius);
+  padding: 8px 11px; background: var(--paper); color: var(--ink); font-size: 13px;
+}
+
+/* Shown only when the render loop has given up. Deliberately loud: a learner
+   looking at a frozen picture has no other way to know it stopped. */
+.fail-banner {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 200;
+  background: var(--danger); color: #fff;
+  font: 600 14px var(--font-ui); padding: 12px var(--s4);
+  text-align: center;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
@@ -853,12 +915,12 @@ button, select, input { font: inherit; color: inherit; }
 
     <div class="field">
       <label for="rhythmSelect">Rhythm</label>
-      <select id="rhythmSelect"></select>
+      <select id="rhythmSelect" aria-label="Rhythm"></select>
     </div>
 
     <div class="field" id="conditionField">
       <label for="conditionSelect">Condition</label>
-      <select id="conditionSelect"></select>
+      <select id="conditionSelect" aria-label="Condition"></select>
     </div>
 
     <span class="topbar-spacer"></span>
@@ -866,6 +928,14 @@ button, select, input { font: inherit; color: inherit; }
     <div class="segmented" role="group" aria-label="ECG view" id="viewToggle" hidden>
       <button type="button" id="viewSingle" aria-pressed="false">Single lead</button>
       <button type="button" id="viewTwelve" aria-pressed="true">12-lead</button>
+    </div>
+
+    <div class="field" id="displayField">
+      <label for="displaySelect">Display</label>
+      <select id="displaySelect" aria-label="Display preset">
+        <option value="study">Study</option>
+        <option value="presenting">Presenting</option>
+      </select>
     </div>
 
     <button type="button" class="btn btn-ghost btn-icon" id="sizeToggle" aria-pressed="false"
@@ -916,13 +986,13 @@ button, select, input { font: inherit; color: inherit; }
       </div>
       <div class="panel-body">
         <div class="ecg-canvas-wrap ecg-strip-wrap" id="stripWrap">
-          <canvas id="stripCanvas" aria-label="Rhythm strip"></canvas>
+          <canvas id="stripCanvas" tabindex="0" aria-describedby="stateSummary" aria-label="Rhythm strip"></canvas>
         </div>
         <div class="ecg-canvas-wrap ecg-detail-wrap" id="detailWrap">
-          <canvas id="detailCanvas" aria-label="One complex magnified, with each wave named and the intervals marked"></canvas>
+          <canvas id="detailCanvas" tabindex="0" aria-describedby="stateSummary" aria-label="One complex magnified, with each wave named and the intervals marked"></canvas>
         </div>
         <div class="ecg-canvas-wrap ecg-twelve-wrap" id="twelveWrap" hidden>
-          <canvas id="twelveCanvas" aria-label="Twelve-lead electrocardiogram, all leads recorded at the same moment"></canvas>
+          <canvas id="twelveCanvas" tabindex="0" aria-describedby="stateSummary" aria-label="Twelve-lead electrocardiogram, all leads recorded at the same moment"></canvas>
         </div>
         <div class="lens-row" id="lensRow" hidden>
           <div class="lens-canvas">
@@ -970,6 +1040,9 @@ button, select, input { font: inherit; color: inherit; }
     <button type="button" class="btn btn-icon" id="prevBtn" title="Previous event" aria-label="Previous event">◀◀</button>
     <button type="button" class="btn btn-primary btn-icon" id="playBtn" aria-label="Play" aria-pressed="false">▶</button>
     <button type="button" class="btn btn-icon" id="nextBtn" title="Next event" aria-label="Next event">▶▶</button>
+    <button type="button" class="btn btn-icon" id="describeBtn"
+            title="Describe what is happening right now (D)"
+            aria-label="Describe what is happening right now">🗣</button>
 
     <div class="speed-wrap">
       <label for="speedRange" class="sr-only">Animation speed</label>
@@ -1018,8 +1091,14 @@ button, select, input { font: inherit; color: inherit; }
       mechanisms: {},
       questions: [],
       lessons: [],
-      waveGuide: {}
+      waveGuide: {},
+      parts: {},
+      partAlias: {}
     },
+    /* Diagnostics. Populated by the render loop's error boundary and by the two
+     * places that legitimately swallow a geometry exception, so a harness can
+     * see failures that are otherwise invisible. */
+    diag: { errors: [], warnings: [] },
     engine: {},
     render: {},
     ui: {},
@@ -1112,6 +1191,74 @@ button, select, input { font: inherit; color: inherit; }
 
   w.CARDIAC = CARDIAC;
 })(window);
+
+</script>
+<script>
+/* 11-store.js */
+/* 11-store.js — a very small amount of remembered state.
+ *
+ * Only display preferences: theme, text size, and which display preset is
+ * active. Deliberately NOT quiz scores, challenge tallies or lesson progress —
+ * this runs on shared classroom and library machines, where inheriting the
+ * previous student's score is a privacy problem and a confusion problem, and
+ * where it buys nothing a student actually wants.
+ *
+ * Every access is guarded. The product ships as a single file that people open
+ * from disk, and `localStorage` on a file:// origin throws SecurityError in some
+ * browsers rather than returning null — an unguarded read here would take down
+ * init() and leave a blank page.
+ */
+(function (C) {
+  "use strict";
+
+  var PREFIX = "cardiac.v1.";
+  var memory = {};          // stands in when real storage is unusable
+  var live = null;          // null until probed
+
+  function backing() {
+    if (live !== null) return live;
+    try {
+      var t = PREFIX + "probe";
+      window.localStorage.setItem(t, "1");
+      window.localStorage.removeItem(t);
+      live = window.localStorage;
+    } catch (e) {
+      C.diag.warnings.push("localStorage unavailable, preferences are session-only: " + e.message);
+      live = false;
+    }
+    return live;
+  }
+
+  function get(key) {
+    var s = backing();
+    if (!s) return Object.prototype.hasOwnProperty.call(memory, key) ? memory[key] : null;
+    try { return s.getItem(PREFIX + key); } catch (e) { return null; }
+  }
+
+  function set(key, value) {
+    var s = backing();
+    memory[key] = value;
+    if (!s) return;
+    try { s.setItem(PREFIX + key, value); } catch (e) { /* quota or private mode */ }
+  }
+
+  function clear() {
+    memory = {};
+    var s = backing();
+    if (!s) return;
+    try {
+      var doomed = [];
+      for (var i = 0; i < s.length; i++) {
+        var k = s.key(i);
+        if (k && k.indexOf(PREFIX) === 0) doomed.push(k);
+      }
+      doomed.forEach(function (k) { s.removeItem(k); });
+    } catch (e) { /* nothing we can do, and nothing that matters */ }
+  }
+
+  C.store = { get: get, set: set, clear: clear,
+              available: function () { return !!backing(); } };
+})(CARDIAC);
 
 </script>
 <script>
@@ -4803,6 +4950,184 @@ Object.assign(CARDIAC.content.waveGuide, {
 
 </script>
 <script>
+/* 27-content-parts.js */
+/* 27-content-parts.js — what each structure in the drawing IS.
+ *
+ * Hovering a part names it; clicking it opens this text plus a generated
+ * sentence about what that part is doing at the instant you paused on. The
+ * split matters: what a structure is gets authored once, what it is doing is
+ * read from the frame. Authoring a line per part per phase would be a hundred
+ * strings that drift out of step with the model the moment anything changes.
+ *
+ * `ecg` names the wave regions where this structure's activity shows up on the
+ * tracing, so clicking a part can highlight the part of the complex it explains.
+ * That is the reverse of clicking a wave and having the heart light up, and it
+ * is the whole point: the causal link should be walkable in both directions.
+ *
+ * Several drawn elements collapse onto one part — the aortic arch branches are
+ * all "aorta", the two drawn pulmonary veins are one "pulmonary-veins".
+ */
+
+Object.assign(CARDIAC.content.parts, {
+
+  /* ----------------------------------------------------------- great veins */
+
+  "svc": {
+    label: "Superior vena cava",
+    what: "Returns deoxygenated blood from the head, neck and arms to the right atrium. It has no valve, which is why a rise in right atrial pressure is visible as distended neck veins.",
+    ecg: []
+  },
+  "ivc": {
+    label: "Inferior vena cava",
+    what: "Returns deoxygenated blood from the abdomen and legs to the right atrium. Together the two venae cavae deliver the entire systemic venous return.",
+    ecg: []
+  },
+  "pulmonary-veins": {
+    label: "Pulmonary veins",
+    what: "Carry oxygenated blood from the lungs back to the left atrium. They are the only veins in the body carrying oxygenated blood.",
+    ecg: []
+  },
+
+  /* --------------------------------------------------------------- chambers */
+
+  "right-atrium": {
+    label: "Right atrium",
+    what: "Receives systemic venous return and delivers it to the right ventricle. It holds the sinus node in its wall, so it is both a receiving chamber and the origin of the heartbeat.",
+    ecg: ["p", "pr"]
+  },
+  "left-atrium": {
+    label: "Left atrium",
+    what: "Receives oxygenated blood from the pulmonary veins and delivers it to the left ventricle. It depolarises slightly after the right, which is why the P wave has two overlapping halves.",
+    ecg: ["p", "pr"]
+  },
+  "right-ventricle": {
+    label: "Right ventricle",
+    what: "Pumps blood to the lungs against low pulmonary pressure, so its wall is thin. It is the chamber that fails first when pulmonary pressures rise.",
+    ecg: ["qrs", "st"]
+  },
+  "left-ventricle": {
+    label: "Left ventricle",
+    what: "Pumps blood to the whole body against systemic pressure, so its wall is roughly three times thicker than the right. Its mass dominates the QRS complex.",
+    ecg: ["qrs", "st"]
+  },
+  "septum": {
+    label: "Interventricular septum",
+    what: "The shared muscular wall between the ventricles. It depolarises first and from left to right, which is what produces the small initial q wave in the lateral leads.",
+    ecg: ["qrs"]
+  },
+  "junction": {
+    label: "Atrioventricular junction",
+    what: "The fibrous ring the atria sit on and the ventricles hang from. It is electrically insulating: apart from the AV node there is no route through it, which is what forces the impulse to pause.",
+    ecg: ["pr"]
+  },
+
+  /* ----------------------------------------------------------------- valves */
+
+  "tricuspid": {
+    label: "Tricuspid valve",
+    what: "Between the right atrium and right ventricle. Opens to let the ventricle fill and shuts when ventricular pressure rises above atrial pressure.",
+    ecg: ["qrs", "tp"]
+  },
+  "mitral": {
+    label: "Mitral valve",
+    what: "Between the left atrium and left ventricle. It shuts at the start of ventricular contraction — that closure, with the tricuspid, is the first heart sound.",
+    ecg: ["qrs", "tp"]
+  },
+  "pulmonic": {
+    label: "Pulmonic valve",
+    what: "Guards the outlet from the right ventricle into the pulmonary trunk. It opens only once right ventricular pressure exceeds pulmonary artery pressure.",
+    ecg: ["st", "t"]
+  },
+  "aortic": {
+    label: "Aortic valve",
+    what: "Guards the outlet from the left ventricle into the aorta. Its closure, with the pulmonic, is the second heart sound.",
+    ecg: ["st", "t"]
+  },
+  "papillary": {
+    label: "Papillary muscles",
+    what: "Cone-shaped muscles that spring from the ventricular wall and anchor the chordae. They shorten with the wall around them, keeping tension on the valve rather than pulling it open.",
+    ecg: ["qrs", "st"]
+  },
+  "chordae": {
+    label: "Chordae tendineae",
+    what: "Fibrous cords running from each papillary muscle to the edge of an AV valve leaflet. They hang slack while the valve is open and snap taut the instant it shuts, which is what stops the leaflets inverting into the atrium.",
+    ecg: ["qrs", "st"]
+  },
+
+  /* ---------------------------------------------------------- great arteries */
+
+  "aorta": {
+    label: "Aorta",
+    what: "Carries oxygenated blood from the left ventricle to the body. The coronary arteries leave it just above the valve, and they fill during diastole rather than systole.",
+    ecg: ["st", "t"]
+  },
+  "pulmonary-artery": {
+    label: "Pulmonary artery",
+    what: "Carries deoxygenated blood from the right ventricle to the lungs. It is the only artery in the body carrying deoxygenated blood, and it passes in front of the aortic root before dividing.",
+    ecg: ["st", "t"]
+  },
+
+  /* ------------------------------------------------------- conduction system */
+
+  "sa-node": {
+    label: "Sinoatrial node",
+    what: "The heart's normal pacemaker, in the wall of the right atrium. It depolarises spontaneously about 60 to 100 times a minute and sets the rate unless something faster or a block takes over.",
+    ecg: ["p"],
+    caution: "The SA node firing produces no deflection of its own. The P wave is the atrial muscle responding to it, not the node itself."
+  },
+  "av-node": {
+    label: "Atrioventricular node",
+    what: "The only electrical route from atria to ventricles. It deliberately conducts slowly, holding the impulse long enough for the atria to finish emptying before the ventricles squeeze.",
+    ecg: ["pr"],
+    caution: "The AV node's own signal is far too small to reach the body surface. The flat PR segment is what its delay looks like — a pause, not a wave."
+  },
+  "bachmann": {
+    label: "Bachmann's bundle",
+    what: "The muscular bridge carrying the impulse from the right atrium across to the left, so the two atria depolarise almost together rather than one after the other.",
+    ecg: ["p"]
+  },
+  "his-bundle": {
+    label: "Bundle of His",
+    what: "Carries the impulse from the AV node through the insulating fibrous ring into the ventricles. It is the only normal electrical connection between the two halves of the heart.",
+    ecg: ["pr", "qrs"]
+  },
+  "right-bundle": {
+    label: "Right bundle branch",
+    what: "A discrete cord running down the right side of the septum to the right ventricle. Being a single narrow strand, it is the more easily interrupted of the two branches.",
+    ecg: ["qrs"]
+  },
+  "left-bundle": {
+    label: "Left bundle branch",
+    what: "Fans out over the left side of the septum into anterior and posterior fascicles. Because it activates the septum and the bulk of the ventricular mass, losing it changes the QRS far more than losing the right.",
+    ecg: ["qrs"]
+  },
+  "left-purkinje": {
+    label: "Purkinje network — left",
+    what: "The fastest-conducting tissue in the heart, spreading activation through the left ventricular wall from the apex upward. It is what lets the whole ventricle contract almost as one unit.",
+    ecg: ["qrs"],
+    caution: "Depolarising is not contracting. The Purkinje network delivers the signal; the muscle takes a few tens of milliseconds more to respond."
+  },
+  "right-purkinje": {
+    label: "Purkinje network — right",
+    what: "Spreads activation through the right ventricular wall from the apex upward. Reaching the ventricles this way, rather than muscle-to-muscle, is what keeps the QRS narrow.",
+    ecg: ["qrs"],
+    caution: "Depolarising is not contracting. The Purkinje network delivers the signal; the muscle takes a few tens of milliseconds more to respond."
+  }
+});
+
+/* Several drawn elements are parts of one structure. */
+Object.assign(CARDIAC.content.partAlias, {
+  "aorta-br1": "aorta",
+  "aorta-br2": "aorta",
+  "aorta-br3": "aorta",
+  "rpa": "pulmonary-artery",
+  "lpa": "pulmonary-artery",
+  "pv1": "pulmonary-veins",
+  "pv2": "pulmonary-veins"
+});
+
+</script>
+<script>
 /* 30-engine-vector.js */
 /* 30-engine-vector.js — lead geometry and dipole projection.
  *
@@ -6781,6 +7106,165 @@ Object.assign(CARDIAC.content.waveGuide, {
 
 </script>
 <script>
+/* 35-engine-partstate.js */
+/* 35-engine-partstate.js — what a given structure is doing at this instant.
+ *
+ * Generated from the frame, never authored. Twenty-five parts times seven
+ * phases would be a hundred and seventy-five strings to keep in step with a
+ * model that changes; this reads the same snapshot the drawing reads, so the
+ * words and the picture cannot disagree.
+ *
+ * The clinical-honesty rules apply here as much as anywhere: conduction
+ * structures are described as carrying or not carrying a signal, never as
+ * causing a contraction, and nothing here reports a pulse.
+ */
+(function (C) {
+  "use strict";
+
+  function pct(v) { return Math.round(C.M.clamp(v, 0, 1.1) * 100); }
+
+  /* Chamber fullness in words. A number alone invites false precision from an
+   * illustrative model. */
+  function fullness(v) {
+    var p = pct(v);
+    if (p >= 88) return "almost full";
+    if (p >= 62) return "filling well";
+    if (p >= 38) return "part full";
+    if (p >= 18) return "nearly empty";
+    return "empty";
+  }
+
+  var PHASE_DOING = {
+    "early-filling": "filling rapidly through the open AV valve",
+    "late-filling": "filling slowly — the pressure gradient has mostly equalised",
+    "atrial-systole": "receiving the atrial kick, the last of its filling",
+    "isovolumetric-contraction": "squeezing with every valve shut, building pressure but moving no blood",
+    "ventricular-ejection": "ejecting through the open semilunar valve",
+    "isovolumetric-relaxation": "relaxing with every valve shut, pressure falling",
+    "noncyclic": "not following an organised cycle"
+  };
+
+  var COND_STATE = {
+    idle: "quiet",
+    active: "carrying the impulse now",
+    spread: "carrying the impulse now",
+    held: "holding the impulse — this is the delay",
+    blocked: "blocked: the impulse is not getting through here",
+    chaotic: "firing chaotically, with no organised wavefront",
+    reentry: "carrying a wavefront that keeps circling instead of stopping"
+  };
+
+  function ventricle(side, frame) {
+    var vol = side === "left" ? frame.volumes.leftVentricle : frame.volumes.rightVentricle;
+    var doing = PHASE_DOING[frame.phase] || "between phases";
+    return "About " + fullness(vol) + ", and " + doing + ".";
+  }
+
+  function atrium(side, frame) {
+    var a = frame.volumes.atria, sq = frame.volumes.atrialContraction;
+    if (frame.volumes.quiver) {
+      return "Quivering rather than contracting, so it is not delivering an atrial kick.";
+    }
+    if (sq > 0.25) return "Contracting now, pushing its last volume into the ventricle.";
+    var av = side === "left" ? frame.valves.mitral : frame.valves.tricuspid;
+    if (av && av.open) return "About " + fullness(a) + ", draining passively into the ventricle through the open valve.";
+    return "About " + fullness(a) + ", filling from its veins while the AV valve is shut.";
+  }
+
+  function valve(name, frame) {
+    var v = frame.valves[name];
+    if (!v) return "";
+    var isAV = (name === "tricuspid" || name === "mitral");
+    if (v.open) {
+      return isAV
+        ? "Open — blood is moving from atrium to ventricle."
+        : "Open — the ventricle is ejecting through it.";
+    }
+    return isAV
+      ? "Shut — ventricular pressure is above atrial pressure, so nothing can go back."
+      : "Shut — arterial pressure is above ventricular pressure, so nothing can fall back in.";
+  }
+
+  function conduction(region, frame) {
+    var c = frame.conduction[region];
+    if (!c) return "Quiet at this instant.";
+    var word = COND_STATE[c.state] || (c.level > 0.2 ? "carrying the impulse now" : "quiet");
+    if (c.state === "idle" && c.level > 0.2) word = "carrying the impulse now";
+    return word.charAt(0).toUpperCase() + word.slice(1) + ".";
+  }
+
+  function flowing(fromId, toId, frame) {
+    for (var i = 0; i < frame.flow.length; i++) {
+      var f = frame.flow[i];
+      if (f.from === fromId || f.to === toId || f.to === fromId || f.from === toId) {
+        return f.open === undefined ? f.active : f.open;
+      }
+    }
+    return null;
+  }
+
+  var VESSEL_FLOW = {
+    "svc": "Blood is returning through it continuously — venous return does not pulse with the cycle.",
+    "ivc": "Blood is returning through it continuously — venous return does not pulse with the cycle.",
+    "pulmonary-veins": "Blood is returning from the lungs continuously, whatever the ventricles are doing."
+  };
+
+  /* The one public entry point. Returns a sentence, or "" when there is nothing
+   * honest to say about this structure at this instant. */
+  function describePart(key, frame) {
+    if (!frame) return "";
+    switch (key) {
+      case "left-ventricle":  return ventricle("left", frame);
+      case "right-ventricle": return ventricle("right", frame);
+      case "left-atrium":     return atrium("left", frame);
+      case "right-atrium":    return atrium("right", frame);
+
+      case "tricuspid": case "mitral": case "pulmonic": case "aortic":
+        return valve(key, frame);
+
+      case "chordae":
+        return (frame.valves.mitral && frame.valves.mitral.open)
+          ? "Slack — the valve is open, so nothing is pulling on them."
+          : "Taut — the valve has shut and they are holding the leaflets against ventricular pressure.";
+      case "papillary":
+        return (frame.phase === "ventricular-ejection" || frame.phase === "isovolumetric-contraction")
+          ? "Shortened with the contracting wall, keeping tension on the valve."
+          : "Relaxed with the wall around them.";
+
+      case "sa-node": case "av-node": case "his-bundle": case "bachmann":
+      case "right-bundle": case "left-bundle":
+      case "left-purkinje": case "right-purkinje":
+        return conduction(key, frame);
+
+      case "aorta":
+        return (frame.valves.aortic && frame.valves.aortic.open)
+          ? "Receiving the stroke volume now, and stretching to take it."
+          : "Its valve is shut. The elastic recoil of its wall is what keeps blood moving on through diastole.";
+      case "pulmonary-artery":
+        return (frame.valves.pulmonic && frame.valves.pulmonic.open)
+          ? "Receiving the right ventricle's output now."
+          : "Its valve is shut while the right ventricle refills.";
+
+      case "svc": case "ivc": case "pulmonary-veins":
+        return VESSEL_FLOW[key];
+
+      case "septum":
+        return conduction("left-bundle", frame) === "Quiet."
+          ? "Quiet at this instant." : "Activating — it depolarises first, and from left to right.";
+      case "junction":
+        return (frame.valves.mitral && frame.valves.mitral.open)
+          ? "Its valves are open, so atria and ventricles are connected."
+          : "Its valves are shut, sealing the ventricles off from the atria.";
+      default:
+        return "";
+    }
+  }
+
+  C.engine.partState = { describePart: describePart, fullness: fullness };
+})(CARDIAC);
+
+</script>
+<script>
 /* 40-heart-geometry.js */
 /* 40-heart-geometry.js — the anatomy, built from parameters rather than traced.
  *
@@ -7073,23 +7557,30 @@ Object.assign(CARDIAC.content.waveGuide, {
 
   /* ------------------------------------------------------- conduction system */
 
-  function conductionAnchors(lvThicken) {
+  function conductionAnchors(lvThicken, descend) {
+    /* The valve plane descends during systole and the fibrous junction goes with
+     * it (see junctionPoints). Anything sitting ON that junction has to descend
+     * by the same amount or it detaches: the AV node used to be pinned at a
+     * fixed y and visibly floated up off the heart at peak contraction. */
+    var drop = (descend || 0) * 9;
     var sept = function (s) {
-      return { x: lvCx(s) - lvOuterHalfWidth(s, lvThicken) + 6, y: lvY(s, 0) };
+      return { x: lvCx(s) - lvOuterHalfWidth(s, lvThicken) + 6, y: lvY(s, descend || 0) };
     };
     var septL = function (s) {
-      return { x: lvCx(s) - lvCavityHalfWidth(s, 0) + 3, y: lvY(s, 0) };
+      return { x: lvCx(s) - lvCavityHalfWidth(s, 0) + 3, y: lvY(s, descend || 0) };
     };
     var septR = function (s) {
-      return { x: lvCx(s) - lvOuterHalfWidth(s, lvThicken) - 4, y: lvY(s, 0) };
+      return { x: lvCx(s) - lvOuterHalfWidth(s, lvThicken) - 4, y: lvY(s, descend || 0) };
     };
     return {
       // In the atrial wall at the junction of the superior vena cava and the
-      // right atrium — inside the wall, not on the vena cava itself.
+      // right atrium — inside the wall, not on the vena cava itself. The atria
+      // do not descend, so this one stays put.
       saNode: { x: 196, y: 152 },
-      // Low in the interatrial septum, just above the valve plane.
-      avNode: { x: 248, y: 228 },
-      hisTop: { x: 246, y: 236 },
+      // Low in the interatrial septum, at the top of the fibrous junction —
+      // the apex of the triangle of Koch, just above the tricuspid annulus.
+      avNode: { x: 248, y: 233 + drop },
+      hisTop: { x: 246, y: 241 + drop },
       hisBottom: sept(0.12),
       septum: sept, septumLeft: septL, septumRight: septR
     };
@@ -7116,18 +7607,22 @@ Object.assign(CARDIAC.content.waveGuide, {
   function internodalTracts(anchors) {
     var sa = anchors.saNode, av = anchors.avNode;
     return {
+      /* All three converge INSIDE the node — the node is only 10 x 7, so an
+       * endpoint eight pixels out sits on its rim and reads as not quite
+       * arriving. They approach from different directions, which is what makes
+       * three tracts legible as three. */
       anterior: [
         { x: sa.x + 4, y: sa.y + 7 },
-        { x: 214, y: 172 }, { x: 232, y: 198 }, { x: av.x - 2, y: av.y - 8 }
+        { x: 214, y: 172 }, { x: 234, y: 200 }, { x: av.x + 1, y: av.y - 3 }
       ],
       middle: [
         { x: sa.x - 2, y: sa.y + 9 },
-        { x: 192, y: 182 }, { x: 216, y: 210 }, { x: av.x - 6, y: av.y - 4 }
+        { x: 192, y: 182 }, { x: 218, y: 212 }, { x: av.x - 3, y: av.y - 1 }
       ],
       posterior: [
         { x: sa.x - 8, y: sa.y + 8 },
-        { x: 162, y: 192 }, { x: 170, y: 226 }, { x: 210, y: 242 },
-        { x: av.x - 8, y: av.y + 3 }
+        { x: 162, y: 192 }, { x: 170, y: 226 }, { x: 212, y: av.y + 4 },
+        { x: av.x - 4, y: av.y + 2 }
       ],
       bachmann: [
         { x: sa.x + 7, y: sa.y + 2 },
@@ -7187,47 +7682,128 @@ Object.assign(CARDIAC.content.waveGuide, {
     }
     function yAt(s) { return side === "left" ? lvY(s, 0) : rvY(s, 0); }
 
+    /* Length along a polyline, optionally only as far as index `upTo`. Used to
+     * turn the tree into conduction distances. */
+    function polyLen(pts, upTo) {
+      var end = (upTo === undefined ? pts.length - 1 : upTo), d = 0;
+      for (var i = 1; i <= end; i++) {
+        d += Math.sqrt(Math.pow(pts[i].x - pts[i - 1].x, 2) +
+                       Math.pow(pts[i].y - pts[i - 1].y, 2));
+      }
+      return d;
+    }
+
     // Three trunks a side, each carrying three branches that twig again. Dense
     // enough to read as a network, but every fibre stays pinned to the
     // endocardium — what made the earlier version a scribble was fibres cutting
     // across the middle of the cavity, not the number of them.
     var walls = side === "left" ? ["sept", "free", "free"] : ["free", "sept", "free"];
+    var ORIGIN_WALL = "sept";     // both origins sit on the septal surface
+
+    /* Which way the cavity lies from a given wall. The previous single
+     * expression assumed the left ventricle's orientation for both sides, so on
+     * the right the offsets pushed fibres OUT through the free wall instead of
+     * just inside it. */
+    function inward(wall) {
+      if (side === "left") return wall === "free" ? -1 : 1;
+      return wall === "free" ? 1 : -1;
+    }
+    /* A point just inside the endocardium — where Purkinje fibres actually run. */
+    function onWall(s, wall, extra) {
+      return { x: endo(s, wall) + inward(wall) * (1.5 + (extra || 0)), y: yAt(s) };
+    }
+    function midline(s) { return (endo(s, "sept") + endo(s, "free")) / 2; }
+
+    /* Distance across the cavity at s, so branch spread can be expressed as a
+     * fraction of the space available rather than a fixed pixel count that is
+     * too wide at the apex and too narrow at the base. */
+    function cavityWidth(s) {
+      return side === "left"
+        ? 2 * lvCavityHalfWidth(s, 0)
+        : rvDepthAt(s, 0);
+    }
+    /* A point `frac` of the way from the wall toward the MIDLINE — so frac is
+     * read against the half-width, not the full wall-to-wall span. Measuring it
+     * against the full width sent branch tips 88% of the way across, which put
+     * the two sides' networks nose to nose at the septum. */
+    function offWall(s, wall, frac) {
+      var f = Math.min(frac, 0.55);
+      return { x: endo(s, wall) + inward(wall) * (cavityWidth(s) / 2) * f, y: yAt(s) };
+    }
+
     for (var w = 0; w < walls.length; w++) {
       var wall = walls[w];
       var top = 0.34 + w * 0.13;
       var trunk = [{ x: origin.x, y: origin.y }];
+      var trunkS = [apexS];
+
+      /* Fibres travel along the endocardium; they do not cut across the cavity.
+       * Both origins sit on the septal side, so a trunk bound for the free wall
+       * runs down to the apex and rounds it — where the cavity is at its
+       * narrowest — before climbing the far side. Interpolating straight to the
+       * target wall instead sent two of the three trunks slashing diagonally
+       * through the middle of the ventricle, which is anatomically wrong and was
+       * the main source of clutter in this network. */
+      var startS = apexS;
+      if (wall !== ORIGIN_WALL) {
+        trunk.push(onWall(0.95, ORIGIN_WALL)); trunkS.push(0.95);
+        trunk.push({ x: midline(0.985), y: yAt(0.985) }); trunkS.push(0.985);
+        trunk.push(onWall(0.95, wall)); trunkS.push(0.95);
+        startS = 0.95;
+      }
+
       var steps = 5;
       for (var j = 1; j <= steps; j++) {
-        var f = j / steps;
-        var s = M.lerp(apexS, top, Math.pow(f, 0.85));
-        // Reach the wall quickly, then run along it.
-        var reach = Math.min(1, f * 2.8);
-        trunk.push({ x: M.lerp(origin.x, endo(s, wall), reach) + (rand() - 0.5) * 1.5, y: yAt(s) });
+        var s = M.lerp(startS, top, Math.pow(j / steps, 0.85));
+        trunk.push(onWall(s, wall, (rand() - 0.5) * 1.5));
+        trunkS.push(s);
       }
-      out.push({ pts: trunk, order: 1 });
+      out.push({ pts: trunk, order: 1, travel: polyLen(trunk) * 0.5 });
 
+      // Branch off the upper half of the trunk, once it is running up the wall.
+      var first = trunk.length - steps + 1;
       for (var b = 0; b < 3; b++) {
-        var at = 2 + b;
+        var at = first + b;
         if (at >= trunk.length) break;
         var from = trunk[at];
-        var sHere = M.lerp(apexS, top, Math.pow(at / steps, 0.85));
-        var sUp = Math.max(0.22, sHere - 0.09 - rand() * 0.04);
-        var bx = endo(sUp, wall) + (wall === "free" ? -1 : 1) * (2 + rand() * 4);
-        var branch = [from,
-                      { x: (from.x + bx) / 2, y: (from.y + yAt(sUp)) / 2 },
-                      { x: bx, y: yAt(sUp) }];
-        out.push({ pts: branch, order: 2 });
+        var trunkTo = polyLen(trunk, at);
+        var sHere = trunkS[at];
+        /* Branches run ACROSS the wall as well as up it. The subendocardial
+         * network arborises over the endocardial surface, and pinning every
+         * order to the same vertical line turns it into a bundle of parallel
+         * wires. Spread is a fraction of the local cavity width, so it stays
+         * proportionate from the narrow apex to the wide base and never reaches
+         * the midline — which is what made the earlier version a scribble. */
+        var sUp = Math.max(0.20, sHere - 0.055 - rand() * 0.03);
+        var sMid = (sHere + sUp) / 2;
+        var reach = 0.28 + rand() * 0.12;
+        var tip = offWall(sUp, wall, reach);
+        var branch = [from, offWall(sMid, wall, reach * 0.45), tip];
+        var branchLen = polyLen(branch);
+        out.push({ pts: branch, order: 2, travel: trunkTo + branchLen * 0.5 });
 
-        // Two twigs off each branch tip, which is what makes it ramify.
+        // Two twigs off each tip: one reaching further across the wall, one
+        // continuing up it, so the network fills area rather than a line.
         for (var t2 = 0; t2 < 2; t2++) {
-          var sTip = Math.max(0.16, sUp - 0.05 - t2 * 0.045);
-          out.push({ pts: [branch[2], {
-            x: bx + (wall === "free" ? -1 : 1) * (3 + t2 * 4) + (rand() - 0.5) * 3,
-            y: yAt(sTip)
-          }], order: 3 });
+          var sTip = Math.max(0.16, sUp - 0.03 - t2 * 0.055);
+          var twig = [tip, offWall(sTip, wall, reach * (t2 === 0 ? 1.4 : 0.55))];
+          out.push({ pts: twig, order: 3,
+                     travel: trunkTo + branchLen + polyLen(twig) * 0.5 });
         }
       }
     }
+
+    /* Activation order comes from distance travelled ALONG the network, not
+     * from array order and not from straight-line distance to the apex. Array
+     * order is wrong because each of the three wall groups restarts its trunk
+     * at the origin, so entries 0, 10 and 20 are all apex trunks. Straight-line
+     * distance is wrong because a branch that doubles back toward the apex sits
+     * close to it while the impulse still had to run up the trunk to reach the
+     * branch point. Path length is what conduction time is actually made of. */
+    var maxT = 0;
+    out.forEach(function (br) { if (br.travel > maxT) maxT = br.travel; });
+    out.forEach(function (br) { br.delay = maxT > 0 ? br.travel / maxT : 0; });
+
     return out;
   }
 
@@ -7380,9 +7956,9 @@ Object.assign(CARDIAC.content.waveGuide, {
     "aortic":          { x: 268, y: 244, tx: RIGHT_TX, ty: 310, text: "Aortic valve" },
     "av-node":         { x: 248, y: 228, tx: RIGHT_TX, ty: 290, text: "AV node" },
     "his-bundle":      { x: 240, y: 266, tx: RIGHT_TX, ty: 350, text: "Bundle of His" },
-    "left-bundle":     { x: 258, y: 348, tx: RIGHT_TX, ty: 410, text: "Left bundle branch" },
+    "left-bundle":     { x: 258, y: 348, tx: RIGHT_TX, ty: 470, text: "Left bundle branch" },
     "left-ventricle":  { x: 300, y: 350, tx: RIGHT_TX, ty: 464, text: "Left ventricle" },
-    "left-purkinje":   { x: 286, y: 412, tx: RIGHT_TX, ty: 470, text: "Purkinje fibres" },
+    "left-purkinje":   { x: 286, y: 412, tx: RIGHT_TX, ty: 410, text: "Purkinje fibres" },
     "chordae":         { x: 240, y: 288, tx: RIGHT_TX, ty: 340, text: "Chordae tendineae" }
   };
 
@@ -7442,6 +8018,10 @@ Object.assign(CARDIAC.content.waveGuide, {
   "use strict";
 
   var M = C.M, GEO = C.geometry, G = GEO.G;
+
+  /* How long the wavefront takes to cross the whole Purkinje network, and
+   * how many activation samples are shared across the fibres to model it. */
+  var PURKINJE_SPREAD_MS = 38, PURKINJE_TAPS = 8;
   var NS = "http://www.w3.org/2000/svg";
 
   function el(tag, attrs, parent) {
@@ -7458,25 +8038,35 @@ Object.assign(CARDIAC.content.waveGuide, {
   var VESSELS = [
     // behind the chambers
     { id: "svc", cls: "deox", w: 29, layer: 0, d: "M198,12 C198,58 197,102 196,150" },
-    { id: "ivc", cls: "deox", w: 26, layer: 0, d: "M112,516 C116,432 122,344 136,266 C140,248 146,240 154,236" },
+    /* The inferior vena cava really does run behind the ventricular mass, but in
+     * a flat frontal cutaway that hides the thing a learner needs to see: where
+     * systemic venous return actually arrives. Held lateral to the right
+     * ventricle's silhouette until the ventricle has ended, it still enters the
+     * right atrium from below and the junction is visible. */
+    { id: "ivc", cls: "deox", w: 26, layer: 0, d: "M104,516 C100,442 96,368 96,290 C96,262 110,240 142,234" },
     { id: "pv1", cls: "ox", w: 15, layer: 0, d: "M470,150 C438,158 410,166 384,176" },
     { id: "pv2", cls: "ox", w: 15, layer: 0, d: "M466,230 C438,220 410,208 384,202" },
 
-    // aortic root and arch, in front of the atria
+    /* Pulmonary branches BEFORE the aorta, so the arch paints over them.
+     * The right branch passes behind the ascending aorta and the left branch
+     * runs underneath the arch — the ligamentum arteriosum is exactly that gap.
+     * Drawn the other way round, the left branch lay across the arch and read as
+     * deoxygenated blood running through the aorta. */
+    { id: "rpa", cls: "deox", w: 15, layer: 1, d: "M250,150 C218,120 188,108 162,112" },
+    { id: "lpa", cls: "deox", w: 15, layer: 1, d: "M250,150 C278,136 304,128 328,130" },
+
+    // aortic root and arch, in front of the atria and of both pulmonary branches
     { id: "aorta", cls: "ox", w: 25, layer: 1,
       d: "M271,250 C271,216 272,180 284,152 C302,110 350,88 380,112 C404,131 412,158 414,190" },
     { id: "aorta-br1", cls: "ox", w: 11, layer: 1, d: "M314,102 C311,84 310,68 309,54" },
     { id: "aorta-br2", cls: "ox", w: 11, layer: 1, d: "M344,94 C344,78 344,64 344,52" },
     { id: "aorta-br3", cls: "ox", w: 11, layer: 1, d: "M372,104 C376,88 378,74 379,62" },
 
-    // pulmonary trunk crossing in front of the aortic root, then its branches
-    // Springs from the top of the RIGHT VENTRICLE, crosses in front of the
-    // aortic root, and bifurcates above. Starting it any higher makes it look
-    // as though it drains an atrium.
+    // The trunk itself IS anterior to the aortic root, so it stays on top.
+    // Springing from the top of the RIGHT VENTRICLE matters: starting it any
+    // higher makes it look as though it drains an atrium.
     { id: "pulmonary-artery", cls: "deox", w: 24, layer: 2,
-      d: "M187,248 C198,212 220,180 248,152" },
-    { id: "rpa", cls: "deox", w: 15, layer: 2, d: "M250,150 C218,120 188,108 162,112" },
-    { id: "lpa", cls: "deox", w: 15, layer: 2, d: "M250,150 C284,118 316,102 342,104" }
+      d: "M187,248 C198,212 220,180 248,152" }
   ];
 
   function create(host, opts) {
@@ -7515,7 +8105,9 @@ Object.assign(CARDIAC.content.waveGuide, {
                  "stroke-width": 2.4, opacity: 0.55 }, hatch);
 
     var layers = {};
-    ["vessels", "chambers", "vesselsFront", "pathology", "valves", "flow", "conduction", "wavefront", "labels", "markers"]
+    /* No "pathology" layer: hypertrophy is drawn as real wall-thickness geometry
+       rather than a colour wash over the top, so the layer was never populated. */
+    ["vessels", "chambers", "vesselsFront", "valves", "flow", "conduction", "wavefront", "labels", "markers"]
       .forEach(function (name) {
         layers[name] = el("g", { class: "layer layer-" + name, "data-layer": name }, svg);
       if (name === "vesselsFront") layers[name].setAttribute("filter", "url(#inFront)");
@@ -7652,10 +8244,13 @@ Object.assign(CARDIAC.content.waveGuide, {
     cond.purkinje = { left: [], right: [] };
     ["left", "right"].forEach(function (side) {
       GEO.purkinjeTree(side, 1).forEach(function (br) {
-        cond.purkinje[side].push(el("path", {
-          class: "cond-purkinje cond-purkinje-" + br.order, fill: "none",
-          "data-region": side + "-purkinje", d: GEO.smoothOpenPath(br.pts)
-        }, layers.conduction));
+        cond.purkinje[side].push({
+          node: el("path", {
+            class: "cond-purkinje cond-purkinje-" + br.order, fill: "none",
+            "data-region": side + "-purkinje", d: GEO.smoothOpenPath(br.pts)
+          }, layers.conduction),
+          delay: br.delay || 0
+        });
       });
     });
 
@@ -7734,7 +8329,7 @@ Object.assign(CARDIAC.content.waveGuide, {
           pts.push({ x: pt.x, y: pt.y });
         }
         flowEls[rid].vesselRoute = pts;
-      } catch (e) { /* path not measurable; the typed route stands in */ }
+      } catch (e) { C.diag.warnings.push("route length unmeasurable: " + e.message); }
     });
 
     /* ---- labels ---- */
@@ -7952,7 +8547,9 @@ Object.assign(CARDIAC.content.waveGuide, {
     });
 
     /* Conduction. Region intensity comes straight from the event schedule. */
-    var anchors = GEO.conductionAnchors(lvThick);
+    var anchors = GEO.conductionAnchors(lvThick, descend);
+    // The nodes sit on structures that move, so they move too.
+    view.cond.avNode.setAttribute("cy", anchors.avNode.y.toFixed(1));
     var cd = frame.conduction;
 
     setNode(view.cond.saNode, cd["sa-node"]);
@@ -7960,6 +8557,13 @@ Object.assign(CARDIAC.content.waveGuide, {
 
     var hisPts = [anchors.hisTop, anchors.hisBottom];
     view.cond.his.setAttribute("d", GEO.smoothOpenPath(hisPts));
+    /* The internodal tracts terminate on the AV node, so they have to be
+     * repathed as it descends — leaving them static detached them from it by
+     * the full descent at peak systole. */
+    var liveTracts = GEO.internodalTracts(anchors);
+    ["posterior", "middle", "anterior", "bachmann"].forEach(function (k) {
+      view.cond.tracts[k].setAttribute("d", GEO.smoothOpenPath(liveTracts[k]));
+    });
     view.cond.rbb.setAttribute("d", GEO.smoothOpenPath(GEO.bundlePath(anchors, "right")));
     view.cond.lbb.setAttribute("d", GEO.smoothOpenPath(GEO.bundlePath(anchors, "left")));
     view.cond.lbbAnt.setAttribute("d", GEO.smoothOpenPath(GEO.bundlePath(anchors, "left", "anterior")));
@@ -7980,16 +8584,36 @@ Object.assign(CARDIAC.content.waveGuide, {
     setTrack(view.cond.tracts.bachmann, cd["left-atrium"] || atrialSt);
     view.cond.saRadials.forEach(function (r) { setTrack(r, cd["sa-node"]); });
 
+    /* Fibres light in sequence, apex first, the way activation really spreads.
+     *
+     * Two things had to be right for this to render at all. The value is driven
+     * through --lvl the way setTrack does for the trunks, because a presentation
+     * attribute is the weakest thing in the cascade and the stylesheet was
+     * winning. And the delay is applied in TIME rather than as a dimming: the
+     * whole Purkinje activation lasts about 22 ms and the level reaches 0.94
+     * within four of them, so subtracting each fibre's distance from its
+     * brightness squeezed the entire apex-to-base sweep into roughly two
+     * milliseconds — present in the numbers, invisible to a learner. Sampling a
+     * fibre at (t minus its own travel time) is what conduction delay physically
+     * is, and it spreads the sweep across a window you can actually watch.
+     *
+     * Nine offsets are sampled per frame and interpolated across all sixty
+     * fibres, rather than sixty separate activation lookups. */
+    var taps = [], q;
+    for (q = 0; q <= PURKINJE_TAPS; q++) {
+      taps.push(C.engine.frame.regionActivation(
+        sim.schedule, frame.tMs - (q / PURKINJE_TAPS) * PURKINJE_SPREAD_MS));
+    }
     ["left", "right"].forEach(function (side) {
-      var st = cd[side + "-purkinje"];
-      view.cond.purkinje[side].forEach(function (p, i) {
-        var lvl = st ? st.level : 0;
-        // Fibres light in sequence, apex first, the way activation really spreads.
-        var delay = i / (view.cond.purkinje[side].length + 1);
-        var v = M.clamp((lvl - delay * 0.35) / 0.65, 0, 1);
-        p.setAttribute("opacity", (0.20 + 0.80 * v).toFixed(2));
-        p.setAttribute("stroke-width", (1.5 + 2.4 * v).toFixed(2));
-        p.classList.toggle("is-active", v > 0.25);
+      var key = side + "-purkinje";
+      view.cond.purkinje[side].forEach(function (p) {
+        var g = p.delay * PURKINJE_TAPS;
+        var i0 = Math.floor(g), i1 = Math.min(PURKINJE_TAPS, i0 + 1);
+        var a = taps[i0][key], b = taps[i1][key];
+        var v = M.clamp(M.lerp(a ? a.level : 0, b ? b.level : 0, g - i0), 0, 1);
+        var s = v.toFixed(3);
+        if (p._last !== s) { p.node.style.setProperty("--lvl", s); p._last = s; }
+        p.node.classList.toggle("is-active", v > 0.25);
       });
     });
 
@@ -8146,7 +8770,7 @@ Object.assign(CARDIAC.content.waveGuide, {
       try {
         var pt = vp.getPointAtLength(vp.getTotalLength() * VESSEL_AT[vk]);
         dyn[vk] = { x: pt.x, y: pt.y };
-      } catch (e) { /* path not measurable in this environment */ }
+      } catch (e) { C.diag.warnings.push("vessel path unmeasurable: " + e.message); }
     }
 
     // Chambers: the centre of the shape as it currently stands.
@@ -8159,15 +8783,23 @@ Object.assign(CARDIAC.content.waveGuide, {
       dyn[ck] = { x: cb.x + cb.width * 0.5, y: cb.y + cb.height * 0.55 };
     }
 
-    // Valves: the middle of the annulus, which moves with the valve plane.
+    /* Valves: the middle of the annulus, which moves with the valve plane.
+     * Offset along the direction the valve OPENS (axis: +1 for the AV valves,
+     * -1 for the semilunars), not always downward. Pushing every anchor down
+     * shoved the pulmonic label into the top of the tricuspid — it ended up
+     * 1.5 px from the wrong valve and 4.5 px from its own. */
     ["tricuspid", "mitral", "aortic", "pulmonic"].forEach(function (vn) {
       var gv = vg[vn];
-      dyn[vn] = { x: (gv.x1 + gv.x2) / 2, y: gv.y + gv.span * 0.35 };
+      dyn[vn] = { x: (gv.x1 + gv.x2) / 2, y: gv.y + gv.span * 0.35 * gv.axis };
     });
 
     var septS = 0.42;
     dyn.septum = { x: GEO.lvCx(septS) - GEO.lvOuterHalfWidth(septS, lvThick) + 8,
                    y: GEO.lvY(septS, descend) };
+
+    /* Keep the live anchors on the view: the inspector uses them as the
+     * proximity fallback for structures too thin to hit natively. */
+    view.labelPos = dyn;
 
     for (var dk in dyn) {
       var lab = view.labels[dk];
@@ -8222,6 +8854,10 @@ Object.assign(CARDIAC.content.waveGuide, {
   /* With labels off there is no need for the side gutters, so the drawing gets
    * the whole panel. */
   var BOX_LABELLED = "-52 14 606 522";
+  /* Classroom text size enlarges the annotation text relative to the drawing,
+     which pushed the two longest labels past the right gutter. A slightly wider
+     box gives them room without shrinking the heart noticeably. */
+  var BOX_LABELLED_LARGE = "-62 14 632 522";
   var BOX_BARE = "86 14 400 522";
 
   function applyFocus(view, focus, labelSet, highlight) {
@@ -8233,7 +8869,10 @@ Object.assign(CARDIAC.content.waveGuide, {
       map.conduction = 1;
     }
     var wantsLabels = labelSet && labelSet !== "none";
-    view.svg.setAttribute("viewBox", wantsLabels ? BOX_LABELLED : BOX_BARE);
+    var bigText = document.documentElement.getAttribute("data-size") === "large";
+    view.svg.setAttribute("viewBox", wantsLabels
+      ? (bigText ? BOX_LABELLED_LARGE : BOX_LABELLED)
+      : BOX_BARE);
     map.wavefront = map.conduction;
     Object.keys(view.layers).forEach(function (name) {
       var o = map[name];
@@ -8245,8 +8884,13 @@ Object.assign(CARDIAC.content.waveGuide, {
     var set = GEO.LABEL_SETS[labelSet] || [];
     Object.keys(view.labels).forEach(function (key) {
       var on = set.indexOf(key) >= 0;
+      // Remember what the label-set control asked for, so a hover can light one
+      // extra label and then put things back exactly as they were.
+      view.labels[key].setAttribute("data-pinned", on ? "1" : "0");
       view.labels[key].setAttribute("opacity", on ? 1 : 0);
+      view.labels[key].classList.remove("is-hover-label");
     });
+    view._hoverLabel = null;
 
     // Spotlight: dim everything that is not the structure being talked about.
     var hi = highlight && highlight.length ? highlight : null;
@@ -8258,7 +8902,129 @@ Object.assign(CARDIAC.content.waveGuide, {
     }
   }
 
-  C.render.heart = { create: create, update: update, applyFocus: applyFocus, FOCUS_LAYERS: FOCUS_LAYERS };
+  /* ------------------------------------------------------------- inspection
+   *
+   * Hovering a structure names it; clicking asks what it is doing. The ECG has
+   * been interrogable since the beginning and the heart was not, so the causal
+   * link the product exists to teach only ran one way.
+   *
+   * Hit testing is hybrid. Native hit testing is accurate for anything with
+   * area — chambers, vessels, valve groups — but useless for a 1.3 px Purkinje
+   * twig or a chorda, so anything that misses falls back to the nearest label
+   * anchor within a radius. Those anchors are already computed from live
+   * geometry every frame, so nothing has to be kept in sync. */
+
+  var HIT_RADIUS = 26;
+  /* Small structures drawn under big ones would otherwise be unreachable: the
+   * aortic valve sits directly beneath the aortic root, and the pulmonic valve
+   * beneath the pulmonary trunk, so a native hit always returns the vessel.
+   * When one of these is close to the pointer it wins. */
+  var PRECISE = ["aortic", "pulmonic", "mitral", "tricuspid",
+                 "sa-node", "av-node", "his-bundle"];
+  var PRECISE_RADIUS = 17;
+
+  function resolveRegion(view, ev) {
+    var pt = toUser(view.svg, ev);
+
+    if (pt) {
+      var near = nearestAnchor(view, pt, PRECISE_RADIUS, PRECISE);
+      if (near) return canonical(near);
+    }
+
+    var el0 = ev.target && ev.target.closest ? ev.target.closest("[data-region]") : null;
+    if (el0) {
+      // A dimmed-out layer should not answer questions about itself.
+      var layer = el0.closest("[data-layer]");
+      if (!layer || parseFloat(layer.style.opacity || 1) >= 0.2) {
+        return canonical(el0.getAttribute("data-region"));
+      }
+    }
+    if (!pt) return null;
+    var any = nearestAnchor(view, pt, HIT_RADIUS, null);
+    return any ? canonical(any) : null;
+  }
+
+  function nearestAnchor(view, pt, radius, only) {
+    var best = null, bestD = radius, pos = view.labelPos || {};
+    Object.keys(pos).forEach(function (key) {
+      if (only && only.indexOf(canonical(key)) < 0) return;
+      var a = pos[key];
+      var d = Math.sqrt(Math.pow(a.x - pt.x, 2) + Math.pow(a.y - pt.y, 2));
+      if (d < bestD) { bestD = d; best = key; }
+    });
+    return best;
+  }
+
+  function canonical(region) {
+    if (!region) return null;
+    return (C.content.partAlias && C.content.partAlias[region]) || region;
+  }
+
+  function toUser(svg, ev) {
+    if (!svg.getScreenCTM) return null;
+    var m = svg.getScreenCTM();
+    if (!m) return null;
+    var p = svg.createSVGPoint();
+    p.x = ev.clientX; p.y = ev.clientY;
+    return p.matrixTransform(m.inverse());
+  }
+
+  /* Show one structure's label on demand, without disturbing whichever label set
+   * the user has pinned. */
+  function setHoverLabel(view, region) {
+    if (view._hoverLabel === region) return;
+    view._hoverLabel = region;
+
+    var hoverKey = null;
+    Object.keys(view.labels).forEach(function (key) {
+      var g = view.labels[key];
+      var pinned = g.getAttribute("data-pinned") === "1";
+      var isHover = region !== null && labelMatches(key, region);
+      if (isHover) hoverKey = key;
+      g.setAttribute("opacity", (pinned || isHover) ? 1 : 0);
+      g.classList.toggle("is-hover-label", !pinned && isHover);
+    });
+    if (!hoverKey) return;
+
+    /* The pinned sets are laid out so nothing inside a set collides, but a
+     * hovered label comes from outside that set and can land on top of one.
+     * The hovered label is the thing being asked about, so it wins and whatever
+     * it covers steps aside until the pointer leaves. */
+    var hb = textBox(view.labels[hoverKey]);
+    if (!hb) return;
+    Object.keys(view.labels).forEach(function (key) {
+      if (key === hoverKey) return;
+      var g = view.labels[key];
+      if (g.getAttribute("data-pinned") !== "1") return;
+      var b = textBox(g);
+      if (b && intersects(hb, b)) g.setAttribute("opacity", 0);
+    });
+  }
+
+  function textBox(g) {
+    var t = g && g.querySelector("text");
+    if (!t) return null;
+    try {
+      var b = t.getBBox();
+      // A little slack, so labels that merely graze each other also separate.
+      return { x: b.x - 3, y: b.y - 2, w: b.width + 6, h: b.height + 4 };
+    } catch (e) { return null; }
+  }
+
+  function intersects(a, b) {
+    return !(a.x + a.w < b.x || b.x + b.w < a.x ||
+             a.y + a.h < b.y || b.y + b.h < a.y);
+  }
+
+  function labelMatches(labelKey, region) {
+    return labelKey === region || canonical(labelKey) === region;
+  }
+
+  C.render.heart = {
+    create: create, update: update, applyFocus: applyFocus,
+    FOCUS_LAYERS: FOCUS_LAYERS,
+    resolveRegion: resolveRegion, canonical: canonical, setHoverLabel: setHoverLabel
+  };
 })(window.CARDIAC);
 
 </script>
@@ -9029,7 +9795,8 @@ Object.assign(CARDIAC.content.waveGuide, {
     legend.className = "tl-legend";
     [["t-p", "P"], ["t-av", "AV delay"], ["t-qrs", "QRS"], ["t-t", "T"],
      ["m-atrial", "Atrial squeeze"], ["m-ivc", "Isovolumetric"], ["m-eject", "Ejection"],
-     ["m-fill", "Passive filling"], ["m-kick", "Atrial kick"]].forEach(function (pair) {
+     ["m-fill", "Passive filling"], ["m-kick", "Atrial kick"],
+     ["m-ivr", "Isovolumetric relaxation"], ["m-none", "No effective output"]].forEach(function (pair) {
       var s = document.createElement("span");
       s.className = "tl-key";
       var sw = document.createElement("i");
@@ -10161,8 +10928,103 @@ Object.assign(CARDIAC.content.waveGuide, {
       highlightTags: [],
       spotlight: [],
       hideName: false,
-      tab: "rhythm"
+      tab: "rhythm",
+      display: "study"
     };
+  }
+
+  /* -------------------------------------------------------- display presets
+   *
+   * NOT a second mode axis. Basic/Advanced is a learner-level axis; this is a
+   * context axis, and crossing the two would give four states to design and
+   * test. Everything a projected session needs already existed as separate
+   * controls — the text-size toggle, label pinning, the rail collapse. What was
+   * missing was a way to set them together and have it stick. So these presets
+   * write existing settings and then get out of the way: change any of them
+   * afterwards and the change holds. */
+
+  var DISPLAY_PRESETS = {
+    study: {
+      label: "Study",
+      size: "normal",
+      // Labels off by default: hovering names a structure on demand, which
+      // keeps the drawing clean for someone working through it alone.
+      labels: "none",
+      railOpen: true
+    },
+    presenting: {
+      label: "Presenting",
+      size: "large",
+      // Pinned labels, because nobody is hovering a projected image, and the
+      // set follows whatever the focus mode is showing.
+      labels: "follow-focus",
+      railOpen: false
+    }
+  };
+
+  var LABELS_FOR_FOCUS = {
+    anatomy: "chambers", contraction: "chambers", integrated: "chambers",
+    conduction: "conduction", flow: "vessels"
+  };
+
+  function applyDisplay(name, opts) {
+    var p = DISPLAY_PRESETS[name] || DISPLAY_PRESETS.study;
+    app.state.display = DISPLAY_PRESETS[name] ? name : "study";
+
+    document.documentElement.setAttribute("data-size", p.size);
+    var sz = document.getElementById("sizeToggle");
+    if (sz) sz.setAttribute("aria-pressed", String(p.size === "large"));
+
+    api.setLabelSet(p.labels === "follow-focus"
+      ? (LABELS_FOR_FOCUS[app.state.focus] || "chambers")
+      : p.labels);
+    applyHeartFocus();            // size changed, so the viewBox may have too
+
+    setRail(p.railOpen);
+
+    /* Only remember a preset the user actually chose. Applying one from a
+     * shared link must not quietly reconfigure the machine it was opened on —
+     * a teacher who has set this laptop up for projection should still find it
+     * that way after following a student's link. */
+    if (!opts || opts.persist !== false) {
+      C.store.set("display", app.state.display);
+      C.store.set("size", p.size);
+    }
+    syncControls();
+    app._dirty = true;
+    if (!opts || !opts.quiet) {
+      api.announce(p.label + " display. " +
+        (p.railOpen ? "Teaching panel open." : "Teaching panel collapsed.") +
+        (p.size === "large" ? " Large text." : ""));
+    }
+  }
+
+  function setRail(open) {
+    var stage = document.getElementById("stage");
+    var btn = document.getElementById("railToggle");
+    stage.setAttribute("data-rail", open ? "open" : "closed");
+    document.getElementById("rail").hidden = !open;
+    if (btn) {
+      btn.setAttribute("aria-pressed", String(open));
+      btn.textContent = open ? "Hide panel" : "Show panel";
+    }
+  }
+
+  /* Restore the handful of display preferences worth remembering. Called
+   * BEFORE readUrl, so a shared link always wins over whatever this machine
+   * happens to have accumulated. */
+  function restorePreferences() {
+    if (/[?&]fresh=1\b/.test(location.search)) return;
+    var theme = C.store.get("theme");
+    if (theme === "dark" || theme === "light") {
+      document.documentElement.setAttribute("data-theme", theme);
+    }
+    var size = C.store.get("size");
+    if (size === "large" || size === "normal") {
+      document.documentElement.setAttribute("data-size", size);
+    }
+    var d = C.store.get("display");
+    if (DISPLAY_PRESETS[d]) app.state.display = d;
   }
 
   /* --------------------------------------------------------------- rebuild */
@@ -10203,6 +11065,213 @@ Object.assign(CARDIAC.content.waveGuide, {
     });
   }
 
+  /* A throw during init() leaves a half-built page with no signal at all, and a
+   * rejected promise leaves no signal anywhere. Route both to the same banner. */
+  function wireGlobalErrors() {
+    window.addEventListener("error", function (e) {
+      C.diag.errors.push({ where: "window", message: String(e.message || e) });
+      showFailure(e.error || e.message || e);
+    });
+    window.addEventListener("unhandledrejection", function (e) {
+      C.diag.errors.push({ where: "promise", message: String(e.reason) });
+      showFailure(e.reason);
+    });
+  }
+
+  /* ---------------------------------------------------------- heart inspector
+   *
+   * Hover names a structure; click asks what it is doing right now and
+   * highlights the part of the tracing that structure's activity shows up in.
+   * Clicking a wave already spotlights the heart — this is the same link walked
+   * backwards, which is the point of having both. */
+
+  function wireHeartInspection() {
+    var host = document.getElementById("heartHolder");
+    var svg = host && host.querySelector("svg");
+    if (!svg) return;
+
+    svg.addEventListener("pointermove", function (e) {
+      // Touch has no hover state, so a tap must not leave a label stuck on.
+      if (e.pointerType === "touch") return;
+      var r = C.render.heart.resolveRegion(app.heartView, e);
+      if (r === app._hoverPart) return;
+      app._hoverPart = r;
+      C.render.heart.setHoverLabel(app.heartView, r);
+      svg.style.cursor = r ? "pointer" : "";
+      var p = r && C.content.parts[r];
+      svg.setAttribute("title", p ? p.label : "");
+    });
+
+    svg.addEventListener("pointerleave", function () {
+      app._hoverPart = null;
+      C.render.heart.setHoverLabel(app.heartView, null);
+      svg.style.cursor = "";
+    });
+
+    svg.addEventListener("click", function (e) {
+      var r = C.render.heart.resolveRegion(app.heartView, e);
+      if (r) selectPart(r, svg);
+    });
+
+    /* One tab stop, then arrow through the parts. Twenty-five tab stops would be
+     * hostile, and the heart had no keyboard or assistive-tech story at all. */
+    svg.setAttribute("tabindex", "0");
+    svg.addEventListener("keydown", function (e) {
+      var keys = inspectableKeys();
+      if (!keys.length) return;
+      var i = keys.indexOf(app._selectedPart);
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault(); e.stopPropagation();
+        selectPart(keys[(i + 1 + keys.length) % keys.length], svg);
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault(); e.stopPropagation();
+        selectPart(keys[(i - 1 + keys.length) % keys.length], svg);
+      } else if (e.key === "Escape" && app._selectedPart) {
+        e.stopPropagation(); selectPart(null, svg);
+      }
+    });
+  }
+
+  function inspectableKeys() {
+    if (app._inspectKeys) return app._inspectKeys;
+    var svg = document.querySelector(".heart-svg");
+    if (!svg) return [];
+    var seen = {}, out = [];
+    svg.querySelectorAll("[data-region]").forEach(function (n2) {
+      var k = C.render.heart.canonical(n2.getAttribute("data-region"));
+      if (k && !seen[k] && C.content.parts[k]) { seen[k] = 1; out.push(k); }
+    });
+    app._inspectKeys = out;
+    return out;
+  }
+
+  /* Reuses the wave explainer's panel rather than adding a second explaining
+   * surface competing for the same space. */
+  function selectPart(key, opener) {
+    app._selectedPart = key || null;
+    var box = document.getElementById("waveExplainer");
+    if (!key) {
+      box.hidden = true;
+      api.setSpotlight([]); api.setHighlight([]);
+      C.render.heart.setHoverLabel(app.heartView, null);
+      app._dirty = true;
+      return;
+    }
+    var part = C.content.parts[key];
+    if (!part) return;
+
+    api.pause();
+    app._waveOpener = opener || document.activeElement || null;
+    api.setSpotlight([key]);
+    C.render.heart.setHoverLabel(app.heartView, key);
+    // The reverse link: light the stretch of tracing this structure explains.
+    api.setHighlight([]);
+    app._selectedWave = null;
+
+    document.getElementById("waveTitle").textContent = part.label;
+    var body = document.getElementById("waveBody");
+    body.innerHTML = "";
+    var doing = C.engine.partState.describePart(key, app.frame || F.frameAt(app, app.tMs));
+    [["What it is", part.what, ""],
+     ["Right now", doing, ""],
+     ["Careful", part.caution, "caution"]].forEach(function (row) {
+      if (!row[1]) return;
+      body.appendChild(h("dt", { text: row[0] }));
+      body.appendChild(h("dd", { text: row[1], class: row[2] || null }));
+    });
+
+    if (part.ecg && part.ecg.length) {
+      var seeAlso = h("dd", { class: "part-ecg" });
+      part.ecg.forEach(function (wk) {
+        var g = C.content.waveGuide[wk];
+        if (!g) return;
+        var b2 = h("button", { class: "pill", type: "button", text: g.label });
+        b2.addEventListener("click", function () { jumpToWave(wk); });
+        seeAlso.appendChild(b2);
+      });
+      if (seeAlso.childNodes.length) {
+        body.appendChild(h("dt", { text: "On the tracing" }));
+        body.appendChild(seeAlso);
+      }
+    }
+
+    box.hidden = false;
+    if (box.scrollIntoView) box.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    var wt = document.getElementById("waveTitle");
+    if (wt) { wt.setAttribute("tabindex", "-1"); wt.focus({ preventScroll: true }); }
+    api.announce(part.label + ". " + doing);
+    app._dirty = true;
+  }
+
+  /* Walk the link the other way: from a structure to the wave it explains. */
+  function jumpToWave(waveKey) {
+    var layout = app._stripLayout;
+    var regions = layout
+      ? C.render.ecg.waveRegions(app.wave, app.schedule, layout.t0, layout.durMs)
+      : null;
+    if (regions) {
+      for (var i = 0; i < regions.length; i++) {
+        if (regions[i].key === waveKey) { selectWave(regions[i]); return; }
+      }
+    }
+    api.setHighlight((C.content.waveGuide[waveKey] || {}).tags || []);
+  }
+
+  /* A teacher wants to hand students the exact view they were just looking at.
+   * Deliberately a button rather than automatic history rewriting: pushState on
+   * a file:// origin throws in some browsers, and rewriting the URL on every
+   * control change floods the back button. */
+  function shareUrl() {
+    var q = ["mode=" + app.state.mode,
+             "rhythm=" + app.state.rhythm,
+             "condition=" + app.state.condition,
+             "lead=" + app.state.selectedLead,
+             "focus=" + app.state.focus,
+             "display=" + app.state.display,
+             "seed=" + app.state.seed];
+    return location.origin + location.pathname + "?" + q.join("&");
+  }
+
+  function copyShareLink(btn) {
+    var url = shareUrl();
+    var done = function () { btn.textContent = "Link copied"; api.announce("Link copied."); };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(url).then(done, function () { showLink(btn, url); });
+    } else {
+      // file:// is not a secure context, so the clipboard API is unavailable.
+      showLink(btn, url);
+    }
+  }
+
+  function showLink(btn, url) {
+    var box = document.getElementById("shareBox");
+    if (!box) {
+      box = document.createElement("input");
+      box.id = "shareBox";
+      box.className = "share-box";
+      box.readOnly = true;
+      box.setAttribute("aria-label", "Link to this view");
+      btn.parentNode.appendChild(box);
+    }
+    box.value = url;
+    box.select();
+    btn.textContent = "Copy from the box";
+  }
+
+  /* User-initiated, therefore always wanted. The per-frame description is never
+   * announced automatically — at 1x a beat changes phase seven times a second
+   * and narrating that is worse than silence. */
+  function describeNow() {
+    api.announce(app.state.hideName
+      ? "Rhythm challenge in progress. The rhythm name is hidden until you commit."
+      : F.describe(app, app.frame || F.frameAt(app, app.tMs)));
+  }
+
+  function setLabel(id, text) {
+    var n = document.getElementById(id);
+    if (n) n.setAttribute("aria-label", text);
+  }
+
   /* ------------------------------------------------------------------ loop */
 
   function tick() {
@@ -10223,7 +11292,47 @@ Object.assign(CARDIAC.content.waveGuide, {
     if (app._dirty) { draw(); app._dirty = false; }
   }
 
+  /* An uncaught throw inside a requestAnimationFrame callback stops the loop
+   * with nothing on screen to say so — the heart keeps showing the last good
+   * frame while the ECG, timeline and readouts silently freeze. That has bitten
+   * this project already. Fail loudly, and stop rather than emit sixty errors a
+   * second. */
   function draw() {
+    try {
+      drawFrame();
+      app._drawFails = 0;
+    } catch (e) {
+      app._drawFails = (app._drawFails || 0) + 1;
+      C.diag.errors.push({ tMs: Math.round(app.tMs), rhythm: app.state.rhythm,
+                           condition: app.state.condition, message: String(e && e.message || e),
+                           stack: String(e && e.stack || "") });
+      if (window.console && console.error) console.error("cardiac draw() failed", e);
+      app.playing = false;
+      if (app._drawFails >= 3) {
+        if (app._raf) cancelAnimationFrame(app._raf);
+        app._raf = null;
+        showFailure(e);
+      }
+    }
+  }
+
+  /* Visible, not sr-only: if the simulation has stopped, a learner staring at a
+   * frozen picture needs to be told. */
+  function showFailure(e) {
+    var bar = document.getElementById("failBanner");
+    if (!bar) {
+      bar = document.createElement("div");
+      bar.id = "failBanner";
+      bar.className = "fail-banner";
+      bar.setAttribute("role", "alert");
+      document.body.appendChild(bar);
+    }
+    bar.textContent = "The simulation stopped: " + String(e && e.message || e)
+      + ". Reload the page to start again.";
+    bar.hidden = false;
+  }
+
+  function drawFrame() {
     var frame = F.frameAt(app, app.tMs);
     app.frame = frame;
 
@@ -10264,9 +11373,29 @@ Object.assign(CARDIAC.content.waveGuide, {
     renderReadouts(frame);
     renderEventChip(frame);
 
-    document.getElementById("stateSummary").textContent = app.state.hideName
-      ? "Rhythm challenge in progress. The rhythm name and measurements are hidden until you commit."
-      : F.describe(app, frame);
+    /* This is the text a screen-reader user hears when they focus the tracing.
+     * It is rebuilt on every animation frame, so write it only when the state it
+     * describes actually changed — sixty rewrites a second churns the
+     * accessibility tree for nothing, and describe() itself is not free. */
+    var sig = [app.state.rhythm, app.state.condition, app.state.selectedLead,
+               app.state.hideName, frame.phase,
+               frame.leadEvent && frame.leadEvent.id,
+               frame.outputCategory && frame.outputCategory.label,
+               frame.perfusion, frame.arrest, frame.pulse].join("|");
+    if (sig !== app._summarySig) {
+      app._summarySig = sig;
+      var summary = app.state.hideName
+        ? "Rhythm challenge in progress. The rhythm name and measurements are hidden until you commit."
+        : F.describe(app, frame);
+      document.getElementById("stateSummary").textContent = summary;
+      // Keep the canvases' own names in step, so arrowing onto the strip says
+      // what is on it rather than just "Rhythm strip".
+      var short = app.state.hideName ? "hidden for the challenge"
+        : (C.content.rhythms[app.state.rhythm] || {}).label || app.state.rhythm;
+      setLabel("stripCanvas", "Rhythm strip, " + short + ", lead " + app.state.selectedLead);
+      setLabel("detailCanvas", "One complex magnified, " + short
+                               + ", lead " + app.state.selectedLead);
+    }
   }
 
   /* The lead-as-lens overlay: the net electrical vector drawn against the
@@ -10322,8 +11451,17 @@ Object.assign(CARDIAC.content.waveGuide, {
       box.hidden = true;
       api.setHighlight([]);
       api.setSpotlight([]);
+      // Send focus back where it came from. Not a focus trap — this is an inline
+      // disclosure, not a modal — but leaving focus on a button that has just
+      // been hidden drops a keyboard user back to the top of the document.
+      if (app._waveOpener && document.contains(app._waveOpener)) app._waveOpener.focus();
+      app._waveOpener = null;
       app._dirty = true;
       return;
+    }
+    if (!app._waveOpener) {
+      app._waveOpener = (document.activeElement && document.activeElement !== document.body)
+        ? document.activeElement : null;
     }
     var g = C.content.waveGuide[region.key];
     if (!g) { box.hidden = true; return; }
@@ -10349,6 +11487,8 @@ Object.assign(CARDIAC.content.waveGuide, {
     // The panel scrolls, so an explainer that opens below the fold reads as
     // nothing having happened.
     if (box.scrollIntoView) box.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    var wt = document.getElementById("waveTitle");
+    if (wt) { wt.setAttribute("tabindex", "-1"); wt.focus({ preventScroll: true }); }
     api.announce(g.label + ". " + g.mechanical);
     app._dirty = true;
   }
@@ -10471,9 +11611,18 @@ Object.assign(CARDIAC.content.waveGuide, {
     get state() { return app.state; },
 
     announce: function (msg) {
+      // The clear-then-set trick forces a screen reader to re-read an identical
+      // string. Without holding the handle, two announcements inside the 30 ms
+      // window race and the survivor is not necessarily the later one — which
+      // applySetup triggers every time, since it sets rhythm and condition back
+      // to back.
       var live = document.getElementById("liveRegion");
+      if (app._announceTimer) clearTimeout(app._announceTimer);
       live.textContent = "";
-      setTimeout(function () { live.textContent = msg; }, 30);
+      app._announceTimer = setTimeout(function () {
+        live.textContent = msg;
+        app._announceTimer = null;
+      }, 30);
     },
 
     play: function () {
@@ -10580,6 +11729,11 @@ Object.assign(CARDIAC.content.waveGuide, {
     },
 
     setFocus: function (f) {
+      // In Presenting the label set follows the focus, since nobody is hovering
+      // a projected image to find out what they are looking at.
+      if (app.state.display === "presenting" && LABELS_FOR_FOCUS[f]) {
+        app.state.labelSet = LABELS_FOR_FOCUS[f];
+      }
       app.state.focus = f;
       if (f === "conduction" && app.state.labelSet === "chambers") app.state.labelSet = "conduction";
       applyHeartFocus(); syncControls(); app._dirty = true;
@@ -10669,6 +11823,8 @@ Object.assign(CARDIAC.content.waveGuide, {
   }
 
   function syncControls() {
+    var ds = document.getElementById("displaySelect");
+    if (ds) ds.value = app.state.display;
     var s = app.state;
 
     /* During the rhythm challenge the answer must not be readable anywhere on
@@ -10824,9 +11980,47 @@ Object.assign(CARDIAC.content.waveGuide, {
       "Space — play or pause",
       "Left and Right arrows — step to the previous or next event",
       "R — restart at the teaching start point",
+      "D — say what is happening right now",
       "1 to 5 — anatomy, conduction, contraction, flow, all together",
-      "L — switch between the single lead and the 12-lead view"
+      "L — switch between the single lead and the 12-lead view",
+      "Left and Right arrows on the teaching tabs — move between them",
+      "Escape — close the About box or an open wave explanation"
     ]));
+
+    /* Say plainly what is kept and what is not. "We remember some things" with
+     * no list is exactly the sentence that makes people distrust a tool they
+     * are asked to run on a shared machine. */
+    body.appendChild(h("h3", { text: "What this page remembers" }));
+    body.appendChild(P.list([
+      "On this computer: your theme, text size, and display preset.",
+      "Not kept anywhere: quiz answers, challenge scores, lesson progress — those " +
+        "last only while the page is open, so a shared machine never hands your " +
+        "work to the next person.",
+      "Nothing is sent anywhere. There is no account and no network call after the page loads."
+    ]));
+
+    var prefRow = h("div", { class: "about-actions" });
+    var copyBtn = h("button", { class: "btn", type: "button", text: "Copy link to this view" });
+    copyBtn.addEventListener("click", function () { copyShareLink(copyBtn); });
+    prefRow.appendChild(copyBtn);
+
+    var resetBtn = h("button", { class: "btn", type: "button", text: "Reset saved settings" });
+    resetBtn.addEventListener("click", function () {
+      C.store.clear();
+      document.documentElement.removeAttribute("data-theme");
+      document.documentElement.removeAttribute("data-size");
+      // persist:false, or "reset" would immediately write a fresh value back.
+      applyDisplay("study", { persist: false, quiet: true });
+      resetBtn.textContent = "Settings cleared";
+      api.announce("Saved settings cleared.");
+    });
+    prefRow.appendChild(resetBtn);
+    body.appendChild(prefRow);
+
+    if (!C.store.available()) {
+      body.appendChild(h("p", { class: "illustrative",
+        text: "This browser is not letting the page store anything, which is common when a file is opened directly from disk. Everything still works; your theme and text size simply reset when you reload." }));
+    }
 
     body.appendChild(h("h3", { text: "Sources" }));
     var ol = h("ol", { class: "refs" });
@@ -10849,7 +12043,11 @@ Object.assign(CARDIAC.content.waveGuide, {
     app.heartView = C.render.heart.create(document.getElementById("heartHolder"));
     app.timelineView = C.render.timeline.create(document.getElementById("timelineHost"));
 
+    restorePreferences();
     readUrl();
+    // Applied after readUrl so ?display= wins, and quietly because announcing
+    // on load would talk over a screen reader's own page summary.
+    applyDisplay(app.state.display, { quiet: true, persist: false });
     rebuild(false);
     applyHeartFocus();
     syncChrome(); syncControls(); syncPlayButton(); renderRail();
@@ -10912,15 +12110,12 @@ Object.assign(CARDIAC.content.waveGuide, {
       });
     });
 
-    on("railToggle", "click", function (e) {
-      var stage = document.getElementById("stage");
-      var open = stage.getAttribute("data-rail") !== "closed";
-      stage.setAttribute("data-rail", open ? "closed" : "open");
-      document.getElementById("rail").hidden = open;
-      e.target.setAttribute("aria-pressed", String(!open));
-      e.target.textContent = open ? "Show panel" : "Hide panel";
+    on("railToggle", "click", function () {
+      setRail(document.getElementById("stage").getAttribute("data-rail") === "closed");
       app._dirty = true;
     });
+
+    on("displaySelect", "change", function (e) { applyDisplay(e.target.value); });
 
     on("themeToggle", "click", function () {
       var root = document.documentElement;
@@ -10928,6 +12123,7 @@ Object.assign(CARDIAC.content.waveGuide, {
       var next = cur === "dark" ? "light" : cur === "light" ? "dark"
         : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "dark");
       root.setAttribute("data-theme", next);
+      C.store.set("theme", next);
       app._dirty = true;
     });
 
@@ -10936,6 +12132,8 @@ Object.assign(CARDIAC.content.waveGuide, {
       var big = root.getAttribute("data-size") === "large";
       root.setAttribute("data-size", big ? "normal" : "large");
       e.target.setAttribute("aria-pressed", String(!big));
+      C.store.set("size", big ? "normal" : "large");
+      applyHeartFocus();          // the labelled viewBox widens for large text
       app._dirty = true;
     });
 
@@ -11011,6 +12209,8 @@ Object.assign(CARDIAC.content.waveGuide, {
     });
 
     on("waveClose", "click", function () { selectWave(null); });
+    on("describeBtn", "click", function () { describeNow(); });
+    wireHeartInspection();
 
     document.addEventListener("keydown", function (e) {
       var tag = (e.target.tagName || "").toLowerCase();
@@ -11034,6 +12234,7 @@ Object.assign(CARDIAC.content.waveGuide, {
       else if (k === "ArrowRight") { e.preventDefault(); api.step(1); }
       else if (k === "ArrowLeft") { e.preventDefault(); api.step(-1); }
       else if (k === "r" || k === "R") { api.restart(); }
+      else if (k === "d" || k === "D") { describeNow(); }
       else if (k === "l" || k === "L") {
         if (app.state.mode === "advanced") api.setLeadView(app.state.leadView === "single" ? "twelve" : "single");
       }
@@ -11043,6 +12244,7 @@ Object.assign(CARDIAC.content.waveGuide, {
       else if (k === "Escape") {
         var m = document.getElementById("aboutModal");
         if (!m.hidden) { m.hidden = true; document.getElementById("aboutBtn").focus(); }
+        else if (!document.getElementById("waveExplainer").hidden) selectWave(null);
       }
     });
 
@@ -11077,6 +12279,8 @@ Object.assign(CARDIAC.content.waveGuide, {
     if (l && C.LEAD_ORDER.indexOf(l) >= 0) app.state.selectedLead = l;
     var f = q.get("focus");
     if (f && ["anatomy", "conduction", "contraction", "flow", "integrated"].indexOf(f) >= 0) app.state.focus = f;
+    var d = q.get("display");
+    if (d && DISPLAY_PRESETS[d]) app.state.display = d;
     if (app.state.leadView === "twelve") app.state.labelSet = "none";
     var seed = parseInt(q.get("seed"), 10);
     if (isFinite(seed) && seed >= 0) app.state.seed = seed >>> 0;

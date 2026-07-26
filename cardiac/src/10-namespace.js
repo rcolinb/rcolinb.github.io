@@ -15,8 +15,14 @@
       mechanisms: {},
       questions: [],
       lessons: [],
-      waveGuide: {}
+      waveGuide: {},
+      parts: {},
+      partAlias: {}
     },
+    /* Diagnostics. Populated by the render loop's error boundary and by the two
+     * places that legitimately swallow a geometry exception, so a harness can
+     * see failures that are otherwise invisible. */
+    diag: { errors: [], warnings: [] },
     engine: {},
     render: {},
     ui: {},

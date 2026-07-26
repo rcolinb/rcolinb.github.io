@@ -289,23 +289,30 @@
 
   /* ------------------------------------------------------- conduction system */
 
-  function conductionAnchors(lvThicken) {
+  function conductionAnchors(lvThicken, descend) {
+    /* The valve plane descends during systole and the fibrous junction goes with
+     * it (see junctionPoints). Anything sitting ON that junction has to descend
+     * by the same amount or it detaches: the AV node used to be pinned at a
+     * fixed y and visibly floated up off the heart at peak contraction. */
+    var drop = (descend || 0) * 9;
     var sept = function (s) {
-      return { x: lvCx(s) - lvOuterHalfWidth(s, lvThicken) + 6, y: lvY(s, 0) };
+      return { x: lvCx(s) - lvOuterHalfWidth(s, lvThicken) + 6, y: lvY(s, descend || 0) };
     };
     var septL = function (s) {
-      return { x: lvCx(s) - lvCavityHalfWidth(s, 0) + 3, y: lvY(s, 0) };
+      return { x: lvCx(s) - lvCavityHalfWidth(s, 0) + 3, y: lvY(s, descend || 0) };
     };
     var septR = function (s) {
-      return { x: lvCx(s) - lvOuterHalfWidth(s, lvThicken) - 4, y: lvY(s, 0) };
+      return { x: lvCx(s) - lvOuterHalfWidth(s, lvThicken) - 4, y: lvY(s, descend || 0) };
     };
     return {
       // In the atrial wall at the junction of the superior vena cava and the
-      // right atrium — inside the wall, not on the vena cava itself.
+      // right atrium — inside the wall, not on the vena cava itself. The atria
+      // do not descend, so this one stays put.
       saNode: { x: 196, y: 152 },
-      // Low in the interatrial septum, just above the valve plane.
-      avNode: { x: 248, y: 228 },
-      hisTop: { x: 246, y: 236 },
+      // Low in the interatrial septum, at the top of the fibrous junction —
+      // the apex of the triangle of Koch, just above the tricuspid annulus.
+      avNode: { x: 248, y: 233 + drop },
+      hisTop: { x: 246, y: 241 + drop },
       hisBottom: sept(0.12),
       septum: sept, septumLeft: septL, septumRight: septR
     };
@@ -332,18 +339,22 @@
   function internodalTracts(anchors) {
     var sa = anchors.saNode, av = anchors.avNode;
     return {
+      /* All three converge INSIDE the node — the node is only 10 x 7, so an
+       * endpoint eight pixels out sits on its rim and reads as not quite
+       * arriving. They approach from different directions, which is what makes
+       * three tracts legible as three. */
       anterior: [
         { x: sa.x + 4, y: sa.y + 7 },
-        { x: 214, y: 172 }, { x: 232, y: 198 }, { x: av.x - 2, y: av.y - 8 }
+        { x: 214, y: 172 }, { x: 234, y: 200 }, { x: av.x + 1, y: av.y - 3 }
       ],
       middle: [
         { x: sa.x - 2, y: sa.y + 9 },
-        { x: 192, y: 182 }, { x: 216, y: 210 }, { x: av.x - 6, y: av.y - 4 }
+        { x: 192, y: 182 }, { x: 218, y: 212 }, { x: av.x - 3, y: av.y - 1 }
       ],
       posterior: [
         { x: sa.x - 8, y: sa.y + 8 },
-        { x: 162, y: 192 }, { x: 170, y: 226 }, { x: 210, y: 242 },
-        { x: av.x - 8, y: av.y + 3 }
+        { x: 162, y: 192 }, { x: 170, y: 226 }, { x: 212, y: av.y + 4 },
+        { x: av.x - 4, y: av.y + 2 }
       ],
       bachmann: [
         { x: sa.x + 7, y: sa.y + 2 },
@@ -403,47 +414,128 @@
     }
     function yAt(s) { return side === "left" ? lvY(s, 0) : rvY(s, 0); }
 
+    /* Length along a polyline, optionally only as far as index `upTo`. Used to
+     * turn the tree into conduction distances. */
+    function polyLen(pts, upTo) {
+      var end = (upTo === undefined ? pts.length - 1 : upTo), d = 0;
+      for (var i = 1; i <= end; i++) {
+        d += Math.sqrt(Math.pow(pts[i].x - pts[i - 1].x, 2) +
+                       Math.pow(pts[i].y - pts[i - 1].y, 2));
+      }
+      return d;
+    }
+
     // Three trunks a side, each carrying three branches that twig again. Dense
     // enough to read as a network, but every fibre stays pinned to the
     // endocardium — what made the earlier version a scribble was fibres cutting
     // across the middle of the cavity, not the number of them.
     var walls = side === "left" ? ["sept", "free", "free"] : ["free", "sept", "free"];
+    var ORIGIN_WALL = "sept";     // both origins sit on the septal surface
+
+    /* Which way the cavity lies from a given wall. The previous single
+     * expression assumed the left ventricle's orientation for both sides, so on
+     * the right the offsets pushed fibres OUT through the free wall instead of
+     * just inside it. */
+    function inward(wall) {
+      if (side === "left") return wall === "free" ? -1 : 1;
+      return wall === "free" ? 1 : -1;
+    }
+    /* A point just inside the endocardium — where Purkinje fibres actually run. */
+    function onWall(s, wall, extra) {
+      return { x: endo(s, wall) + inward(wall) * (1.5 + (extra || 0)), y: yAt(s) };
+    }
+    function midline(s) { return (endo(s, "sept") + endo(s, "free")) / 2; }
+
+    /* Distance across the cavity at s, so branch spread can be expressed as a
+     * fraction of the space available rather than a fixed pixel count that is
+     * too wide at the apex and too narrow at the base. */
+    function cavityWidth(s) {
+      return side === "left"
+        ? 2 * lvCavityHalfWidth(s, 0)
+        : rvDepthAt(s, 0);
+    }
+    /* A point `frac` of the way from the wall toward the MIDLINE — so frac is
+     * read against the half-width, not the full wall-to-wall span. Measuring it
+     * against the full width sent branch tips 88% of the way across, which put
+     * the two sides' networks nose to nose at the septum. */
+    function offWall(s, wall, frac) {
+      var f = Math.min(frac, 0.55);
+      return { x: endo(s, wall) + inward(wall) * (cavityWidth(s) / 2) * f, y: yAt(s) };
+    }
+
     for (var w = 0; w < walls.length; w++) {
       var wall = walls[w];
       var top = 0.34 + w * 0.13;
       var trunk = [{ x: origin.x, y: origin.y }];
+      var trunkS = [apexS];
+
+      /* Fibres travel along the endocardium; they do not cut across the cavity.
+       * Both origins sit on the septal side, so a trunk bound for the free wall
+       * runs down to the apex and rounds it — where the cavity is at its
+       * narrowest — before climbing the far side. Interpolating straight to the
+       * target wall instead sent two of the three trunks slashing diagonally
+       * through the middle of the ventricle, which is anatomically wrong and was
+       * the main source of clutter in this network. */
+      var startS = apexS;
+      if (wall !== ORIGIN_WALL) {
+        trunk.push(onWall(0.95, ORIGIN_WALL)); trunkS.push(0.95);
+        trunk.push({ x: midline(0.985), y: yAt(0.985) }); trunkS.push(0.985);
+        trunk.push(onWall(0.95, wall)); trunkS.push(0.95);
+        startS = 0.95;
+      }
+
       var steps = 5;
       for (var j = 1; j <= steps; j++) {
-        var f = j / steps;
-        var s = M.lerp(apexS, top, Math.pow(f, 0.85));
-        // Reach the wall quickly, then run along it.
-        var reach = Math.min(1, f * 2.8);
-        trunk.push({ x: M.lerp(origin.x, endo(s, wall), reach) + (rand() - 0.5) * 1.5, y: yAt(s) });
+        var s = M.lerp(startS, top, Math.pow(j / steps, 0.85));
+        trunk.push(onWall(s, wall, (rand() - 0.5) * 1.5));
+        trunkS.push(s);
       }
-      out.push({ pts: trunk, order: 1 });
+      out.push({ pts: trunk, order: 1, travel: polyLen(trunk) * 0.5 });
 
+      // Branch off the upper half of the trunk, once it is running up the wall.
+      var first = trunk.length - steps + 1;
       for (var b = 0; b < 3; b++) {
-        var at = 2 + b;
+        var at = first + b;
         if (at >= trunk.length) break;
         var from = trunk[at];
-        var sHere = M.lerp(apexS, top, Math.pow(at / steps, 0.85));
-        var sUp = Math.max(0.22, sHere - 0.09 - rand() * 0.04);
-        var bx = endo(sUp, wall) + (wall === "free" ? -1 : 1) * (2 + rand() * 4);
-        var branch = [from,
-                      { x: (from.x + bx) / 2, y: (from.y + yAt(sUp)) / 2 },
-                      { x: bx, y: yAt(sUp) }];
-        out.push({ pts: branch, order: 2 });
+        var trunkTo = polyLen(trunk, at);
+        var sHere = trunkS[at];
+        /* Branches run ACROSS the wall as well as up it. The subendocardial
+         * network arborises over the endocardial surface, and pinning every
+         * order to the same vertical line turns it into a bundle of parallel
+         * wires. Spread is a fraction of the local cavity width, so it stays
+         * proportionate from the narrow apex to the wide base and never reaches
+         * the midline — which is what made the earlier version a scribble. */
+        var sUp = Math.max(0.20, sHere - 0.055 - rand() * 0.03);
+        var sMid = (sHere + sUp) / 2;
+        var reach = 0.28 + rand() * 0.12;
+        var tip = offWall(sUp, wall, reach);
+        var branch = [from, offWall(sMid, wall, reach * 0.45), tip];
+        var branchLen = polyLen(branch);
+        out.push({ pts: branch, order: 2, travel: trunkTo + branchLen * 0.5 });
 
-        // Two twigs off each branch tip, which is what makes it ramify.
+        // Two twigs off each tip: one reaching further across the wall, one
+        // continuing up it, so the network fills area rather than a line.
         for (var t2 = 0; t2 < 2; t2++) {
-          var sTip = Math.max(0.16, sUp - 0.05 - t2 * 0.045);
-          out.push({ pts: [branch[2], {
-            x: bx + (wall === "free" ? -1 : 1) * (3 + t2 * 4) + (rand() - 0.5) * 3,
-            y: yAt(sTip)
-          }], order: 3 });
+          var sTip = Math.max(0.16, sUp - 0.03 - t2 * 0.055);
+          var twig = [tip, offWall(sTip, wall, reach * (t2 === 0 ? 1.4 : 0.55))];
+          out.push({ pts: twig, order: 3,
+                     travel: trunkTo + branchLen + polyLen(twig) * 0.5 });
         }
       }
     }
+
+    /* Activation order comes from distance travelled ALONG the network, not
+     * from array order and not from straight-line distance to the apex. Array
+     * order is wrong because each of the three wall groups restarts its trunk
+     * at the origin, so entries 0, 10 and 20 are all apex trunks. Straight-line
+     * distance is wrong because a branch that doubles back toward the apex sits
+     * close to it while the impulse still had to run up the trunk to reach the
+     * branch point. Path length is what conduction time is actually made of. */
+    var maxT = 0;
+    out.forEach(function (br) { if (br.travel > maxT) maxT = br.travel; });
+    out.forEach(function (br) { br.delay = maxT > 0 ? br.travel / maxT : 0; });
+
     return out;
   }
 
@@ -596,9 +688,9 @@
     "aortic":          { x: 268, y: 244, tx: RIGHT_TX, ty: 310, text: "Aortic valve" },
     "av-node":         { x: 248, y: 228, tx: RIGHT_TX, ty: 290, text: "AV node" },
     "his-bundle":      { x: 240, y: 266, tx: RIGHT_TX, ty: 350, text: "Bundle of His" },
-    "left-bundle":     { x: 258, y: 348, tx: RIGHT_TX, ty: 410, text: "Left bundle branch" },
+    "left-bundle":     { x: 258, y: 348, tx: RIGHT_TX, ty: 470, text: "Left bundle branch" },
     "left-ventricle":  { x: 300, y: 350, tx: RIGHT_TX, ty: 464, text: "Left ventricle" },
-    "left-purkinje":   { x: 286, y: 412, tx: RIGHT_TX, ty: 470, text: "Purkinje fibres" },
+    "left-purkinje":   { x: 286, y: 412, tx: RIGHT_TX, ty: 410, text: "Purkinje fibres" },
     "chordae":         { x: 240, y: 288, tx: RIGHT_TX, ty: 340, text: "Chordae tendineae" }
   };
 

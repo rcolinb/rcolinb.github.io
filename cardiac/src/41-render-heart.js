@@ -8,6 +8,10 @@
   "use strict";
 
   var M = C.M, GEO = C.geometry, G = GEO.G;
+
+  /* How long the wavefront takes to cross the whole Purkinje network, and
+   * how many activation samples are shared across the fibres to model it. */
+  var PURKINJE_SPREAD_MS = 38, PURKINJE_TAPS = 8;
   var NS = "http://www.w3.org/2000/svg";
 
   function el(tag, attrs, parent) {
@@ -24,25 +28,35 @@
   var VESSELS = [
     // behind the chambers
     { id: "svc", cls: "deox", w: 29, layer: 0, d: "M198,12 C198,58 197,102 196,150" },
-    { id: "ivc", cls: "deox", w: 26, layer: 0, d: "M112,516 C116,432 122,344 136,266 C140,248 146,240 154,236" },
+    /* The inferior vena cava really does run behind the ventricular mass, but in
+     * a flat frontal cutaway that hides the thing a learner needs to see: where
+     * systemic venous return actually arrives. Held lateral to the right
+     * ventricle's silhouette until the ventricle has ended, it still enters the
+     * right atrium from below and the junction is visible. */
+    { id: "ivc", cls: "deox", w: 26, layer: 0, d: "M104,516 C100,442 96,368 96,290 C96,262 110,240 142,234" },
     { id: "pv1", cls: "ox", w: 15, layer: 0, d: "M470,150 C438,158 410,166 384,176" },
     { id: "pv2", cls: "ox", w: 15, layer: 0, d: "M466,230 C438,220 410,208 384,202" },
 
-    // aortic root and arch, in front of the atria
+    /* Pulmonary branches BEFORE the aorta, so the arch paints over them.
+     * The right branch passes behind the ascending aorta and the left branch
+     * runs underneath the arch — the ligamentum arteriosum is exactly that gap.
+     * Drawn the other way round, the left branch lay across the arch and read as
+     * deoxygenated blood running through the aorta. */
+    { id: "rpa", cls: "deox", w: 15, layer: 1, d: "M250,150 C218,120 188,108 162,112" },
+    { id: "lpa", cls: "deox", w: 15, layer: 1, d: "M250,150 C278,136 304,128 328,130" },
+
+    // aortic root and arch, in front of the atria and of both pulmonary branches
     { id: "aorta", cls: "ox", w: 25, layer: 1,
       d: "M271,250 C271,216 272,180 284,152 C302,110 350,88 380,112 C404,131 412,158 414,190" },
     { id: "aorta-br1", cls: "ox", w: 11, layer: 1, d: "M314,102 C311,84 310,68 309,54" },
     { id: "aorta-br2", cls: "ox", w: 11, layer: 1, d: "M344,94 C344,78 344,64 344,52" },
     { id: "aorta-br3", cls: "ox", w: 11, layer: 1, d: "M372,104 C376,88 378,74 379,62" },
 
-    // pulmonary trunk crossing in front of the aortic root, then its branches
-    // Springs from the top of the RIGHT VENTRICLE, crosses in front of the
-    // aortic root, and bifurcates above. Starting it any higher makes it look
-    // as though it drains an atrium.
+    // The trunk itself IS anterior to the aortic root, so it stays on top.
+    // Springing from the top of the RIGHT VENTRICLE matters: starting it any
+    // higher makes it look as though it drains an atrium.
     { id: "pulmonary-artery", cls: "deox", w: 24, layer: 2,
-      d: "M187,248 C198,212 220,180 248,152" },
-    { id: "rpa", cls: "deox", w: 15, layer: 2, d: "M250,150 C218,120 188,108 162,112" },
-    { id: "lpa", cls: "deox", w: 15, layer: 2, d: "M250,150 C284,118 316,102 342,104" }
+      d: "M187,248 C198,212 220,180 248,152" }
   ];
 
   function create(host, opts) {
@@ -81,7 +95,9 @@
                  "stroke-width": 2.4, opacity: 0.55 }, hatch);
 
     var layers = {};
-    ["vessels", "chambers", "vesselsFront", "pathology", "valves", "flow", "conduction", "wavefront", "labels", "markers"]
+    /* No "pathology" layer: hypertrophy is drawn as real wall-thickness geometry
+       rather than a colour wash over the top, so the layer was never populated. */
+    ["vessels", "chambers", "vesselsFront", "valves", "flow", "conduction", "wavefront", "labels", "markers"]
       .forEach(function (name) {
         layers[name] = el("g", { class: "layer layer-" + name, "data-layer": name }, svg);
       if (name === "vesselsFront") layers[name].setAttribute("filter", "url(#inFront)");
@@ -218,10 +234,13 @@
     cond.purkinje = { left: [], right: [] };
     ["left", "right"].forEach(function (side) {
       GEO.purkinjeTree(side, 1).forEach(function (br) {
-        cond.purkinje[side].push(el("path", {
-          class: "cond-purkinje cond-purkinje-" + br.order, fill: "none",
-          "data-region": side + "-purkinje", d: GEO.smoothOpenPath(br.pts)
-        }, layers.conduction));
+        cond.purkinje[side].push({
+          node: el("path", {
+            class: "cond-purkinje cond-purkinje-" + br.order, fill: "none",
+            "data-region": side + "-purkinje", d: GEO.smoothOpenPath(br.pts)
+          }, layers.conduction),
+          delay: br.delay || 0
+        });
       });
     });
 
@@ -300,7 +319,7 @@
           pts.push({ x: pt.x, y: pt.y });
         }
         flowEls[rid].vesselRoute = pts;
-      } catch (e) { /* path not measurable; the typed route stands in */ }
+      } catch (e) { C.diag.warnings.push("route length unmeasurable: " + e.message); }
     });
 
     /* ---- labels ---- */
@@ -518,7 +537,9 @@
     });
 
     /* Conduction. Region intensity comes straight from the event schedule. */
-    var anchors = GEO.conductionAnchors(lvThick);
+    var anchors = GEO.conductionAnchors(lvThick, descend);
+    // The nodes sit on structures that move, so they move too.
+    view.cond.avNode.setAttribute("cy", anchors.avNode.y.toFixed(1));
     var cd = frame.conduction;
 
     setNode(view.cond.saNode, cd["sa-node"]);
@@ -526,6 +547,13 @@
 
     var hisPts = [anchors.hisTop, anchors.hisBottom];
     view.cond.his.setAttribute("d", GEO.smoothOpenPath(hisPts));
+    /* The internodal tracts terminate on the AV node, so they have to be
+     * repathed as it descends — leaving them static detached them from it by
+     * the full descent at peak systole. */
+    var liveTracts = GEO.internodalTracts(anchors);
+    ["posterior", "middle", "anterior", "bachmann"].forEach(function (k) {
+      view.cond.tracts[k].setAttribute("d", GEO.smoothOpenPath(liveTracts[k]));
+    });
     view.cond.rbb.setAttribute("d", GEO.smoothOpenPath(GEO.bundlePath(anchors, "right")));
     view.cond.lbb.setAttribute("d", GEO.smoothOpenPath(GEO.bundlePath(anchors, "left")));
     view.cond.lbbAnt.setAttribute("d", GEO.smoothOpenPath(GEO.bundlePath(anchors, "left", "anterior")));
@@ -546,16 +574,36 @@
     setTrack(view.cond.tracts.bachmann, cd["left-atrium"] || atrialSt);
     view.cond.saRadials.forEach(function (r) { setTrack(r, cd["sa-node"]); });
 
+    /* Fibres light in sequence, apex first, the way activation really spreads.
+     *
+     * Two things had to be right for this to render at all. The value is driven
+     * through --lvl the way setTrack does for the trunks, because a presentation
+     * attribute is the weakest thing in the cascade and the stylesheet was
+     * winning. And the delay is applied in TIME rather than as a dimming: the
+     * whole Purkinje activation lasts about 22 ms and the level reaches 0.94
+     * within four of them, so subtracting each fibre's distance from its
+     * brightness squeezed the entire apex-to-base sweep into roughly two
+     * milliseconds — present in the numbers, invisible to a learner. Sampling a
+     * fibre at (t minus its own travel time) is what conduction delay physically
+     * is, and it spreads the sweep across a window you can actually watch.
+     *
+     * Nine offsets are sampled per frame and interpolated across all sixty
+     * fibres, rather than sixty separate activation lookups. */
+    var taps = [], q;
+    for (q = 0; q <= PURKINJE_TAPS; q++) {
+      taps.push(C.engine.frame.regionActivation(
+        sim.schedule, frame.tMs - (q / PURKINJE_TAPS) * PURKINJE_SPREAD_MS));
+    }
     ["left", "right"].forEach(function (side) {
-      var st = cd[side + "-purkinje"];
-      view.cond.purkinje[side].forEach(function (p, i) {
-        var lvl = st ? st.level : 0;
-        // Fibres light in sequence, apex first, the way activation really spreads.
-        var delay = i / (view.cond.purkinje[side].length + 1);
-        var v = M.clamp((lvl - delay * 0.35) / 0.65, 0, 1);
-        p.setAttribute("opacity", (0.20 + 0.80 * v).toFixed(2));
-        p.setAttribute("stroke-width", (1.5 + 2.4 * v).toFixed(2));
-        p.classList.toggle("is-active", v > 0.25);
+      var key = side + "-purkinje";
+      view.cond.purkinje[side].forEach(function (p) {
+        var g = p.delay * PURKINJE_TAPS;
+        var i0 = Math.floor(g), i1 = Math.min(PURKINJE_TAPS, i0 + 1);
+        var a = taps[i0][key], b = taps[i1][key];
+        var v = M.clamp(M.lerp(a ? a.level : 0, b ? b.level : 0, g - i0), 0, 1);
+        var s = v.toFixed(3);
+        if (p._last !== s) { p.node.style.setProperty("--lvl", s); p._last = s; }
+        p.node.classList.toggle("is-active", v > 0.25);
       });
     });
 
@@ -712,7 +760,7 @@
       try {
         var pt = vp.getPointAtLength(vp.getTotalLength() * VESSEL_AT[vk]);
         dyn[vk] = { x: pt.x, y: pt.y };
-      } catch (e) { /* path not measurable in this environment */ }
+      } catch (e) { C.diag.warnings.push("vessel path unmeasurable: " + e.message); }
     }
 
     // Chambers: the centre of the shape as it currently stands.
@@ -725,15 +773,23 @@
       dyn[ck] = { x: cb.x + cb.width * 0.5, y: cb.y + cb.height * 0.55 };
     }
 
-    // Valves: the middle of the annulus, which moves with the valve plane.
+    /* Valves: the middle of the annulus, which moves with the valve plane.
+     * Offset along the direction the valve OPENS (axis: +1 for the AV valves,
+     * -1 for the semilunars), not always downward. Pushing every anchor down
+     * shoved the pulmonic label into the top of the tricuspid — it ended up
+     * 1.5 px from the wrong valve and 4.5 px from its own. */
     ["tricuspid", "mitral", "aortic", "pulmonic"].forEach(function (vn) {
       var gv = vg[vn];
-      dyn[vn] = { x: (gv.x1 + gv.x2) / 2, y: gv.y + gv.span * 0.35 };
+      dyn[vn] = { x: (gv.x1 + gv.x2) / 2, y: gv.y + gv.span * 0.35 * gv.axis };
     });
 
     var septS = 0.42;
     dyn.septum = { x: GEO.lvCx(septS) - GEO.lvOuterHalfWidth(septS, lvThick) + 8,
                    y: GEO.lvY(septS, descend) };
+
+    /* Keep the live anchors on the view: the inspector uses them as the
+     * proximity fallback for structures too thin to hit natively. */
+    view.labelPos = dyn;
 
     for (var dk in dyn) {
       var lab = view.labels[dk];
@@ -788,6 +844,10 @@
   /* With labels off there is no need for the side gutters, so the drawing gets
    * the whole panel. */
   var BOX_LABELLED = "-52 14 606 522";
+  /* Classroom text size enlarges the annotation text relative to the drawing,
+     which pushed the two longest labels past the right gutter. A slightly wider
+     box gives them room without shrinking the heart noticeably. */
+  var BOX_LABELLED_LARGE = "-62 14 632 522";
   var BOX_BARE = "86 14 400 522";
 
   function applyFocus(view, focus, labelSet, highlight) {
@@ -799,7 +859,10 @@
       map.conduction = 1;
     }
     var wantsLabels = labelSet && labelSet !== "none";
-    view.svg.setAttribute("viewBox", wantsLabels ? BOX_LABELLED : BOX_BARE);
+    var bigText = document.documentElement.getAttribute("data-size") === "large";
+    view.svg.setAttribute("viewBox", wantsLabels
+      ? (bigText ? BOX_LABELLED_LARGE : BOX_LABELLED)
+      : BOX_BARE);
     map.wavefront = map.conduction;
     Object.keys(view.layers).forEach(function (name) {
       var o = map[name];
@@ -811,8 +874,13 @@
     var set = GEO.LABEL_SETS[labelSet] || [];
     Object.keys(view.labels).forEach(function (key) {
       var on = set.indexOf(key) >= 0;
+      // Remember what the label-set control asked for, so a hover can light one
+      // extra label and then put things back exactly as they were.
+      view.labels[key].setAttribute("data-pinned", on ? "1" : "0");
       view.labels[key].setAttribute("opacity", on ? 1 : 0);
+      view.labels[key].classList.remove("is-hover-label");
     });
+    view._hoverLabel = null;
 
     // Spotlight: dim everything that is not the structure being talked about.
     var hi = highlight && highlight.length ? highlight : null;
@@ -824,5 +892,127 @@
     }
   }
 
-  C.render.heart = { create: create, update: update, applyFocus: applyFocus, FOCUS_LAYERS: FOCUS_LAYERS };
+  /* ------------------------------------------------------------- inspection
+   *
+   * Hovering a structure names it; clicking asks what it is doing. The ECG has
+   * been interrogable since the beginning and the heart was not, so the causal
+   * link the product exists to teach only ran one way.
+   *
+   * Hit testing is hybrid. Native hit testing is accurate for anything with
+   * area — chambers, vessels, valve groups — but useless for a 1.3 px Purkinje
+   * twig or a chorda, so anything that misses falls back to the nearest label
+   * anchor within a radius. Those anchors are already computed from live
+   * geometry every frame, so nothing has to be kept in sync. */
+
+  var HIT_RADIUS = 26;
+  /* Small structures drawn under big ones would otherwise be unreachable: the
+   * aortic valve sits directly beneath the aortic root, and the pulmonic valve
+   * beneath the pulmonary trunk, so a native hit always returns the vessel.
+   * When one of these is close to the pointer it wins. */
+  var PRECISE = ["aortic", "pulmonic", "mitral", "tricuspid",
+                 "sa-node", "av-node", "his-bundle"];
+  var PRECISE_RADIUS = 17;
+
+  function resolveRegion(view, ev) {
+    var pt = toUser(view.svg, ev);
+
+    if (pt) {
+      var near = nearestAnchor(view, pt, PRECISE_RADIUS, PRECISE);
+      if (near) return canonical(near);
+    }
+
+    var el0 = ev.target && ev.target.closest ? ev.target.closest("[data-region]") : null;
+    if (el0) {
+      // A dimmed-out layer should not answer questions about itself.
+      var layer = el0.closest("[data-layer]");
+      if (!layer || parseFloat(layer.style.opacity || 1) >= 0.2) {
+        return canonical(el0.getAttribute("data-region"));
+      }
+    }
+    if (!pt) return null;
+    var any = nearestAnchor(view, pt, HIT_RADIUS, null);
+    return any ? canonical(any) : null;
+  }
+
+  function nearestAnchor(view, pt, radius, only) {
+    var best = null, bestD = radius, pos = view.labelPos || {};
+    Object.keys(pos).forEach(function (key) {
+      if (only && only.indexOf(canonical(key)) < 0) return;
+      var a = pos[key];
+      var d = Math.sqrt(Math.pow(a.x - pt.x, 2) + Math.pow(a.y - pt.y, 2));
+      if (d < bestD) { bestD = d; best = key; }
+    });
+    return best;
+  }
+
+  function canonical(region) {
+    if (!region) return null;
+    return (C.content.partAlias && C.content.partAlias[region]) || region;
+  }
+
+  function toUser(svg, ev) {
+    if (!svg.getScreenCTM) return null;
+    var m = svg.getScreenCTM();
+    if (!m) return null;
+    var p = svg.createSVGPoint();
+    p.x = ev.clientX; p.y = ev.clientY;
+    return p.matrixTransform(m.inverse());
+  }
+
+  /* Show one structure's label on demand, without disturbing whichever label set
+   * the user has pinned. */
+  function setHoverLabel(view, region) {
+    if (view._hoverLabel === region) return;
+    view._hoverLabel = region;
+
+    var hoverKey = null;
+    Object.keys(view.labels).forEach(function (key) {
+      var g = view.labels[key];
+      var pinned = g.getAttribute("data-pinned") === "1";
+      var isHover = region !== null && labelMatches(key, region);
+      if (isHover) hoverKey = key;
+      g.setAttribute("opacity", (pinned || isHover) ? 1 : 0);
+      g.classList.toggle("is-hover-label", !pinned && isHover);
+    });
+    if (!hoverKey) return;
+
+    /* The pinned sets are laid out so nothing inside a set collides, but a
+     * hovered label comes from outside that set and can land on top of one.
+     * The hovered label is the thing being asked about, so it wins and whatever
+     * it covers steps aside until the pointer leaves. */
+    var hb = textBox(view.labels[hoverKey]);
+    if (!hb) return;
+    Object.keys(view.labels).forEach(function (key) {
+      if (key === hoverKey) return;
+      var g = view.labels[key];
+      if (g.getAttribute("data-pinned") !== "1") return;
+      var b = textBox(g);
+      if (b && intersects(hb, b)) g.setAttribute("opacity", 0);
+    });
+  }
+
+  function textBox(g) {
+    var t = g && g.querySelector("text");
+    if (!t) return null;
+    try {
+      var b = t.getBBox();
+      // A little slack, so labels that merely graze each other also separate.
+      return { x: b.x - 3, y: b.y - 2, w: b.width + 6, h: b.height + 4 };
+    } catch (e) { return null; }
+  }
+
+  function intersects(a, b) {
+    return !(a.x + a.w < b.x || b.x + b.w < a.x ||
+             a.y + a.h < b.y || b.y + b.h < a.y);
+  }
+
+  function labelMatches(labelKey, region) {
+    return labelKey === region || canonical(labelKey) === region;
+  }
+
+  C.render.heart = {
+    create: create, update: update, applyFocus: applyFocus,
+    FOCUS_LAYERS: FOCUS_LAYERS,
+    resolveRegion: resolveRegion, canonical: canonical, setHoverLabel: setHoverLabel
+  };
 })(window.CARDIAC);

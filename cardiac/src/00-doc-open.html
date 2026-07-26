@@ -24,12 +24,12 @@
 
     <div class="field">
       <label for="rhythmSelect">Rhythm</label>
-      <select id="rhythmSelect"></select>
+      <select id="rhythmSelect" aria-label="Rhythm"></select>
     </div>
 
     <div class="field" id="conditionField">
       <label for="conditionSelect">Condition</label>
-      <select id="conditionSelect"></select>
+      <select id="conditionSelect" aria-label="Condition"></select>
     </div>
 
     <span class="topbar-spacer"></span>
@@ -37,6 +37,14 @@
     <div class="segmented" role="group" aria-label="ECG view" id="viewToggle" hidden>
       <button type="button" id="viewSingle" aria-pressed="false">Single lead</button>
       <button type="button" id="viewTwelve" aria-pressed="true">12-lead</button>
+    </div>
+
+    <div class="field" id="displayField">
+      <label for="displaySelect">Display</label>
+      <select id="displaySelect" aria-label="Display preset">
+        <option value="study">Study</option>
+        <option value="presenting">Presenting</option>
+      </select>
     </div>
 
     <button type="button" class="btn btn-ghost btn-icon" id="sizeToggle" aria-pressed="false"
@@ -87,13 +95,13 @@
       </div>
       <div class="panel-body">
         <div class="ecg-canvas-wrap ecg-strip-wrap" id="stripWrap">
-          <canvas id="stripCanvas" aria-label="Rhythm strip"></canvas>
+          <canvas id="stripCanvas" tabindex="0" aria-describedby="stateSummary" aria-label="Rhythm strip"></canvas>
         </div>
         <div class="ecg-canvas-wrap ecg-detail-wrap" id="detailWrap">
-          <canvas id="detailCanvas" aria-label="One complex magnified, with each wave named and the intervals marked"></canvas>
+          <canvas id="detailCanvas" tabindex="0" aria-describedby="stateSummary" aria-label="One complex magnified, with each wave named and the intervals marked"></canvas>
         </div>
         <div class="ecg-canvas-wrap ecg-twelve-wrap" id="twelveWrap" hidden>
-          <canvas id="twelveCanvas" aria-label="Twelve-lead electrocardiogram, all leads recorded at the same moment"></canvas>
+          <canvas id="twelveCanvas" tabindex="0" aria-describedby="stateSummary" aria-label="Twelve-lead electrocardiogram, all leads recorded at the same moment"></canvas>
         </div>
         <div class="lens-row" id="lensRow" hidden>
           <div class="lens-canvas">
@@ -141,6 +149,9 @@
     <button type="button" class="btn btn-icon" id="prevBtn" title="Previous event" aria-label="Previous event">◀◀</button>
     <button type="button" class="btn btn-primary btn-icon" id="playBtn" aria-label="Play" aria-pressed="false">▶</button>
     <button type="button" class="btn btn-icon" id="nextBtn" title="Next event" aria-label="Next event">▶▶</button>
+    <button type="button" class="btn btn-icon" id="describeBtn"
+            title="Describe what is happening right now (D)"
+            aria-label="Describe what is happening right now">🗣</button>
 
     <div class="speed-wrap">
       <label for="speedRange" class="sr-only">Animation speed</label>

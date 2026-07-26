@@ -17,15 +17,46 @@ access after it loads.
 - **Shared as a file:** send `index.html` to students. Double-clicking it works — it runs from
   `file://` as well as over HTTP.
 - **Deep links:** `?mode=advanced&rhythm=af&condition=hyperkalemia&lead=V1&focus=conduction&seed=4182`
+  — "Copy link to this view" in the About box builds one for whatever is on screen.
+  `?fresh=1` ignores anything this machine has remembered, which is what you want on a lectern.
+
+**Two display presets, not two modes.** `Study` keeps labels off (hover names a structure on demand)
+and the teaching panel open. `Presenting` turns on classroom text size, pins the label set to
+whatever the focus mode is showing, and collapses the panel. Both only write settings that already
+existed as their own controls, so anything a preset sets can be changed afterwards and the change
+holds. This is deliberately not a second mode axis — `Basic`/`Advanced` is a *learner level*, this is
+a *context*, and crossing them would give four states to design and test instead of two of each.
 
 Keyboard: space plays and pauses, arrow keys step event by event, `R` restarts at the teaching start
 point, `1`–`5` switch focus modes, `L` toggles the 12-lead view.
+
+**Click the heart.** Hovering a structure names it; clicking asks what it is and what it is doing at
+the instant you paused on. The second half is generated from the frame rather than authored, so the
+words cannot drift out of step with the drawing. Clicking a structure also highlights the stretch of
+tracing its activity appears in — the reverse of clicking a wave and watching the heart light up.
+Click the AV node and the PR segment lights: the causal claim is walkable in both directions.
+
+The heart takes one tab stop and arrow keys move between structures, which is also the first
+assistive-technology route into the illustration.
 
 **Click the tracing.** Hovering the rhythm strip or the magnified complex outlines the wave under the
 pointer; clicking it pauses there, spotlights what the heart is doing at that instant, and explains
 the wave beside it. The clickable parts include the stretches *between* waves — clicking the flat ST
 segment is how a student finds out it is when ejection happens, and clicking the PR segment is how
 they find out the flat line is the AV delay the atrial kick fits into.
+
+## What it remembers
+
+Theme, text size and display preset, on that computer. Nothing else — no quiz answers, no challenge
+scores, no lesson progress. Those last only while the page is open, which is the right call for a
+tool that runs on shared classroom and library machines: inheriting the previous student's score is
+a privacy problem and a confusion problem, and it buys nobody anything. Nothing is sent anywhere,
+and "Reset saved settings" in the About box clears what little there is.
+
+A shared link overrides the local preset for that session but never overwrites it, so following a
+student's link on a lectern laptop does not silently undo the projection setup. Storage access is
+guarded throughout: `localStorage` throws on a `file://` origin in some browsers, and this ships as
+a file people open from disk.
 
 ## What it teaches
 
@@ -119,7 +150,11 @@ three internodal tracts rather than one wire, Bachmann's bundle carrying the imp
 left atrium, the AV node and His bundle, a right bundle branch as a discrete cord and a left bundle
 branch fanning into anterior and posterior fascicles, and a Purkinje network that branches to three
 orders along the endocardium. A bright marker travels the pathway in real time, pausing at the AV
-node during the PR segment and turning red at a block. Atrial depolarisation lights the atrial wall
+node during the PR segment and turning red at a block. The Purkinje network lights apex-first, each
+fibre sampled at its own travel time along the tree — conduction delay is a delay in *time*, and
+modelling it as a reduction in brightness compressed the whole sweep into about two milliseconds.
+Fibres run subendocardially, down the septum and round the apex rather than across the cavity, and
+arborise horizontally over each free wall. Atrial depolarisation lights the atrial wall
 itself rather than drawing arcs through the cavity — the muscle changes state, and rings propagating
 through space were clutter that added nothing the tracts and the marker did not already show.
 
@@ -142,6 +177,17 @@ they park at fixed stations rather than disappearing, because direction is the i
 does not require animation. They remain gated on valve state: an arrow drawn across a shut valve
 would assert flow that is not happening. Watch the isovolumetric period, where all four valves are
 shut and only the venous return arrows keep moving.
+
+### Things that must move together
+
+Anything drawn on a structure that moves has to move with it. The valve plane descends during
+systole, so the AV node, the internodal tracts that terminate on it, the His bundle and the bundle
+branches all descend with it — pinning the node at a fixed y left it visibly floating off the heart
+at peak contraction, and left the three tracts ending in mid-air.
+
+Depth ordering is load-bearing too. The pulmonary trunk is anterior to the aortic root and stays on
+top; both its branches pass behind the arch, because drawn the other way the left branch lay across
+the aorta and read as deoxygenated blood running through it.
 
 ### Scales
 

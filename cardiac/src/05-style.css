@@ -32,6 +32,8 @@
   --ecg-grid-major: #E9AAA0;
   --wave-highlight: rgba(237, 181, 46, 0.26);
 
+  --layer-cellular: #6C4E8C;
+
   --myo: #D8C4B4;
   --myo-edge: #A98B76;
   --blood-ox: #C4674C;
@@ -39,7 +41,6 @@
 
   --font-ui: "Aptos", "Calibri", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
   --font-display: Georgia, "Times New Roman", serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s6: 24px; --s8: 32px; --s12: 48px;
   --radius: 8px;
@@ -73,6 +74,8 @@
   --ecg-grid-major: #55322A;
   --wave-highlight: rgba(237, 181, 46, 0.20);
 
+  --layer-cellular: #B79AD4;
+
   --myo: #4A4034;
   --myo-edge: #6E6050;
   --blood-ox: #8E4433;
@@ -91,6 +94,7 @@
     --ecg-paper: #14140F; --ecg-trace: #F2EDE4;
     --ecg-grid-minor: #38251F; --ecg-grid-major: #55322A;
     --wave-highlight: rgba(237, 181, 46, 0.20);
+    --layer-cellular: #B79AD4;
     --myo: #4A4034; --myo-edge: #6E6050; --blood-ox: #8E4433; --blood-deox: #2F5F70;
     --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
   }
@@ -160,7 +164,13 @@ button, select, input { font: inherit; color: inherit; }
   .segmented button { padding: 7px 12px; font-size: 13px; }
 }
 @media (max-width: 1240px) {
-  .topbar .field > label { display: none; }
+  /* Clip rather than display:none. These two labels are the only accessible
+     name Rhythm and Condition have, and display:none removes the control's name
+     as well as its text in at least one major screen reader. */
+  .topbar .field > label {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
 }
 
 .brand {
@@ -185,6 +195,8 @@ button, select, input { font: inherit; color: inherit; }
   appearance: none; border: 0; background: transparent; cursor: pointer;
   padding: 7px 15px; border-radius: 999px; font-size: 14px; font-weight: 600;
   color: var(--muted); white-space: nowrap;
+  /* 44 would burst the 52px topbar this control lives in; 40 is the compromise. */
+  min-height: 40px;
 }
 .segmented button[aria-pressed="true"] {
   background: var(--accent); color: var(--on-accent);
@@ -197,7 +209,7 @@ button, select, input { font: inherit; color: inherit; }
   border: 1px solid var(--rule-strong); border-radius: var(--radius);
   padding: 8px 13px; font-size: 14px; font-weight: 600;
   display: inline-flex; align-items: center; gap: 7px;
-  min-height: 40px;
+  min-height: 44px;
 }
 .btn:hover { border-color: var(--accent); color: var(--accent); }
 .btn[aria-pressed="true"], .btn.is-active { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
@@ -206,7 +218,7 @@ button, select, input { font: inherit; color: inherit; }
 .btn-ghost { background: transparent; border-color: transparent; }
 #aboutBtn { gap: 5px; }
 .btn-ghost:hover { background: var(--white); }
-.btn-icon { padding: 8px; min-width: 40px; justify-content: center; }
+.btn-icon { padding: 8px; min-width: 44px; justify-content: center; }
 .btn:disabled { opacity: .42; cursor: not-allowed; }
 
 .field { display: inline-flex; flex-direction: column; gap: 3px; min-width: 0; }
@@ -324,11 +336,9 @@ button, select, input { font: inherit; color: inherit; }
   stroke: var(--conduction); stroke-width: 2.2; stroke-linecap: round;
   opacity: calc(.4 + var(--lvl, 0) * .6);
 }
-.cond-tract { stroke-width: calc(3.4px + var(--lvl, 0) * 3.4px); }
-.cond-fascicle { stroke-width: calc(2.6px + var(--lvl, 0) * 2.6px); opacity: calc(.44 + var(--lvl, 0) * .56); }
-.cond-purkinje-1 { stroke-width: 2.6; }
-.cond-purkinje-2 { stroke-width: 1.9; }
-.cond-purkinje-3 { stroke-width: 1.3; opacity: calc(.42 + var(--lvl, 0) * .58); }
+/* Widths for the specific pathway classes live BELOW the general .cond-track /
+   .cond-purkinje rules — at equal specificity the later rule wins, and having
+   them here meant every one of them was silently dead. */
 
 .chamber.is-hypertrophied .myo { fill: color-mix(in srgb, var(--myo) 78%, var(--accent)); }
 
@@ -359,7 +369,22 @@ button, select, input { font: inherit; color: inherit; }
 .cond-bundle { stroke-width: calc(3.6px + var(--lvl, 0) * 3.4px); }
 .cond-track-shadow { stroke: var(--myo-edge); stroke-width: 9; opacity: .35; fill: none;
   stroke-linecap: round; stroke-linejoin: round; }
-.cond-purkinje { stroke-width: 2.2; }
+
+/* Internodal tracts stay thinner than the His trunk, and the left fascicles
+   thinner than the bundle they fan off. Both must come after the general rules
+   they refine. */
+.cond-tract { stroke-width: calc(3.4px + var(--lvl, 0) * 3.4px); }
+.cond-fascicle { stroke-width: calc(2.6px + var(--lvl, 0) * 2.6px); }
+
+/* The Purkinje network keeps the same 0.5 resting floor as the rest of the
+   pathway — it has to stay legible on a projector — and brightens and thickens
+   as the wavefront reaches each fibre. One ramp for all three orders; the order
+   distinction is carried by width, which does not fight the legibility floor. */
+.cond-purkinje { opacity: calc(.5 + var(--lvl, 0) * .5); }
+.cond-purkinje-1 { stroke-width: calc(2.6px + var(--lvl, 0) * 1.8px); }
+.cond-purkinje-2 { stroke-width: calc(1.9px + var(--lvl, 0) * 1.5px); }
+.cond-purkinje-3 { stroke-width: calc(1.3px + var(--lvl, 0) * 1.2px); }
+
 .cond-track.is-active, .cond-purkinje.is-active { filter: url(#condGlow); stroke: var(--conduction-bright); }
 
 /* The travelling impulse. A moving marker reads instantly at any playback
@@ -394,6 +419,18 @@ button, select, input { font: inherit; color: inherit; }
 .heart-svg.has-spotlight .layer-chambers,
 .heart-svg.has-spotlight .layer-vessels { opacity: .34; }
 .heart-svg.has-spotlight [data-region].is-spotlit { opacity: 1 !important; }
+
+/* ...except the conduction pathway, which encodes activation level IN opacity.
+   Forcing it to 1 flattens the very apex-first ramp a Purkinje spotlight exists
+   to show — and the QRS wave explainer and three lesson steps all spotlight it.
+   Those keep their ramp and take their emphasis from the glow instead. */
+.heart-svg.has-spotlight .cond-track.is-spotlit,
+.heart-svg.has-spotlight .cond-radial.is-spotlit,
+.heart-svg.has-spotlight .cond-purkinje.is-spotlit {
+  opacity: calc(.5 + var(--lvl, 0) * .5) !important;
+  filter: drop-shadow(0 0 6px var(--conduction-bright));
+}
+
 .heart-svg.has-spotlight .chamber.is-spotlit,
 .heart-svg.has-spotlight .valve.is-spotlit { filter: drop-shadow(0 0 7px var(--conduction-bright)); }
 
@@ -601,7 +638,7 @@ button, select, input { font: inherit; color: inherit; }
   background: var(--paper); color: var(--muted); border: 1px solid var(--rule);
 }
 .chain .layer-trigger    { color: var(--muted); }
-.chain .layer-cellular   { color: #6C4E8C; border-color: #6C4E8C; }
+.chain .layer-cellular   { color: var(--layer-cellular); border-color: var(--layer-cellular); }
 .chain .layer-conduction { color: var(--warn); border-color: var(--warn); }
 .chain .layer-ecg        { color: var(--accent); border-color: var(--accent); }
 .chain .layer-mechanical { color: var(--flow-deox); border-color: var(--flow-deox); }
@@ -808,6 +845,31 @@ button, select, input { font: inherit; color: inherit; }
 :root[data-size="large"] .quiz-option { font-size: 16px; }
 :root[data-size="large"] .chain .chain-text { font-size: 15.5px; }
 :root[data-size="large"] .rail-pane p, :root[data-size="large"] .rail-pane ul { font-size: 15.5px; }
+
+/* A label summoned by hovering rather than pinned by the label-set control.
+   Slightly quieter, so a pinned set still reads as the deliberate choice. */
+.anno.is-hover-label .anno-text { fill: var(--accent); }
+.anno.is-hover-label .anno-line { stroke: var(--accent); }
+.heart-svg { outline-offset: -3px; }
+
+/* Links from an inspected structure back to the stretch of tracing it explains. */
+.part-ecg { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 0; }
+
+.about-actions { display: flex; flex-wrap: wrap; gap: var(--s2); margin: var(--s3) 0 0; }
+.share-box {
+  flex: 1 1 100%; margin-top: var(--s2);
+  border: 1px solid var(--rule-strong); border-radius: var(--radius);
+  padding: 8px 11px; background: var(--paper); color: var(--ink); font-size: 13px;
+}
+
+/* Shown only when the render loop has given up. Deliberately loud: a learner
+   looking at a frozen picture has no other way to know it stopped. */
+.fail-banner {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 200;
+  background: var(--danger); color: #fff;
+  font: 600 14px var(--font-ui); padding: 12px var(--s4);
+  text-align: center;
+}
 
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
