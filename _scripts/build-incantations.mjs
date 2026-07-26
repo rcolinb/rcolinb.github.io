@@ -172,22 +172,6 @@ function homepageHero(config, dedicatedPageEnabled) {
   </div>`;
 }
 
-function editorResources() {
-  return `<section class="editor-resources reveal" id="short-bio" aria-labelledby="editor-resources-heading">
-      <!-- Add the supplied RCBlenis_headshot_4x5_crop.png picture and download link here after web derivatives are created. -->
-      <h3 id="editor-resources-heading">For Editors &amp; Press</h3>
-      <p class="short-bio-text" id="short-bio-text">R.C. Blenis is a nurse, poet, essayist, and assistant professor of nursing in Atlanta. His essay &ldquo;Incantations&rdquo; won the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay. His poetry and nonfiction appear or are forthcoming in <em>JAMA</em>, <em>The Massachusetts Review</em>, <em>Fourth Genre</em>, <em>River Teeth</em>, and <em>American Journal of Nursing</em>. He has worked in emergency, intensive care, and psychiatric settings. His writing explores what care asks of us, what clinical language obscures, and what remains when repair is no longer possible.</p>
-      <div class="copy-bio-row">
-        <button class="copy-bio-button" id="copy-short-bio" type="button">Copy short bio</button>
-        <span class="copy-bio-status" id="copy-bio-status" role="status" aria-live="polite"></span>
-      </div>
-      <nav class="editor-resource-links" aria-label="Editor and press resources">
-        <a href="#short-bio">Short bio</a>
-        <a href="publications.html">Publications</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </section>`;
-}
 
 function incantationsPublication(config) {
   const publication = {
@@ -578,11 +562,9 @@ indexHtml = replaceHtmlRegion(
   "INCANTATIONS_HERO",
   visible ? homepageHero(config, dedicatedPageEnabled) : defaultHeroContent(),
 );
-indexHtml = replaceHtmlRegion(
-  indexHtml,
-  "INCANTATIONS_EDITOR_RESOURCES",
-  visible ? editorResources() : "",
-);
+// The "For Editors & Press" box was removed from the site; keep this region
+// empty so a rebuild does not reinstate it.
+indexHtml = replaceHtmlRegion(indexHtml, "INCANTATIONS_EDITOR_RESOURCES", "");
 indexHtml = updateMetaContent(
   indexHtml,
   "site-description",

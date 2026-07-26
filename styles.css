@@ -561,20 +561,14 @@
 
   .contact-subscribe { max-width: 400px; }
 
-  .contact-subscribe h3 {
-    font-family: var(--serif);
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: var(--ink);
-    margin-bottom: 0.6rem;
-  }
-
+  /* The note sits under the button, so the gap belongs above it. */
   .contact-subscribe p {
     font-family: var(--serif);
     font-size: 0.95rem;
     color: var(--stone);
     line-height: 1.7;
-    margin-bottom: 1.5rem;
+    margin-top: 1.2rem;
+    margin-bottom: 0;
   }
 
   .subscribe-btn {
@@ -604,6 +598,10 @@
     display: flex;
     gap: 2rem;
     align-items: center;
+    /* Wrap rather than overflow. The row is clipped by body{overflow-x:hidden},
+       so anything past the edge is not scrollable to — it is simply gone. */
+    flex-wrap: wrap;
+    row-gap: 1rem;
   }
 
   .contact-social a {
@@ -686,6 +684,10 @@
     .about-epigraph { padding: 1.5rem 1.8rem; }
     .about-photo { max-width: 300px; }
     .contact-email { font-size: 1.3rem; }
+    /* Tighter spacing keeps the four links on one line where it fits; dropping
+       the rules means a wrapped line never begins or ends with an orphan one. */
+    .contact-social { gap: 1.25rem; }
+    .contact-social-divider { display: none; }
   }
   /* ═══ PRINT ═══ */
 
@@ -912,96 +914,6 @@
     margin-top: 0.55rem;
   }
 
-  .editor-resources {
-    background: var(--linen);
-    border-left: 3px solid var(--clay);
-    margin-top: 4rem;
-    padding: 2.2rem 2.5rem;
-    scroll-margin-top: 6rem;
-  }
-
-  .editor-resources h3 {
-    color: var(--ink);
-    font-family: var(--serif);
-    font-size: 1.5rem;
-    font-weight: 400;
-    margin-bottom: 1rem;
-  }
-
-  .short-bio-text {
-    color: var(--charcoal);
-    font-family: var(--serif);
-    font-size: 1rem;
-    line-height: 1.85;
-  }
-
-  .copy-bio-row {
-    align-items: center;
-    display: none;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-    margin-top: 1.4rem;
-  }
-
-  .js .copy-bio-row {
-    display: flex;
-  }
-
-  .copy-bio-button {
-    background: transparent;
-    border: 1px solid var(--clay-light);
-    color: var(--clay);
-    cursor: pointer;
-    font-family: var(--sans);
-    font-size: 0.72rem;
-    font-weight: 400;
-    letter-spacing: 0.13em;
-    padding: 0.65rem 1rem;
-    text-transform: uppercase;
-  }
-
-  .copy-bio-button:hover {
-    background: var(--clay-glow);
-  }
-
-  .copy-bio-status {
-    color: var(--mist);
-    font-family: var(--sans);
-    font-size: 0.76rem;
-    min-height: 1.3rem;
-  }
-
-  .editor-resource-links {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: transparent;
-    border-bottom: 0;
-    border-top: 1px solid var(--parchment);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 1.4rem;
-    justify-content: flex-start;
-    margin-top: 1.6rem;
-    padding: 1.2rem 0 0;
-    position: static;
-    transition: none;
-    width: auto;
-    z-index: auto;
-  }
-
-  .editor-resource-links a {
-    color: var(--mist);
-    font-family: var(--sans);
-    font-size: 0.73rem;
-    letter-spacing: 0.12em;
-    text-decoration: none;
-    text-transform: uppercase;
-  }
-
-  .editor-resource-links a:hover {
-    color: var(--clay);
-  }
-
   .recognition-section {
     margin-bottom: 3.5rem;
   }
@@ -1179,11 +1091,6 @@
       font-size: 0.96rem;
     }
 
-    .editor-resources {
-      margin-top: 3rem;
-      padding: 1.8rem;
-    }
-
     .essay-feature-section {
       padding-top: 3rem;
     }
@@ -1232,10 +1139,5 @@
 
     .essay-feature {
       border-left: 2px solid #A0522D;
-    }
-
-    .copy-bio-row,
-    .editor-resource-links {
-      display: none;
     }
   }

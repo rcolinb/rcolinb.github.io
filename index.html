@@ -225,20 +225,6 @@
     </div>
 
     <!-- INCANTATIONS_EDITOR_RESOURCES:START -->
-<section class="editor-resources reveal" id="short-bio" aria-labelledby="editor-resources-heading">
-      <!-- Add the supplied RCBlenis_headshot_4x5_crop.png picture and download link here after web derivatives are created. -->
-      <h3 id="editor-resources-heading">For Editors &amp; Press</h3>
-      <p class="short-bio-text" id="short-bio-text">R.C. Blenis is a nurse, poet, essayist, and assistant professor of nursing in Atlanta. His essay &ldquo;Incantations&rdquo; won the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay. His poetry and nonfiction appear or are forthcoming in <em>JAMA</em>, <em>The Massachusetts Review</em>, <em>Fourth Genre</em>, <em>River Teeth</em>, and <em>American Journal of Nursing</em>. He has worked in emergency, intensive care, and psychiatric settings. His writing explores what care asks of us, what clinical language obscures, and what remains when repair is no longer possible.</p>
-      <div class="copy-bio-row">
-        <button class="copy-bio-button" id="copy-short-bio" type="button">Copy short bio</button>
-        <span class="copy-bio-status" id="copy-bio-status" role="status" aria-live="polite"></span>
-      </div>
-      <nav class="editor-resource-links" aria-label="Editor and press resources">
-        <a href="#short-bio">Short bio</a>
-        <a href="publications.html">Publications</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </section>
     <!-- INCANTATIONS_EDITOR_RESOURCES:END -->
   </div>
 </section>
@@ -251,8 +237,7 @@
       <div class="section-divider" style="margin-bottom: 3rem;"></div>
       <h2 class="section-title" style="margin-bottom: 2rem;">Get in Touch</h2>
       <p class="contact-intro">
-        For publication and representation inquiries, readings,
-        collaboration, or just a conversation worth having.
+        For inquiries, readings, collaboration, or conversation.
       </p>
       <a class="contact-email" id="contact-email" href="#"></a>
       <noscript><span class="contact-email">colinblenis [at] gmail.com</span></noscript>
@@ -260,11 +245,10 @@
       <div class="contact-divider-line"></div>
 
       <div class="contact-subscribe">
-        <h3>Follow the Work</h3>
-        <p>
-          Occasional notes on new publications, readings, and the writing life. No schedule, no spam: just word when there's something worth sharing.
-        </p>
         <a class="subscribe-btn" href="https://rcblenis.substack.com" target="_blank" rel="noopener">Subscribe</a>
+        <p>
+          Occasional updates, no schedule, no spam, just word when there's something worth sharing.
+        </p>
       </div>
 
       <div class="contact-social">
@@ -273,6 +257,8 @@
         <a href="https://rcblenis.substack.com" target="_blank" rel="noopener">Substack</a>
         <div class="contact-social-divider"></div>
         <a href="https://orcid.org/0000-0002-8751-9854" target="_blank" rel="noopener">ORCID</a>
+        <div class="contact-social-divider"></div>
+        <a href="/cardiac/">Cardiac Simulator</a>
       </div>
     </div>
   </div>
@@ -360,22 +346,6 @@
     var el = document.getElementById('contact-email');
     el.href = 'mai' + 'lto:' + u + '@' + d;
     el.textContent = u + '@' + d;
-  })();
-
-  // Copy the editor-ready biography when that section is present.
-  (function() {
-    const button = document.getElementById('copy-short-bio');
-    if (!button) return;
-    const bio = document.getElementById('short-bio-text');
-    const status = document.getElementById('copy-bio-status');
-    button.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(bio.innerText.trim());
-        status.textContent = 'Copied';
-      } catch {
-        status.textContent = 'Select the bio text and copy it manually';
-      }
-    });
   })();
 
   reveals.forEach(el => observer.observe(el));
