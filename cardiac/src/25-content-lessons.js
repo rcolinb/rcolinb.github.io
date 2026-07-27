@@ -380,7 +380,11 @@ CARDIAC.content.lessons = CARDIAC.content.lessons || [];
         title: "The atrial kick",
         text: "Coordinated atrial contraction adds a final increment of ventricular filling, so losing organized atrial contraction removes a meaningful share of end-diastolic volume.",
         focus: "contraction",
-        seek: { kind: "event", eventType: "atrial-systole", occurrence: 1 },
+        /* This step is ABOUT the absence of coordinated atrial contraction, so
+         * seeking "atrial-systole" in atrial fibrillation resolved to nothing
+         * and silently fell back to the schedule start. Land on filling instead,
+         * which is the thing the missing kick would have topped up. */
+        seek: { kind: "event", eventType: "av-valve-open", occurrence: 1 },
         highlight: ["right-atrium", "left-atrium", "mitral", "tricuspid"],
         predict: null
       },

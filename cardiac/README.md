@@ -58,6 +58,30 @@ student's link on a lectern laptop does not silently undo the projection setup. 
 guarded throughout: `localStorage` throws on a `file://` origin in some browsers, and this ships as
 a file people open from disk.
 
+## Starting from nothing
+
+**Start here** in the top bar opens a three-part walkthrough written for someone who has never seen an
+ECG and has never used this page. It teaches the tool first — what the three panels are, that time
+only moves when you say so, that everything is clickable — and only then the beat. Five of its
+nineteen steps will not let you continue until you have actually done the thing: found the P wave,
+clicked the mitral valve, pressed the step button. Each of those has a **Show me where** button
+available from the first frame, which unlocks the step and records that you were shown rather than
+that you found it, because a student stuck in front of a class is a worse outcome than one who
+accepted help.
+
+`?tour=1` opens straight into step one, so a class can be handed a single link.
+
+**Defined terms are linkified wherever they appear.** The glossary is written once and matched against
+rendered prose, so adding an entry makes it clickable in every sequence retroactively — including the
+five that existed before it. That mattered more than it sounds: `pump-consequences` opened on
+*"Diastole shortens far more than systole as rate climbs"* and neither word was defined anywhere in
+the product.
+
+A definition is read as authoritative and read out of context, which makes the glossary the one place
+where the framing that protects the honesty rules elsewhere is absent. So nothing electrical is
+described in mechanical words, and "pulse" says it is *felt* — a beginner's default model is that a
+line on the screen means alive, and that is the model the whole walkthrough exists to dismantle.
+
 ## What it teaches
 
 Sixteen rhythms, ten conditions (potassium, calcium and magnesium patterns; LVH; RVH; HFrEF; HFpEF),
@@ -79,7 +103,10 @@ src/            numbered fragments, concatenated in lexical order
   30-34         engine: lead geometry, rhythm scheduling, waveform synthesis, pump, frame snapshot
   26            what each wave and interval means, for the click-to-explain interaction
   40-43         heart geometry, layered SVG renderer, ECG canvas, two-track timeline
-  51-53, 60     teaching panels, quiz, guided lessons, application shell
+  24a           the zero-knowledge walkthrough (before 25, so it heads the index)
+  28            glossary — one plain sentence per term
+  50-53, 60     glossary UI, teaching panels, quiz, guided lessons, application shell
+  _harness.js   verification; build.py skips anything starting with "_"
 build.py        concatenates src/ into index.html
 CONTRACT.md     module contract, content schemas, and the clinical-honesty rules
 ```
@@ -165,6 +192,15 @@ the pulmonary trunk in particular reads as though it comes off an atrium. Both s
 on top of their own ventricle for the same reason, and the pulmonary trunk carries a drop shadow
 where it passes anterior to the right atrium, so the crossing reads as depth rather than as a merge.
 
+Counts are the naming, so the drawing states them: the tricuspid has three leaflets, the mitral is
+the exception with two, and both semilunar valves have three cusps.
+
+Not everything true is worth drawing. Two pulmonary veins are shown where a real heart has four, and
+the coronary arteries are described in the text but not drawn at all — both were added, looked at,
+and taken back out. They put lines on a already-dense picture without changing what a learner of this
+material can work out from it, and the cost of extraneous detail is paid on every single frame a
+student looks at.
+
 **Every label anchor is computed from the geometry it names** — vessels by measuring along the drawn
 path, chambers from the current cavity bounds, valves from the annulus, conduction structures from
 the generated pathway. Hand-typed anchors drift the moment the geometry moves, which is how
@@ -177,6 +213,22 @@ they park at fixed stations rather than disappearing, because direction is the i
 does not require animation. They remain gated on valve state: an arrow drawn across a shut valve
 would assert flow that is not happening. Watch the isovolumetric period, where all four valves are
 shut and only the venous return arrows keep moving.
+
+A label summoned by hovering sits **beside** the structure rather than out in the gutter. The first
+attempt widened the crop to make room for the gutter text, which fixed the clipping and introduced
+something worse: the whole illustration rescaled every time the pointer moved on or off a structure.
+The crop is now fixed, and a name next to the thing it names reads better than one at the end of a
+long leader line anyway.
+
+**Nothing in the chrome may resize with its own content.** The stage is `1fr` between a fixed topbar
+and transport bar, so anything that changes the transport's height resizes the drawing. The event chip
+had `flex: 1 1 auto` — an `auto` basis sizes from the text, so a longer event label grew the chip,
+tipped the flex row into wrapping, and doubled the bar's height. The heart jumped 52px several times a
+beat, which read as a stutter during playback. Basis `0` makes the width depend only on the space
+left over. Below 1100px the longest labels need two lines, so the second line is reserved
+unconditionally — a one-line and a two-line label occupy identical height — and below 900px, where the
+layout already stacks and scrolls, the chip takes its own row rather than competing with eight
+controls for one strip.
 
 ### Things that must move together
 

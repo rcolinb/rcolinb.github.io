@@ -695,6 +695,9 @@ button, select, input { font: inherit; color: inherit; }
   display: flex; align-items: center; gap: var(--s2);
   padding: var(--s2) var(--s4); border-top: 1px solid var(--rule);
   background: var(--paper); flex-wrap: wrap;
+  /* The stage above is 1fr, so anything that changes this bar's height resizes
+     the drawing. Hold a floor so a reflow here can never shrink the heart. */
+  min-height: 60px;
 }
 .transport .btn-icon { min-width: 44px; min-height: 44px; flex: 0 0 auto; }
 .transport .spacer { flex: 0 0 var(--s2); }
@@ -704,12 +707,32 @@ button, select, input { font: inherit; color: inherit; }
   font-size: 14px; font-weight: 600; color: var(--ink);
   background: var(--white); border: 1px solid var(--rule-strong);
   border-radius: 999px; padding: 6px 15px; min-height: 36px;
-  flex: 1 1 auto; min-width: 0; max-width: 72ch;
+  /* Basis 0, not auto. With an auto basis the chip sizes from its own text, so
+     a longer event label grew the chip, tipped this flex row into wrapping, and
+     doubled the transport height — which shrank the stage above it. The heart
+     jumped 52px several times a beat. Basis 0 makes the width depend only on
+     the space left over, so text length cannot move anything. */
+  flex: 1 1 0; min-width: 0; max-width: 72ch;
 }
 .event-chip > span:last-child {
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .event-chip .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--conduction); flex: 0 0 auto; }
+
+/* Below about this width the longest event labels no longer fit on one line,
+   and ellipsis would eat exactly the clause that links the event to the wave —
+   "drawn as the QRS". Let them wrap, but reserve the second line ALWAYS, so a
+   one-line label and a two-line label occupy identical height and the bar still
+   never changes size mid-beat. */
+@media (max-width: 1100px) {
+  .event-chip { min-height: 56px; align-items: center; }
+  .event-chip > span:last-child {
+    white-space: normal; overflow: hidden; text-overflow: clip;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    line-height: 1.25;
+  }
+  .transport { min-height: 76px; }
+}
 
 .speed-wrap { display: flex; align-items: center; gap: var(--s2); }
 .speed-wrap input[type="range"] { width: 116px; accent-color: var(--accent); height: 28px; }
@@ -823,6 +846,10 @@ button, select, input { font: inherit; color: inherit; }
 }
 
 @media (max-width: 900px) {
+  /* Its own row. Below here the stage is already stacked and the page scrolls,
+     so the extra line is free — and the chip stops competing with eight
+     controls for the same strip of space. */
+  .event-chip { order: 10; flex-basis: 100%; max-width: 100%; }
   body { overflow: auto; }
   .app { height: auto; min-height: 100vh; }
   .stage {
@@ -841,7 +868,7 @@ button, select, input { font: inherit; color: inherit; }
 @media (max-width: 560px) {
   .brand { font-size: 15px; }
   .transport { gap: 5px; padding: var(--s2); }
-  .event-chip { max-width: 100%; order: 10; flex-basis: 100%; }
+  .event-chip { max-width: 100%; }
   .segmented button { padding: 7px 11px; font-size: 13px; }
 }
 
@@ -865,6 +892,52 @@ button, select, input { font: inherit; color: inherit; }
 
 /* Links from an inspected structure back to the stretch of tracing it explains. */
 .part-ecg { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 0; }
+
+/* The way in, for someone who has just arrived. */
+.lesson-card.is-primary { border-color: var(--accent); border-left: 3px solid var(--accent); }
+
+/* ---- guided steps: do-it blocks, glossary terms, pointing ---- */
+
+/* "Now you try." Visually distinct from the prediction box so a learner can see
+   at a glance whether this step wants an answer or an action. */
+.step-do {
+  margin: var(--s3) 0 0; padding: 11px 13px;
+  border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent);
+  border-radius: var(--radius); background: var(--paper);
+}
+.step-do.is-done { border-color: var(--sage); border-left-color: var(--sage); }
+.step-do .do-prompt { margin: 0; font-weight: 600; font-size: 14px; }
+.step-do.is-done .do-prompt::before { content: "\2713  "; color: var(--sage); }
+.step-do .do-hint { margin: 6px 0 0; font-size: 13.5px; color: var(--muted); }
+.step-do .pill { margin-top: 9px; }
+
+/* A defined term inside otherwise ordinary prose. Underlined rather than
+   coloured alone, so it survives greyscale and colour-blindness. */
+.gloss {
+  appearance: none; background: none; border: 0; padding: 0;
+  font: inherit; color: inherit; cursor: pointer;
+  text-decoration: underline dotted var(--accent); text-underline-offset: 3px;
+}
+.gloss:hover { color: var(--accent); }
+.gloss[aria-expanded="true"] { color: var(--accent); text-decoration-style: solid; }
+
+.gloss-def {
+  margin: 6px 0 2px; padding: 9px 11px;
+  border-left: 3px solid var(--accent-soft); border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--paper); font-size: 13.5px; line-height: 1.5;
+}
+.gloss-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+.gloss-list { margin: var(--s3) 0 0; font-size: 13.5px; }
+.gloss-list dt { font-weight: 700; margin-top: 9px; }
+.gloss-list dd { margin: 2px 0 0; color: var(--muted); }
+
+/* Pointing at a control that lives outside this panel. Static outline, no
+   animation — it has to survive reduced-motion and forced-colors intact. */
+.is-pointed {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
 
 .about-actions { display: flex; flex-wrap: wrap; gap: var(--s2); margin: var(--s3) 0 0; }
 .share-box {
@@ -929,6 +1002,9 @@ button, select, input { font: inherit; color: inherit; }
       <button type="button" id="viewSingle" aria-pressed="false">Single lead</button>
       <button type="button" id="viewTwelve" aria-pressed="true">12-lead</button>
     </div>
+
+    <button type="button" class="btn" id="tourBtn"
+            title="Start the walkthrough for people new to ECGs">Start<span class="wide-only"> here</span></button>
 
     <div class="field" id="displayField">
       <label for="displaySelect">Display</label>
@@ -1093,7 +1169,8 @@ button, select, input { font: inherit; color: inherit; }
       lessons: [],
       waveGuide: {},
       parts: {},
-      partAlias: {}
+      partAlias: {},
+      glossary: {}
     },
     /* Diagnostics. Populated by the render loop's error boundary and by the two
      * places that legitimately swallow a geometry exception, so a harness can
@@ -1123,6 +1200,45 @@ button, select, input { font: inherit; color: inherit; }
   CARDIAC.REGIONS = ["sa-node", "right-atrium", "left-atrium", "av-node",
     "his-bundle", "right-bundle", "left-bundle", "right-purkinje",
     "left-purkinje", "right-ventricle", "left-ventricle"];
+
+  /* ---------- event bus ----------
+   *
+   * Exists so a guided step can wait for the learner to actually do something
+   * without the lesson module and the inspector learning about each other. The
+   * inspector emits "a part was selected, by a user"; the lesson module listens.
+   * Neither reaches into the other's state, and the only shared vocabulary is an
+   * event name and a key both already use.
+   *
+   * `source` matters: a step that says "click the mitral valve" must not be able
+   * to satisfy itself by opening that valve programmatically. Only "user" counts.
+   */
+
+  CARDIAC.bus = (function () {
+    var listeners = {};
+    return {
+      on: function (type, fn) {
+        (listeners[type] || (listeners[type] = [])).push(fn);
+      },
+      off: function (type, fn) {
+        var a = listeners[type];
+        if (!a) return;
+        var i = a.indexOf(fn);
+        if (i >= 0) a.splice(i, 1);
+      },
+      emit: function (type, detail) {
+        var a = listeners[type];
+        if (!a || !a.length) return;
+        // Copy first: a handler may remove itself, which it does on every
+        // satisfied gate.
+        a.slice().forEach(function (fn) {
+          try { fn(detail); }
+          catch (e) { CARDIAC.diag.errors.push({ where: "bus:" + type, message: String(e && e.message || e) }); }
+        });
+      },
+      // Only so a harness can prove listeners are not leaking across steps.
+      count: function (type) { return (listeners[type] || []).length; }
+    };
+  })();
 
   /* ---------- deterministic PRNG (mulberry32) ---------- */
 
@@ -4410,6 +4526,288 @@ CARDIAC.content.questions = CARDIAC.content.questions || [];
 
 </script>
 <script>
+/* 24a-content-tour.js */
+/* 24a-content-tour.js — the zero-knowledge walkthrough.
+ *
+ * Loads before 25-content-lessons.js so these three sit at the head of the index.
+ *
+ * Written for a student who has never seen an ECG and has never used this page.
+ * That audience has no prior knowledge to catch an error with, so the honesty
+ * rules bite harder here than anywhere else in the product:
+ *
+ *   - A wave is always the muscle RECEIVING THE SIGNAL, never the muscle
+ *     "beating", "pumping" or "squeezing". The single sentence a beginner most
+ *     wants to hear — "this spike is the heart beating" — is the one that must
+ *     never appear.
+ *   - No numeric intervals. The existing sequences quote 0.12-0.20 s quite
+ *     legitimately, but a beginner cannot tell a conventional interval from a
+ *     measurement of this generated tracing, and the readouts panel is on screen
+ *     the whole time looking like an instrument.
+ *   - No arrest rhythms. "Line on the screen means alive" is the default model
+ *     this tutorial has to dismantle, and showing VF to someone on step three is
+ *     not how to do it.
+ *
+ * Three short sequences rather than one long one, chained with `next`. Progress
+ * is not stored anywhere (see 11-store.js), so a single nineteen-step walkthrough
+ * would lose everything on a reload; three units cap the loss at one.
+ */
+
+[].push.apply(CARDIAC.content.lessons, [
+
+  /* ============================================================ A. the tool */
+  {
+    id: "tour-basics",
+    label: "Start here: what you're looking at",
+    level: "basic",
+    next: "tour-beat",
+    blurb: "No cardiology yet — just what the three panels are and how to drive them.",
+    steps: [
+      {
+        id: "tour-basics-1",
+        rhythm: "nsr", condition: "normal",
+        title: "Three panels, one heartbeat",
+        text: "On the left is a drawing of a heart, in the middle is the tracing a monitor would draw, and on the right is this panel — all three are showing the same instant of the same beat.",
+        focus: "integrated",
+        seek: { kind: "start" },
+        highlight: []
+      },
+      {
+        id: "tour-basics-2",
+        title: "Nothing moves until you say so",
+        text: "The buttons along the bottom control time, and stepping one event at a time is the main way to study this — it is easier to read a moment than to watch it go by.",
+        focus: "integrated",
+        seek: { kind: "start" },
+        point: "#nextBtn",
+        gate: {
+          kind: "control", value: "step",
+          prompt: "Press the ▶▶ button at the bottom to move forward one event.",
+          hint: "It is the fourth button along the bottom bar. The right arrow key does the same thing.",
+          wrong: "That moved something else. Look for ▶▶ along the bottom."
+        }
+      },
+      {
+        id: "tour-basics-3",
+        title: "The tracing is a picture of time",
+        text: "The tracing runs left to right like a strip of paper coming out of a machine, and the moving line marks the moment the heart drawing is showing.",
+        focus: "integrated",
+        seek: { kind: "event", eventType: "pacemaker-fire", occurrence: 1 },
+        point: "#stripWrap"
+      },
+      {
+        id: "tour-basics-4",
+        title: "Everything here is clickable",
+        text: "Every structure in the drawing will tell you what it is and what it is doing at the moment you have paused on.",
+        focus: "anatomy",
+        labelSet: "chambers",
+        seek: { kind: "start" },
+        point: "#heartHolder",
+        gate: {
+          kind: "part", value: "*",
+          prompt: "Click any part of the heart drawing.",
+          hint: "The four big chambers are the easiest targets — try one of the large open areas."
+        }
+      },
+      {
+        id: "tour-basics-5",
+        title: "Click a wave, the heart answers",
+        text: "It works the other way round too: click a bump on the tracing and the drawing shows you which part of the heart that bump came from.",
+        focus: "integrated",
+        labelSet: "none",
+        seek: { kind: "event", eventType: "ventricular-depolarization", occurrence: 1 },
+        point: "#detailWrap",
+        gate: {
+          kind: "wave", value: "qrs",
+          prompt: "Click the tall narrow spike on the magnified tracing.",
+          hint: "It is the tallest thing on the trace — the one labelled QRS above it.",
+          wrong: "Close. Try the tall narrow spike, not the rounder bumps either side of it."
+        }
+      },
+      {
+        id: "tour-basics-6",
+        title: "This panel has five sections",
+        text: "Rhythm describes what you are looking at, Why explains the cause behind it, Set up changes the conditions, Quiz tests you, and Learn is where you are now.",
+        focus: "integrated",
+        seek: { kind: "start" },
+        point: ".rail-tabs"
+      },
+      {
+        id: "tour-basics-7",
+        title: "Two controls, and one promise",
+        text: "Focus fades everything except one story at a time, Labels names the parts — and everything on this page is generated by a model, so none of it is a recording of a real person.",
+        focus: "integrated",
+        seek: { kind: "start" },
+        point: "#focusSelect",
+        predict: {
+          q: "So what is this page showing you?",
+          options: ["A model that generates a beat", "A recording of a real patient", "A video of a real heart"],
+          correct: 0,
+          reveal: "Everything here is worked out from a model of how a heart behaves. That is what makes it safe to break on purpose — and it is why no number on this page is a measurement of anyone."
+        }
+      }
+    ]
+  },
+
+  /* ======================================================== B. the physiology */
+  {
+    id: "tour-beat",
+    label: "The beat, in plain words",
+    level: "basic",
+    next: "tour-limits",
+    blurb: "One beat from start to finish, with nothing assumed.",
+    steps: [
+      {
+        id: "tour-beat-1",
+        rhythm: "nsr", condition: "normal",
+        title: "Two things happen every beat",
+        text: "First an electrical signal travels through the heart, and then the muscle it reached squeezes — two separate events, and the second always follows the first.",
+        focus: "integrated",
+        seek: { kind: "start" },
+        highlight: ["right-atrium", "left-atrium", "right-ventricle", "left-ventricle"]
+      },
+      {
+        id: "tour-beat-2",
+        title: "Where the beat starts",
+        text: "A small patch of tissue at the top of the heart starts each beat on its own, without being told to by anything else.",
+        focus: "conduction",
+        labelSet: "conduction",
+        inspect: "sa-node",
+        seek: { kind: "event", eventType: "pacemaker-fire", occurrence: 1 },
+        highlight: ["sa-node"]
+      },
+      {
+        id: "tour-beat-3",
+        title: "The first bump",
+        text: "As the signal spreads across the two upper chambers, the tracing draws a small rounded bump called the P wave.",
+        focus: "conduction",
+        labelSet: "none",
+        seek: { kind: "event", eventType: "atrial-depolarization", occurrence: 1 },
+        highlight: ["right-atrium", "left-atrium"],
+        gate: {
+          kind: "wave", value: "p",
+          prompt: "Click the first small bump on the magnified tracing.",
+          hint: "It comes before the tall spike, and it is the smaller, rounder one.",
+          wrong: "Not that part. The P wave is the small rounded bump that comes first."
+        }
+      },
+      {
+        id: "tour-beat-4",
+        title: "The pause you can see",
+        text: "The flat stretch after that bump is not nothing happening — the signal is being held up on purpose, which gives the upper chambers time to finish emptying.",
+        focus: "conduction",
+        wave: "pr",
+        seek: { kind: "event", eventType: "av-arrival", occurrence: 1 },
+        highlight: ["av-node"]
+      },
+      {
+        id: "tour-beat-5",
+        title: "The big spike",
+        text: "When the signal finally reaches the two large lower chambers it spreads through them very fast, and that is the tall narrow spike.",
+        focus: "conduction",
+        seek: { kind: "event", eventType: "ventricular-depolarization", occurrence: 1 },
+        highlight: ["left-ventricle", "right-ventricle"],
+        predict: {
+          q: "The tall spike tells you the lower chambers have just...",
+          options: ["received the electrical signal", "finished squeezing", "emptied completely"],
+          correct: 0,
+          reveal: "The spike is the signal arriving, not the squeeze. The squeeze follows a moment later — which is exactly why you cannot tell from a tracing alone whether any blood actually moved."
+        }
+      },
+      {
+        id: "tour-beat-6",
+        title: "Now watch a valve",
+        text: "The moment the lower chambers start to squeeze, the valves above them slam shut so that blood cannot go backwards.",
+        focus: "contraction",
+        labelSet: "valves",
+        seek: { kind: "event", eventType: "av-valve-close", occurrence: 1 },
+        highlight: ["mitral", "tricuspid"],
+        gate: {
+          kind: "part", value: "mitral",
+          prompt: "Click the mitral valve to see what it is doing right now.",
+          hint: "It is on the right-hand side of the drawing as you look at it, between the upper and lower chamber.",
+          wrong: "That is a different valve. The mitral one is on the right of the picture, between the upper and lower chamber."
+        }
+      },
+      {
+        id: "tour-beat-7",
+        title: "The flattest part is the busiest part",
+        text: "Just after the spike the tracing goes almost flat, and that quiet-looking stretch is when most of the blood is actually leaving the heart.",
+        focus: "flow",
+        labelSet: "none",
+        wave: "st",
+        seek: { kind: "event", eventType: "semilunar-valve-open", occurrence: 1 },
+        highlight: ["left-ventricle", "aortic"]
+      },
+      {
+        id: "tour-beat-8",
+        title: "The reset, and one last thing",
+        text: "The last bump is the muscle resetting itself electrically so it can go again — and that is the whole beat, told entirely in signals.",
+        focus: "integrated",
+        seek: { kind: "event", eventType: "ventricular-repolarization", occurrence: 1 },
+        highlight: ["left-ventricle", "right-ventricle"],
+        predict: {
+          q: "You are looking at a normal-looking tracing. What does it tell you about whether this person has a pulse?",
+          options: ["Nothing — you have to feel for one", "That they definitely have one", "That their blood pressure is normal"],
+          correct: 0,
+          reveal: "The tracing only ever shows the electrical signal. Whether the muscle answered it, and whether blood actually moved, are things you find out at the bedside by feeling for a pulse and looking at the patient."
+        }
+      }
+    ]
+  },
+
+  /* =========================================================== C. the limits */
+  {
+    id: "tour-limits",
+    label: "What it can't tell you",
+    level: "basic",
+    blurb: "Short, and the most important part.",
+    steps: [
+      {
+        id: "tour-limits-1",
+        rhythm: "nsr", condition: "normal",
+        patientState: "pea",
+        title: "A tracing is not a patient",
+        text: "The tracing on screen has not changed, but this patient now has no pulse — the signal is still travelling, and the muscle is no longer answering it.",
+        focus: "integrated",
+        seek: { kind: "start" },
+        highlight: ["left-ventricle", "right-ventricle"]
+      },
+      {
+        id: "tour-limits-2",
+        rhythm: "nsr", condition: "normal",
+        title: "One lead is one viewpoint",
+        text: "What you have been watching is one view of the heart's signal, and the same beat looks quite different from a different sensor position.",
+        focus: "integrated",
+        lead: "V1",
+        seek: { kind: "start" }
+      },
+      {
+        id: "tour-limits-3",
+        title: "Every number here is illustrative",
+        text: "The figures underneath the tracing come from the model, not from a machine measuring a person, so treat them as a demonstration of direction rather than as readings.",
+        focus: "integrated",
+        lead: "II",
+        seek: { kind: "start" },
+        point: "#readouts"
+      },
+      {
+        id: "tour-limits-4",
+        title: "Where to go next",
+        text: "You now know enough to use the rest of this page — the other sequences in this panel go deeper, and the Quiz tab will tell you what has stuck.",
+        focus: "integrated",
+        seek: { kind: "start" },
+        predict: {
+          q: "One last time: what does this page record?",
+          options: ["The heart's electrical activity", "The force of each squeeze", "How much blood is moving"],
+          correct: 0,
+          reveal: "Electrical activity, and only that. Every other question — is the muscle working, is blood moving, is this person all right — is answered by going and looking at the patient."
+        }
+      }
+    ]
+  }
+]);
+
+</script>
+<script>
 /* 25-content-lessons.js */
 /* 25-content-lessons.js — CARDIAC.content.lessons
    Five guided step sequences: three basic (normal-cycle, lead-as-lens, rhythm-detective)
@@ -4793,7 +5191,11 @@ CARDIAC.content.lessons = CARDIAC.content.lessons || [];
         title: "The atrial kick",
         text: "Coordinated atrial contraction adds a final increment of ventricular filling, so losing organized atrial contraction removes a meaningful share of end-diastolic volume.",
         focus: "contraction",
-        seek: { kind: "event", eventType: "atrial-systole", occurrence: 1 },
+        /* This step is ABOUT the absence of coordinated atrial contraction, so
+         * seeking "atrial-systole" in atrial fibrillation resolved to nothing
+         * and silently fell back to the schedule start. Land on filling instead,
+         * which is the thing the missing kick would have topped up. */
+        seek: { kind: "event", eventType: "av-valve-open", occurrence: 1 },
         highlight: ["right-atrium", "left-atrium", "mitral", "tricuspid"],
         predict: null
       },
@@ -5025,22 +5427,22 @@ Object.assign(CARDIAC.content.parts, {
 
   "tricuspid": {
     label: "Tricuspid valve",
-    what: "Between the right atrium and right ventricle. Opens to let the ventricle fill and shuts when ventricular pressure rises above atrial pressure.",
+    what: "Between the right atrium and right ventricle, with three leaflets — which is where the name comes from. It opens to let the ventricle fill and shuts when ventricular pressure rises above atrial pressure.",
     ecg: ["qrs", "tp"]
   },
   "mitral": {
     label: "Mitral valve",
-    what: "Between the left atrium and left ventricle. It shuts at the start of ventricular contraction — that closure, with the tricuspid, is the first heart sound.",
+    what: "Between the left atrium and left ventricle, and the only heart valve with two leaflets rather than three. It shuts at the start of ventricular contraction — that closure, with the tricuspid, is the first heart sound.",
     ecg: ["qrs", "tp"]
   },
   "pulmonic": {
     label: "Pulmonic valve",
-    what: "Guards the outlet from the right ventricle into the pulmonary trunk. It opens only once right ventricular pressure exceeds pulmonary artery pressure.",
+    what: "Guards the outlet from the right ventricle into the pulmonary trunk. Three cup-shaped cusps that fill and swing shut from above, and it opens only once right ventricular pressure exceeds pulmonary artery pressure.",
     ecg: ["st", "t"]
   },
   "aortic": {
     label: "Aortic valve",
-    what: "Guards the outlet from the left ventricle into the aorta. Its closure, with the pulmonic, is the second heart sound.",
+    what: "Guards the outlet from the left ventricle into the aorta, with three cup-shaped cusps like the pulmonic. Its closure, with the pulmonic, is the second heart sound.",
     ecg: ["st", "t"]
   },
   "papillary": {
@@ -5066,6 +5468,7 @@ Object.assign(CARDIAC.content.parts, {
     what: "Carries deoxygenated blood from the right ventricle to the lungs. It is the only artery in the body carrying deoxygenated blood, and it passes in front of the aortic root before dividing.",
     ecg: ["st", "t"]
   },
+
 
   /* ------------------------------------------------------- conduction system */
 
@@ -5124,6 +5527,196 @@ Object.assign(CARDIAC.content.partAlias, {
   "lpa": "pulmonary-artery",
   "pv1": "pulmonary-veins",
   "pv2": "pulmonary-veins"
+});
+
+</script>
+<script>
+/* 28-content-glossary.js */
+/* 28-content-glossary.js — one plain sentence per term.
+ *
+ * Written for someone who has never seen an ECG. Rules the definitions follow,
+ * because a definition is read as authoritative AND read out of context — it is
+ * the one place where the surrounding framing that protects the honesty rules
+ * everywhere else is absent:
+ *
+ *   - `short` is one sentence, under thirty words, containing no other jargon.
+ *     If a definition needs a second defined term, that term gets its own entry
+ *     and the reader can follow it.
+ *   - Nothing electrical is described as mechanical. The ECG records electrical
+ *     activity; it does not record beating, pumping, squeezing or output.
+ *   - "Pulse" says it is FELT. A beginner's default model is "line on the screen
+ *     means alive", and this is the single entry most likely to reinforce it.
+ *
+ * `also` carries the spelling variants. This is not optional plumbing: the
+ * codebase already writes both "depolarization" (25-content-lessons.js) and
+ * "depolarisation" (26-content-waveguide.js), so a single-spelling term list
+ * would silently miss half the places it should fire.
+ *
+ * `see` points at a structure in content.parts; `wave` at an entry in
+ * content.waveGuide. Both are optional, and both turn the definition into a
+ * doorway to the same explain-this machinery the rest of the product uses.
+ */
+
+Object.assign(CARDIAC.content.glossary, {
+
+  /* ---------------------------------------------------- the two big stories */
+
+  "electrical": {
+    term: "Electrical activity",
+    short: "The signal that travels through the heart telling muscle when to work. It is what the tracing records.",
+    also: ["electrical", "electrical signal", "electrically"]
+  },
+  "ecg": {
+    term: "ECG",
+    short: "A recording of the heart's electrical activity, made from sensors on the skin. It shows the signal, not the squeeze.",
+    also: ["electrocardiogram", "EKG"]
+  },
+  "depolarize": {
+    term: "Depolarise",
+    short: "What a heart muscle cell does when the signal reaches it — an electrical change that tells the cell to get ready to work.",
+    also: ["depolarisation", "depolarization", "depolarises",
+           "depolarizes", "depolarising", "depolarizing", "depolarized", "depolarised"],
+    wave: "p"
+  },
+  "repolarize": {
+    term: "Repolarise",
+    short: "The cell resetting itself electrically after it has worked, so that it is ready for the next beat.",
+    also: ["repolarisation", "repolarization", "repolarises",
+           "repolarizes", "repolarising", "repolarizing"],
+    wave: "t"
+  },
+  "wavefront": {
+    term: "Wavefront",
+    short: "The leading edge of the signal as it spreads through the heart, like the edge of a ripple crossing a pond.",
+    also: ["wave front"]
+  },
+  "conduction": {
+    term: "Conduction",
+    short: "The passing of the electrical signal from one part of the heart to the next.",
+    also: ["conducts", "conducting", "conducted", "conduction velocity"]
+  },
+  "myocardium": {
+    term: "Myocardium",
+    short: "The muscular wall of the heart — the part that does the actual work of squeezing.",
+    also: ["myocardial"]
+  },
+
+  /* ------------------------------------------------------- the pumping cycle */
+
+  "systole": {
+    term: "Systole",
+    short: "The part of each beat when the ventricles are squeezing and pushing blood out.",
+    also: ["systolic"]
+  },
+  "diastole": {
+    term: "Diastole",
+    short: "The part of each beat when the ventricles are relaxed and filling with blood. It is the longer half at a normal rate.",
+    also: ["diastolic"]
+  },
+  "isovolumetric": {
+    term: "Isovolumetric",
+    short: "A moment when every valve is shut, so the ventricle changes pressure without changing volume. No blood moves.",
+    also: ["isovolumic"]
+  },
+  "atrium": {
+    term: "Atrium",
+    short: "One of the two upper chambers. They receive blood arriving at the heart and hand it down to the chamber below.",
+    also: ["atria", "atrial"],
+    see: "right-atrium"
+  },
+  "ventricle": {
+    term: "Ventricle",
+    short: "One of the two lower chambers. They do the forceful work of pushing blood out to the lungs and to the body.",
+    also: ["ventricles", "ventricular"],
+    see: "left-ventricle"
+  },
+  "atrial-kick": {
+    term: "Atrial kick",
+    short: "The last top-up of filling the atria add by squeezing, just before the ventricles take over.",
+    also: ["atrial contraction"]
+  },
+  "end-diastolic-volume": {
+    term: "End-diastolic volume",
+    short: "How much blood is in a ventricle at the instant it stops filling and starts to squeeze.",
+    also: ["end diastolic volume", "EDV"]
+  },
+  "stroke-volume": {
+    term: "Stroke volume",
+    short: "The amount of blood one ventricle pushes out in a single beat.",
+    also: []
+  },
+  "cardiac-output": {
+    term: "Cardiac output",
+    short: "How much blood the heart moves each minute. It depends on both the rate and the amount moved per beat.",
+    also: []
+  },
+  "preload": {
+    term: "Preload",
+    short: "How full the ventricle is before it squeezes — the stretch on the muscle at the start of the beat.",
+    also: []
+  },
+  "afterload": {
+    term: "Afterload",
+    short: "How hard the ventricle has to push to open its outlet valve and move blood onward.",
+    also: []
+  },
+  "contractility": {
+    term: "Contractility",
+    short: "How forcefully the muscle squeezes for a given amount of filling — the strength of the beat itself.",
+    also: ["contractile"]
+  },
+  "frank-starling": {
+    term: "Frank-Starling relation",
+    short: "The observation that a ventricle filled more fully squeezes out more, up to a point beyond which extra filling stops helping.",
+    also: ["Frank-Starling", "Starling"]
+  },
+
+  /* ------------------------------------------------ the patient, not the trace */
+
+  "pulse": {
+    term: "Pulse",
+    short: "A wave you can feel with your fingers at an artery when blood is actually moving. You feel it; you cannot see it on a tracing.",
+    also: ["pulses", "pulseless"]
+  },
+  "perfusion": {
+    term: "Perfusion",
+    short: "Blood actually reaching the body's tissues and delivering oxygen to them.",
+    also: ["perfusing", "perfused"]
+  },
+
+  /* --------------------------------------------------------- reading a strip */
+
+  "lead": {
+    term: "Lead",
+    short: "One viewpoint on the heart's electrical activity. Different sensor positions give different views of the same signal.",
+    also: ["leads"]
+  },
+  "sinus-rhythm": {
+    term: "Sinus rhythm",
+    short: "The normal pattern, in which each beat starts at the heart's own pacemaker and travels its usual route.",
+    also: ["sinus"],
+    see: "sa-node"
+  },
+  "deflection": {
+    term: "Deflection",
+    short: "Any movement of the tracing away from the flat baseline, up or down.",
+    also: ["deflections"]
+  },
+  "baseline": {
+    term: "Baseline",
+    short: "The flat line the tracing rests on when no electrical change is being recorded.",
+    also: ["isoelectric"]
+  },
+  "interval": {
+    term: "Interval",
+    short: "The time between two named points on the tracing, measured by counting squares.",
+    also: ["intervals"]
+  },
+  "hypertrophy": {
+    term: "Hypertrophy",
+    short: "Muscle that has thickened over time in response to working against a heavier load.",
+    also: ["hypertrophied", "hypertrophic"]
+  }
 });
 
 </script>
@@ -7844,14 +8437,17 @@ Object.assign(CARDIAC.content.partAlias, {
   function valveGeometry(descend, lvThicken) {
     var drop = (descend || 0) * 9;
     return {
-      tricuspid: { x1: 126, x2: 194, y: 250 + drop, axis: 1,  span: 18 },
-      mitral:    { x1: 288, x2: 354, y: 246 + drop, axis: 1,  span: 18 },
+      /* Leaflet counts are the naming. The tricuspid is named for having three
+       * and was drawn with two; the mitral genuinely has two, which is what
+       * makes it the exception worth pointing at. */
+      tricuspid: { x1: 126, x2: 194, y: 250 + drop, axis: 1,  span: 18, leaflets: 3 },
+      mitral:    { x1: 288, x2: 354, y: 246 + drop, axis: 1,  span: 18, leaflets: 2 },
       // Both semilunar valves sit at the TOP OF THEIR OWN VENTRICLE. Placed any
       // higher they hover between the atria, and the great artery above them
       // reads as if it drains an atrium — which is the single most misleading
       // thing this drawing could say.
-      pulmonic:  { x1: 168, x2: 206, y: 246 + drop * 0.6, axis: -1, span: 13 },
-      aortic:    { x1: 252, x2: 290, y: 250 + drop * 0.6, axis: -1, span: 13 }
+      pulmonic:  { x1: 168, x2: 206, y: 246 + drop * 0.6, axis: -1, span: 13, leaflets: 3 },
+      aortic:    { x1: 252, x2: 290, y: 250 + drop * 0.6, axis: -1, span: 13, leaflets: 3 }
     };
   }
 
@@ -8044,6 +8640,9 @@ Object.assign(CARDIAC.content.partAlias, {
      * ventricle's silhouette until the ventricle has ended, it still enters the
      * right atrium from below and the junction is visible. */
     { id: "ivc", cls: "deox", w: 26, layer: 0, d: "M104,516 C100,442 96,368 96,290 C96,262 110,240 142,234" },
+    /* Two drawn, though there are four in a real heart. Drawing all four added
+     * lines without adding anything a learner of this material needs: the point
+     * here is only that oxygenated blood arrives at the left atrium. */
     { id: "pv1", cls: "ox", w: 15, layer: 0, d: "M470,150 C438,158 410,166 384,176" },
     { id: "pv2", cls: "ox", w: 15, layer: 0, d: "M466,230 C438,220 410,208 384,202" },
 
@@ -8194,10 +8793,12 @@ Object.assign(CARDIAC.content.partAlias, {
     var valveEls = {};
     ["tricuspid", "mitral", "pulmonic", "aortic"].forEach(function (v) {
       var g = el("g", { class: "valve valve-" + v, "data-region": v }, layers.valves);
+      var count = (GEO.valveGeometry(0, 1)[v] || {}).leaflets || 2;
+      var leaves = [];
+      for (var li = 0; li < count; li++) leaves.push(el("path", { class: "leaflet" }, g));
       valveEls[v] = {
         group: g,
-        a: el("path", { class: "leaflet" }, g),
-        b: el("path", { class: "leaflet" }, g),
+        leaves: leaves,
         dot: el("circle", { class: "valve-dot", r: 3.4 }, g)
       };
     });
@@ -8523,21 +9124,26 @@ Object.assign(CARDIAC.content.partAlias, {
     ["tricuspid", "mitral", "pulmonic", "aortic"].forEach(function (name) {
       var v = frame.valves[name], geo = vg[name], e = view.valves[name];
       var open = v.openFraction;
-      var mid = (geo.x1 + geo.x2) / 2, half = (geo.x2 - geo.x1) / 2;
+      var mid = (geo.x1 + geo.x2) / 2;
       var span = geo.span * geo.axis;
+      var n = e.leaves.length;
 
-      // Shut: both tips meet at the midline. Open: each tip retreats toward its
-      // own hinge and the leaflet lies almost flat against the wall.
-      var tipL = M.lerp(mid, geo.x1 + half * 0.22, open);
-      var tipR = M.lerp(mid, geo.x2 - half * 0.22, open);
-      var tipY = geo.y + span * (1 - 0.45 * open);
-
-      e.a.setAttribute("d", "M" + geo.x1.toFixed(1) + "," + geo.y.toFixed(1) +
-        " Q" + (M.lerp(geo.x1, tipL, .55)).toFixed(1) + "," + (geo.y + span * 0.72).toFixed(1) +
-        " " + tipL.toFixed(1) + "," + tipY.toFixed(1));
-      e.b.setAttribute("d", "M" + geo.x2.toFixed(1) + "," + geo.y.toFixed(1) +
-        " Q" + (M.lerp(geo.x2, tipR, .55)).toFixed(1) + "," + (geo.y + span * 0.72).toFixed(1) +
-        " " + tipR.toFixed(1) + "," + tipY.toFixed(1));
+      /* One stroke per leaflet, hinged at its own share of the annulus and
+       * meeting the others near the middle. Shut, the tips converge and seal;
+       * open, each retreats toward its hinge and lies back against the wall.
+       * With three, the middle cusp sits a little shallower so it reads as the
+       * one behind rather than as a line through the other two. */
+      e.leaves.forEach(function (leaf, i) {
+        var hinge = n === 1 ? geo.x1 : M.lerp(geo.x1, geo.x2, i / (n - 1));
+        var inward = hinge <= mid ? 1 : -1;
+        var rest = hinge + (mid - hinge) * 0.78;
+        var tipX = M.lerp(rest, hinge + inward * Math.abs(mid - hinge) * 0.18, open);
+        var depth = (n > 2 && i > 0 && i < n - 1) ? 0.68 : 1;
+        var tipY = geo.y + span * depth * (1 - 0.45 * open);
+        leaf.setAttribute("d", "M" + hinge.toFixed(1) + "," + geo.y.toFixed(1) +
+          " Q" + (M.lerp(hinge, tipX, .55)).toFixed(1) + "," + (geo.y + span * depth * 0.72).toFixed(1) +
+          " " + tipX.toFixed(1) + "," + tipY.toFixed(1));
+      });
 
       e.dot.setAttribute("cx", mid);
       e.dot.setAttribute("cy", geo.y);
@@ -8764,8 +9370,12 @@ Object.assign(CARDIAC.content.partAlias, {
     // Vessels: a point measured along the drawn path itself.
     var VESSEL_AT = { "svc": 0.62, "ivc": 0.42, "aorta": 0.26,
                       "pulmonary-artery": 0.55, "pulmonary-veins": 0.40 };
+    /* Any label NOT anchored here keeps its static gutter position, which the
+     * hover repositioning below never sees — that is how the coronary label came
+     * to hang off the right edge of the narrow crop. */
+    var VESSEL_SOURCE = { "pulmonary-veins": "pv1" };
     for (var vk in VESSEL_AT) {
-      var vp = view.vessels[vk === "pulmonary-veins" ? "pv1" : vk];
+      var vp = view.vessels[VESSEL_SOURCE[vk] || vk];
       if (!vp || !vp.getTotalLength) continue;
       try {
         var pt = vp.getPointAtLength(vp.getTotalLength() * VESSEL_AT[vk]);
@@ -8806,10 +9416,35 @@ Object.assign(CARDIAC.content.partAlias, {
       if (!lab) continue;
       var L = GEO.LABELS[dk];
       var dot = lab.querySelector(".anno-dot"), line = lab.querySelector(".anno-line");
+      var txt = lab.querySelector(".anno-text");
       dot.setAttribute("cx", dyn[dk].x.toFixed(1));
       dot.setAttribute("cy", dyn[dk].y.toFixed(1));
-      line.setAttribute("d", "M" + L.tx + "," + L.ty + " L" +
+
+      /* A label summoned by hovering, with no label set pinned, cannot use the
+       * gutters — the drawing is cropped tighter and the text ran off the edge.
+       * Widening the crop was the first fix and it was wrong: it rescaled the
+       * whole illustration, so the picture jumped every time the pointer moved
+       * on or off. Put the text beside the structure instead. The crop never
+       * changes, and a name next to the thing it names reads better than one at
+       * the end of a long leader line anyway. */
+      var beside = (dk === view._hoverLabel) && lab.getAttribute("data-pinned") !== "1";
+      var tx = L.tx, ty = L.ty, anchorEnd = L.tx < 260;
+      if (beside) {
+        var box = (view.svg.getAttribute("viewBox") || "").split(/\s+/).map(Number);
+        var right = box.length === 4 ? box[0] + box[2] : 554;
+        var left = box.length === 4 ? box[0] : -52;
+        var toRight = (right - dyn[dk].x) > (dyn[dk].x - left);
+        tx = dyn[dk].x + (toRight ? 20 : -20);
+        ty = dyn[dk].y - 10;
+        anchorEnd = !toRight;
+      }
+      line.setAttribute("d", "M" + tx.toFixed(1) + "," + ty.toFixed(1) + " L" +
                         dyn[dk].x.toFixed(1) + "," + dyn[dk].y.toFixed(1));
+      if (txt) {
+        txt.setAttribute("x", (tx + (anchorEnd ? -6 : 6)).toFixed(1));
+        txt.setAttribute("y", (ty + 4).toFixed(1));
+        txt.setAttribute("text-anchor", anchorEnd ? "end" : "start");
+      }
     }
 
     /* Pathology: wall thickness is real geometry, not a colour wash. */
@@ -8860,6 +9495,11 @@ Object.assign(CARDIAC.content.partAlias, {
   var BOX_LABELLED_LARGE = "-62 14 632 522";
   var BOX_BARE = "86 14 400 522";
 
+  function labelledBox() {
+    return document.documentElement.getAttribute("data-size") === "large"
+      ? BOX_LABELLED_LARGE : BOX_LABELLED;
+  }
+
   function applyFocus(view, focus, labelSet, highlight) {
     var map = FOCUS_LAYERS[focus] || FOCUS_LAYERS.integrated;
     // Naming conduction structures while the conduction layer is dimmed to a
@@ -8869,10 +9509,9 @@ Object.assign(CARDIAC.content.partAlias, {
       map.conduction = 1;
     }
     var wantsLabels = labelSet && labelSet !== "none";
-    var bigText = document.documentElement.getAttribute("data-size") === "large";
-    view.svg.setAttribute("viewBox", wantsLabels
-      ? (bigText ? BOX_LABELLED_LARGE : BOX_LABELLED)
-      : BOX_BARE);
+    view._labelledBox = labelledBox();
+    view._restBox = wantsLabels ? view._labelledBox : BOX_BARE;
+    view.svg.setAttribute("viewBox", view._restBox);
     map.wavefront = map.conduction;
     Object.keys(view.layers).forEach(function (name) {
       var o = map[name];
@@ -8975,6 +9614,7 @@ Object.assign(CARDIAC.content.partAlias, {
     if (view._hoverLabel === region) return;
     view._hoverLabel = region;
 
+
     var hoverKey = null;
     Object.keys(view.labels).forEach(function (key) {
       var g = view.labels[key];
@@ -8990,6 +9630,7 @@ Object.assign(CARDIAC.content.partAlias, {
      * hovered label comes from outside that set and can land on top of one.
      * The hovered label is the thing being asked about, so it wins and whatever
      * it covers steps aside until the pointer leaves. */
+    if (view._onHoverChange) view._onHoverChange();
     var hb = textBox(view.labels[hoverKey]);
     if (!hb) return;
     Object.keys(view.labels).forEach(function (key) {
@@ -9937,6 +10578,213 @@ Object.assign(CARDIAC.content.partAlias, {
 
 </script>
 <script>
+/* 50-ui-glossary.js */
+/* 50-ui-glossary.js — turn defined terms in already-written prose into buttons.
+ *
+ * Lesson text is a plain string rendered with textContent, and the five existing
+ * sequences went through a clinical review pass. So rather than marking terms up
+ * by hand — which would mean editing reviewed prose, and which fails open the
+ * moment somebody forgets to tag a word — this walks the rendered text nodes and
+ * linkifies whatever it recognises. Adding a term to the glossary makes it
+ * clickable everywhere it already appears, retroactively.
+ *
+ * Definitions open inline, immediately under the paragraph they came from. Not
+ * a tooltip (dead on touch, keyboard and screen readers) and not the shared
+ * explainer panel, which lives a column away in the ECG pane and gets hidden
+ * whenever the rhythm changes — a definition that vanishes when a lesson step
+ * changes rhythm is worse than no definition.
+ *
+ * Loads before 53-ui-lessons.js so C.ui.glossary exists when lessons render.
+ */
+(function (C) {
+  "use strict";
+
+  var MAX_PER_BLOCK = 3;      // a paragraph of buttons is not a paragraph
+  var uid = 0;
+  var matcher = null;         // built lazily, once the content files have run
+
+  function build() {
+    if (matcher) return matcher;
+    var pairs = [];
+    Object.keys(C.content.glossary).forEach(function (id) {
+      var g = C.content.glossary[id];
+      pairs.push([g.term, id]);
+      (g.also || []).forEach(function (a) { pairs.push([a, id]); });
+    });
+    /* Longest alias first, or "atrial" swallows the start of "atrial kick" and
+     * the more specific entry never fires. */
+    pairs.sort(function (a, b) { return b[0].length - a[0].length; });
+
+    var index = {};
+    var alts = pairs.map(function (p) {
+      index[p[0].toLowerCase()] = p[1];
+      return p[0].replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    });
+    matcher = {
+      re: new RegExp("\\b(" + alts.join("|") + ")\\b", "i"),
+      index: index
+    };
+    return matcher;
+  }
+
+  function idFor(text) {
+    return build().index[String(text).toLowerCase()] || null;
+  }
+
+  /* Walk text nodes and replace the first few recognised terms with buttons.
+   * Idempotent: nodes already inside a .gloss are skipped, so running twice
+   * changes nothing. */
+  function decorate(root) {
+    if (!root || root.closest && root.closest('[data-gloss="off"]')) return root;
+    /* Idempotent by mark, not by inspection. The text left over after a button
+     * is a sibling of it, not a descendant, so a second pass would happily
+     * match it again and stack up duplicate buttons. */
+    if (root.getAttribute && root.getAttribute("data-gloss-done") === "1") return root;
+    if (root.setAttribute) root.setAttribute("data-gloss-done", "1");
+
+    var m = build();
+    var used = {}, made = 0;
+
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        if (!n.nodeValue || !n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        var p = n.parentNode;
+        while (p && p !== root) {
+          if (p.classList && (p.classList.contains("gloss") || p.classList.contains("gloss-def"))) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          if (p.getAttribute && p.getAttribute("data-gloss") === "off") return NodeFilter.FILTER_REJECT;
+          p = p.parentNode;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+
+    var texts = [], n;
+    while ((n = walker.nextNode())) texts.push(n);
+
+    texts.forEach(function (node) {
+      /* Keep matching the remainder of this node, not just its first term — a
+       * step's whole sentence is usually a single text node, so stopping after
+       * one match meant only ever one definable word per step. */
+      while (made < MAX_PER_BLOCK) {
+        var hit = m.re.exec(node.nodeValue);
+        if (!hit) return;
+        var id = idFor(hit[1]);
+        if (!id) return;
+        // One button per term per block: the third reminder is noise.
+        if (used[id]) {
+          // Skip past this occurrence and keep looking for a different term.
+          var skip = document.createTextNode(node.nodeValue.slice(0, hit.index + hit[1].length));
+          node.parentNode.insertBefore(skip, node);
+          node.nodeValue = node.nodeValue.slice(hit.index + hit[1].length);
+          continue;
+        }
+        used[id] = 1; made++;
+
+        var before = node.nodeValue.slice(0, hit.index);
+        var after = node.nodeValue.slice(hit.index + hit[1].length);
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "gloss";
+        btn.textContent = hit[1];
+        btn.setAttribute("data-term", id);
+        btn.setAttribute("aria-expanded", "false");
+        btn.setAttribute("aria-controls", "glossdef-" + (++uid));
+        btn.addEventListener("click", function (e) { e.preventDefault(); toggle(btn); });
+
+        var parent = node.parentNode;
+        parent.insertBefore(document.createTextNode(before), node);
+        parent.insertBefore(btn, node);
+        node.nodeValue = after;
+      }
+    });
+
+    return root;
+  }
+
+  function toggle(btn) {
+    var id = btn.getAttribute("data-term");
+    var g = C.content.glossary[id];
+    if (!g) return;
+    var defId = btn.getAttribute("aria-controls");
+    var open = btn.getAttribute("aria-expanded") === "true";
+
+    // One definition open at a time in a given pane, so the panel does not
+    // become a stack of half-read boxes.
+    var pane = btn.closest(".rail-pane") || btn.ownerDocument.body;
+    pane.querySelectorAll(".gloss[aria-expanded='true']").forEach(function (b) {
+      if (b !== btn) closeDef(b);
+    });
+
+    if (open) return closeDef(btn);
+
+    var host = btn.closest("p, li, dd, .step-text") || btn.parentNode;
+    var box = document.createElement("div");
+    box.className = "gloss-def";
+    box.id = defId;
+
+    var t = document.createElement("b");
+    t.textContent = g.term;
+    box.appendChild(t);
+    var s = document.createElement("span");
+    s.textContent = " — " + g.short;
+    box.appendChild(s);
+
+    // A definition is also a doorway to the same explain-this machinery the
+    // rest of the product uses, rather than a fourth parallel one.
+    if (g.see || g.wave) {
+      var row = document.createElement("div");
+      row.className = "gloss-links";
+      if (g.see && C.content.parts[g.see]) {
+        row.appendChild(pill("Show me on the heart", function () { C.api.inspectPart(g.see); }));
+      }
+      if (g.wave && C.content.waveGuide[g.wave]) {
+        row.appendChild(pill("Show me on the tracing", function () { C.api.showWave(g.wave); }));
+      }
+      if (row.childNodes.length) box.appendChild(row);
+    }
+
+    host.parentNode.insertBefore(box, host.nextSibling);
+    btn.setAttribute("aria-expanded", "true");
+  }
+
+  function pill(label, fn) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "pill"; b.textContent = label;
+    b.addEventListener("click", fn);
+    return b;
+  }
+
+  function closeDef(btn) {
+    var box = document.getElementById(btn.getAttribute("aria-controls"));
+    if (box && box.parentNode) box.parentNode.removeChild(box);
+    btn.setAttribute("aria-expanded", "false");
+  }
+
+  /* The whole list, rendered wherever it is asked for. No sixth rail tab: the
+   * tablist is already five wide and collapses at 1180px. */
+  function renderAll(host) {
+    var dl = document.createElement("dl");
+    dl.className = "gloss-list";
+    dl.setAttribute("data-gloss", "off");     // do not linkify the glossary itself
+    Object.keys(C.content.glossary)
+      .map(function (id) { return C.content.glossary[id]; })
+      .sort(function (a, b) { return a.term.localeCompare(b.term); })
+      .forEach(function (g) {
+        var dt = document.createElement("dt"); dt.textContent = g.term;
+        var dd = document.createElement("dd"); dd.textContent = g.short;
+        dl.appendChild(dt); dl.appendChild(dd);
+      });
+    host.appendChild(dl);
+    return host;
+  }
+
+  C.ui.glossary = { decorate: decorate, renderAll: renderAll, idFor: idFor };
+})(CARDIAC);
+
+</script>
+<script>
 /* 51-ui-panels.js */
 /* 51-ui-panels.js — the teaching rail.
  *
@@ -10675,8 +11523,83 @@ Object.assign(CARDIAC.content.partAlias, {
   var state = {
     lessonId: null, step: 0,
     predictChoice: null, predictRevealed: false,
-    completed: {}
+    completed: {},
+    // Action gate: whether the learner has done the thing this step asked for,
+    // how many wrong targets they have tried, and whether they did it themselves
+    // or asked to be shown. "shown" is kept distinct from "done" so a closing
+    // step can say how many they found unaided without overclaiming.
+    gateDone: false, gateTries: 0, gateOutcome: null, _gateHandler: null
   };
+
+  /* Which bus event satisfies which kind of gate. */
+  var GATE_EVENT = {
+    part: "part-selected",
+    wave: "wave-selected",
+    tab: "tab-changed",
+    control: "control-used"
+  };
+
+  /* What the detail payload calls the thing that was touched. */
+  function gateValueOf(kind, detail) {
+    if (kind === "tab") return detail.tab;
+    if (kind === "control") return detail.control;
+    return detail.key;
+  }
+
+  function disarmGate() {
+    if (!state._gateHandler) return;
+    C.bus.off(state._gateHandler.type, state._gateHandler.fn);
+    state._gateHandler = null;
+  }
+
+  function armGate(s, app) {
+    state.gateDone = false;
+    state.gateTries = 0;
+    state.gateOutcome = null;
+    if (!s.gate) return;
+
+    var kind = s.gate.kind, type = GATE_EVENT[kind];
+    if (!type) return;
+
+    /* A selection left over from the previous step must not pre-satisfy this
+     * one. Closing the explainer first also removes a stale panel from view. */
+    if (kind === "part") app.inspectPart(null);
+
+    var fn = function (detail) {
+      /* Only real user input counts. A step that says "click the mitral valve"
+       * must not be able to satisfy itself, and a later step's `inspect` must
+       * not retroactively clear an earlier gate. */
+      if (!detail || detail.source !== "user") return;
+      var got = gateValueOf(kind, detail);
+      if (s.gate.value !== "*" && got !== s.gate.value) {
+        state.gateTries++;
+        app.announce(s.gate.wrong || ("Not that one. " + s.gate.prompt));
+        state.rerender && state.rerender();
+        return;
+      }
+      state.gateDone = true;
+      state.gateOutcome = "done";
+      disarmGate();
+      app.announce("That's it. You can move on now.");
+      state.rerender && state.rerender();
+    };
+    state._gateHandler = { type: type, fn: fn };
+    C.bus.on(type, fn);
+  }
+
+  /* The escape hatch, available from the first frame rather than after a timer.
+   * A hidden delayed unlock is hostile, and a student stuck in front of a class
+   * is a worse failure than one who accepted help. */
+  function showGateAnswer(s, app) {
+    var g = s.gate;
+    if (g.kind === "part" && g.value !== "*") app.inspectPart(g.value);
+    else if (g.kind === "wave") app.showWave(g.value);
+    else if (g.kind === "part") app.inspectPart("left-ventricle");
+    state.gateDone = true;
+    state.gateOutcome = "shown";
+    disarmGate();
+    app.announce(g.hint || g.prompt);
+  }
 
   function lessonsFor(mode) {
     return C.content.lessons.filter(function (l) {
@@ -10695,10 +11618,10 @@ Object.assign(CARDIAC.content.partAlias, {
     pane.appendChild(h("h3", { class: "headline", text: "Work through one idea at a time" }));
 
     var box = h("div", { class: "lesson-list" });
-    lessonsFor(app.state.mode).forEach(function (l) {
+    lessonsFor(app.state.mode).forEach(function (l, li) {
       var done = state.completed[l.id];
       box.appendChild(h("button", {
-        type: "button", class: "lesson-card",
+        type: "button", class: "lesson-card" + (li === 0 ? " is-primary" : ""),
         onclick: function () { start(l.id, app, pane); }
       }, [
         h("strong", { text: l.label + (done ? "  ✓" : "") }),
@@ -10706,6 +11629,20 @@ Object.assign(CARDIAC.content.partAlias, {
       ]));
     });
     pane.appendChild(box);
+
+    pane.appendChild(h("button", {
+      type: "button", class: "pill", text: "All terms",
+      onclick: function () {
+        var box2 = pane.querySelector(".gloss-list");
+        if (box2) { box2.parentNode.removeChild(box2); return; }
+        C.ui.glossary.renderAll(pane);
+      }
+    }));
+
+    /* Progress is deliberately not stored (see 11-store.js), so say so rather
+     * than let a reset tick list read as a bug. */
+    pane.appendChild(h("p", { class: "illustrative",
+      text: "Ticks last until you close the page — nothing about your progress is saved to this computer." }));
 
     if (app.state.mode === "basic") {
       pane.appendChild(h("p", { class: "illustrative",
@@ -10724,21 +11661,71 @@ Object.assign(CARDIAC.content.partAlias, {
     return C.content.lessons.filter(function (l) { return l.id === state.lessonId; })[0];
   }
 
+  /* Order here is load-bearing. rebuild() hides the explainer and clears the
+   * selected wave, and setRhythm/setCondition call it — so anything that OPENS
+   * the explainer has to come after them. announce goes last so the step's own
+   * sentence wins the 30 ms debounce rather than racing the rhythm change. */
   function applyStep(app) {
     var l = currentLesson();
     if (!l) return;
     var s = l.steps[state.step];
     if (!s) return;
+
+    disarmGate();
+
     app.pause();
     if (s.focus) app.setFocus(s.focus);
-    if (s.rhythm) app.setRhythm(s.rhythm, { keepLesson: true });
-    if (s.condition) app.setCondition(s.condition, { keepLesson: true });
+    if (s.rhythm) app.setRhythm(s.rhythm, { quiet: true });
+    if (s.condition) app.setCondition(s.condition, { quiet: true });
     if (s.patientState) app.setPatientState(s.patientState);
-    if (s.lead) app.setLead(s.lead);
+    if (s.lead) app.setLead(s.lead, { source: "lesson" });
     if (s.leadView) app.setLeadView(s.leadView);
+    if (s.labelSet) app.setLabelSet(s.labelSet, { source: "lesson" });
     app.setSpotlight(s.highlight || []);
     app.seek(s.seek);
+
+    /* inspect/wave need a drawn layout: jumpToWave reads app._stripLayout,
+     * which only exists after a frame has been drawn. Straight after a rebuild
+     * it is stale, and the wave lookup silently degrades to a tag highlight. */
+    if (s.inspect || s.wave || s.point) {
+      requestAnimationFrame(function () {
+        if (currentLesson() !== l || l.steps[state.step] !== s) return;  // moved on
+        if (s.inspect) app.inspectPart(s.inspect);
+        if (s.wave) app.showWave(s.wave);
+        if (s.point) pointAt(s.point);
+      });
+    } else {
+      pointAt(null);
+    }
+
     app.announce(s.title + ". " + s.text);
+    armGate(s, app);
+  }
+
+  /* Sequence A has to talk about the topbar and the transport bar, which live
+   * outside this panel. Scroll the thing into view and outline it — deliberately
+   * NOT a coach-mark overlay, which would mean positioning, z-index, focus order
+   * and reduced-motion handling for very little more teaching value. */
+  function pointAt(selector) {
+    var prev = document.querySelectorAll(".is-pointed");
+    for (var i = 0; i < prev.length; i++) prev[i].classList.remove("is-pointed");
+    if (!selector) return;
+    var el = document.querySelector(selector);
+    if (!el) return;
+    el.classList.add("is-pointed");
+    if (el.scrollIntoView) el.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
+  /* Everything a lesson turned on gets turned off. Before this existed a
+   * sequence that opened the explainer left it open forever, and a spotlight
+   * outlived the step that set it. */
+  function exitLesson(app) {
+    disarmGate();
+    state.rerender = null;
+    app.setSpotlight([]);
+    app.setHighlight([]);
+    app.inspectPart(null);
+    pointAt(null);
   }
 
   function renderStep(pane, app) {
@@ -10749,7 +11736,7 @@ Object.assign(CARDIAC.content.partAlias, {
     pane.appendChild(h("button", {
       type: "button", class: "pill", text: "◀ All sequences",
       onclick: function () {
-        state.lessonId = null; app.setSpotlight([]); render(pane, app);
+        state.lessonId = null; exitLesson(app); render(pane, app);
       }
     }));
 
@@ -10765,11 +11752,22 @@ Object.assign(CARDIAC.content.partAlias, {
     ]));
 
     pane.appendChild(h("h3", { class: "step-title", text: s.title }));
-    pane.appendChild(h("p", { class: "step-text", text: s.text }));
+    /* Linkify defined terms in the rendered text. Two lines here give all five
+     * existing sequences glossary coverage without editing their reviewed prose. */
+    var body = h("p", { class: "step-text", text: s.text });
+    pane.appendChild(body);
+    C.ui.glossary.decorate(body);
 
     if (s.predict) {
       pane.appendChild(renderPredict(s.predict, app, pane, s.id));
     }
+    if (s.gate) {
+      pane.appendChild(renderGate(s, app, pane));
+    }
+
+    /* The bus handler fires from outside this render pass, so give it a way to
+     * refresh the panel without holding a stale `pane` reference. */
+    state.rerender = function () { render(pane, app); };
 
     var nav = h("div", { class: "step-nav" });
     nav.appendChild(h("button", {
@@ -10784,11 +11782,19 @@ Object.assign(CARDIAC.content.partAlias, {
     nav.appendChild(h("button", {
       type: "button", class: "btn btn-primary", text: last ? "Finish" : "Next ▶",
       "data-fkey": "lesson-next",
-      disabled: (s.predict && !state.predictRevealed) ? "disabled" : null,
+      disabled: ((s.predict && !state.predictRevealed) ||
+                 (s.gate && !state.gateDone)) ? "disabled" : null,
       onclick: function () {
         if (last) {
           state.completed[l.id] = true;
-          state.lessonId = null; app.setSpotlight([]);
+          state.lessonId = null; exitLesson(app);
+          /* Chained sequences read as one journey but behave as three
+           * resumable units, which matters because progress is not stored. */
+          if (l.next && C.content.lessons.filter(function (x) { return x.id === l.next; }).length) {
+            app.announce("Sequence complete. Starting the next one.");
+            start(l.next, app, pane);
+            return;
+          }
           app.announce("Sequence complete.");
         } else {
           state.step++; state.predictChoice = null; state.predictRevealed = false;
@@ -10802,6 +11808,32 @@ Object.assign(CARDIAC.content.partAlias, {
     if (s.predict && !state.predictRevealed) {
       pane.appendChild(h("p", { class: "illustrative", text: "Commit to a prediction before moving on." }));
     }
+  }
+
+  /* "Do this" block. The prompt is always visible; the hint appears once they
+   * have tried and missed, so a learner who gets it first time is not given the
+   * answer they did not need. */
+  function renderGate(s, app, pane) {
+    var g = s.gate;
+    var box = h("div", { class: "step-do" + (state.gateDone ? " is-done" : "") });
+
+    box.appendChild(h("p", { class: "do-prompt",
+      text: state.gateDone
+        ? (state.gateOutcome === "shown" ? "Shown: " + g.prompt : "Done: " + g.prompt)
+        : g.prompt }));
+
+    if (!state.gateDone && state.gateTries > 0 && g.hint) {
+      box.appendChild(h("p", { class: "do-hint", text: g.hint }));
+    }
+
+    if (!state.gateDone) {
+      box.appendChild(h("button", {
+        type: "button", class: "pill", text: "Show me where",
+        "data-fkey": "gate-show",
+        onclick: function () { showGateAnswer(s, app); render(pane, app); }
+      }));
+    }
+    return box;
   }
 
   /* The authored predictions all list the correct option first. Presented in
@@ -10870,14 +11902,14 @@ Object.assign(CARDIAC.content.partAlias, {
         }
       }));
     } else {
-      box.appendChild(h("div", { class: "quiz-feedback" + (state.predictChoice === p.correct ? "" : " is-wrong") }, [
-        h("p", { text: p.reveal })
-      ]));
+      var rev = h("p", { text: p.reveal });
+      box.appendChild(h("div", { class: "quiz-feedback" + (state.predictChoice === p.correct ? "" : " is-wrong") }, [rev]));
+      C.ui.glossary.decorate(rev);
     }
     return box;
   }
 
-  C.ui.lessons = { render: render, state: state, lessonsFor: lessonsFor };
+  C.ui.lessons = { render: render, start: start, state: state, lessonsFor: lessonsFor };
 })(window.CARDIAC);
 
 </script>
@@ -11097,6 +12129,7 @@ Object.assign(CARDIAC.content.partAlias, {
       if (r === app._hoverPart) return;
       app._hoverPart = r;
       C.render.heart.setHoverLabel(app.heartView, r);
+      app._dirty = true;      // so the label repositions beside the structure
       svg.style.cursor = r ? "pointer" : "";
       var p = r && C.content.parts[r];
       svg.setAttribute("title", p ? p.label : "");
@@ -11105,6 +12138,7 @@ Object.assign(CARDIAC.content.partAlias, {
     svg.addEventListener("pointerleave", function () {
       app._hoverPart = null;
       C.render.heart.setHoverLabel(app.heartView, null);
+      app._dirty = true;
       svg.style.cursor = "";
     });
 
@@ -11147,7 +12181,14 @@ Object.assign(CARDIAC.content.partAlias, {
 
   /* Reuses the wave explainer's panel rather than adding a second explaining
    * surface competing for the same space. */
-  function selectPart(key, opener) {
+  /* opts.source  — "user" (a real click or arrow key) or "lesson". Only user
+   *                 input can satisfy a guided step's action gate.
+   * opts.focusExplainer — false when a lesson opens this. Moving focus is right
+   *                 for a click and wrong for a step: pressing Next would throw
+   *                 focus out of the rail and a keyboard learner would have to
+   *                 tab all the way back to reach Next again. */
+  function selectPart(key, opener, opts) {
+    opts = opts || {};
     app._selectedPart = key || null;
     var box = document.getElementById("waveExplainer");
     if (!key) {
@@ -11197,21 +12238,24 @@ Object.assign(CARDIAC.content.partAlias, {
 
     box.hidden = false;
     if (box.scrollIntoView) box.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    var wt = document.getElementById("waveTitle");
-    if (wt) { wt.setAttribute("tabindex", "-1"); wt.focus({ preventScroll: true }); }
+    if (opts.focusExplainer !== false) {
+      var wt = document.getElementById("waveTitle");
+      if (wt) { wt.setAttribute("tabindex", "-1"); wt.focus({ preventScroll: true }); }
+    }
     api.announce(part.label + ". " + doing);
     app._dirty = true;
+    C.bus.emit("part-selected", { key: key, source: opts.source || "user" });
   }
 
   /* Walk the link the other way: from a structure to the wave it explains. */
-  function jumpToWave(waveKey) {
+  function jumpToWave(waveKey, opts) {
     var layout = app._stripLayout;
     var regions = layout
       ? C.render.ecg.waveRegions(app.wave, app.schedule, layout.t0, layout.durMs)
       : null;
     if (regions) {
       for (var i = 0; i < regions.length; i++) {
-        if (regions[i].key === waveKey) { selectWave(regions[i]); return; }
+        if (regions[i].key === waveKey) { selectWave(regions[i], opts); return; }
       }
     }
     api.setHighlight((C.content.waveGuide[waveKey] || {}).tags || []);
@@ -11265,6 +12309,16 @@ Object.assign(CARDIAC.content.partAlias, {
     api.announce(app.state.hideName
       ? "Rhythm challenge in progress. The rhythm name is hidden until you commit."
       : F.describe(app, app.frame || F.frameAt(app, app.tMs)));
+  }
+
+  function startTour() {
+    /* The Presenting preset collapses this panel, and it persists. Without this
+     * a student who last used the projection setup — or who opened a teacher's
+     * shared link — starts the walkthrough unable to see a word of it. */
+    setRail(true);
+    api.setTab("learn");
+    var pane = document.getElementById("pane-learn");
+    if (C.ui.lessons && C.ui.lessons.start) C.ui.lessons.start("tour-basics", api, pane);
   }
 
   function setLabel(id, text) {
@@ -11444,7 +12498,8 @@ Object.assign(CARDIAC.content.partAlias, {
 
   /* Selecting a wave pauses there, spotlights what the heart is doing at that
    * instant, and explains it beside the tracing. One click, three connections. */
-  function selectWave(region) {
+  function selectWave(region, opts) {
+    opts = opts || {};
     app._selectedWave = region || null;
     var box = document.getElementById("waveExplainer");
     if (!region) {
@@ -11487,10 +12542,13 @@ Object.assign(CARDIAC.content.partAlias, {
     // The panel scrolls, so an explainer that opens below the fold reads as
     // nothing having happened.
     if (box.scrollIntoView) box.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    var wt = document.getElementById("waveTitle");
-    if (wt) { wt.setAttribute("tabindex", "-1"); wt.focus({ preventScroll: true }); }
+    if (opts.focusExplainer !== false) {
+      var wt = document.getElementById("waveTitle");
+      if (wt) { wt.setAttribute("tabindex", "-1"); wt.focus({ preventScroll: true }); }
+    }
     api.announce(g.label + ". " + g.mechanical);
     app._dirty = true;
+    C.bus.emit("wave-selected", { key: region.key, source: opts.source || "user" });
   }
 
   /* -------------------------------------------------------------- readouts */
@@ -11672,6 +12730,7 @@ Object.assign(CARDIAC.content.partAlias, {
       app.tMs = e.onsetMs;
       setOrigin(); app._dirty = true;
       api.announce(F.eventLabel(e));
+      C.bus.emit("stepped", { dir: dir, source: "user" });
     },
 
     setMode: function (mode) {
@@ -11701,21 +12760,29 @@ Object.assign(CARDIAC.content.partAlias, {
       rebuild(false);
       syncControls(); renderRail();
       var rec = C.content.rhythms[id];
-      if (rec && !app.state.hideName) api.announce(rec.label + ". " + rec.headline);
+      // A guided step announces its own sentence; two announcements 30 ms apart
+      // race, and the survivor is not guaranteed to be the later one.
+      if (rec && !app.state.hideName && !(opts && opts.quiet)) {
+        api.announce(rec.label + ". " + rec.headline);
+      }
     },
 
-    setCondition: function (id) {
+    setCondition: function (id, opts) {
       app.state.condition = id;
       app.state.physiology = null;
       rebuild(true); syncControls(); renderRail();
       var rec = C.content.conditions[id];
-      if (rec && !app.state.hideName) api.announce(rec.label + ". " + (rec.headline || ""));
+      if (rec && !app.state.hideName && !(opts && opts.quiet)) {
+        api.announce(rec.label + ". " + (rec.headline || ""));
+      }
     },
 
-    setLead: function (lead) {
+    setLead: function (lead, opts) {
       if (C.LEAD_ORDER.indexOf(lead) < 0) return;
       app.state.selectedLead = lead;
       syncControls(); app._dirty = true;
+      C.bus.emit("control-used", { control: "lead", value: lead,
+                                   source: (opts && opts.source) || "user" });
     },
 
     setLeadView: function (v) {
@@ -11737,9 +12804,24 @@ Object.assign(CARDIAC.content.partAlias, {
       app.state.focus = f;
       if (f === "conduction" && app.state.labelSet === "chambers") app.state.labelSet = "conduction";
       applyHeartFocus(); syncControls(); app._dirty = true;
+      C.bus.emit("control-used", { control: "focus", value: f, source: "user" });
     },
 
-    setLabelSet: function (l) { app.state.labelSet = l; applyHeartFocus(); app._dirty = true; },
+    setLabelSet: function (l, opts) {
+      app.state.labelSet = l; applyHeartFocus(); app._dirty = true;
+      C.bus.emit("control-used", { control: "labels", value: l,
+                                   source: (opts && opts.source) || "user" });
+    },
+
+    /* Let a guided step drive the same code paths a learner's click drives,
+     * rather than reimplementing them. Marked source:"lesson" so a step can
+     * never satisfy its own action gate. */
+    inspectPart: function (key) {
+      selectPart(key || null, null, { source: "lesson", focusExplainer: false });
+    },
+    showWave: function (key) {
+      jumpToWave(key, { source: "lesson", focusExplainer: false });
+    },
 
     setSpotlight: function (regions) { app.state.spotlight = regions || []; applyHeartFocus(); app._dirty = true; },
 
@@ -11794,7 +12876,10 @@ Object.assign(CARDIAC.content.partAlias, {
 
     revealName: function () { app.state.hideName = false; syncControls(); renderRail(); },
 
-    setTab: function (t) { app.state.tab = t; renderRail(); }
+    setTab: function (t) {
+      app.state.tab = t; renderRail();
+      C.bus.emit("tab-changed", { tab: t, source: "user" });
+    }
   };
 
   /* -------------------------------------------------------------- chrome */
@@ -11996,7 +13081,8 @@ Object.assign(CARDIAC.content.partAlias, {
       "Not kept anywhere: quiz answers, challenge scores, lesson progress — those " +
         "last only while the page is open, so a shared machine never hands your " +
         "work to the next person.",
-      "Nothing is sent anywhere. There is no account and no network call after the page loads."
+      "Nothing is sent anywhere. There is no account and no network call after the page loads.",
+      "Nothing tracks whether you have done the walkthrough \u2014 the Start here button is always there."
     ]));
 
     var prefRow = h("div", { class: "about-actions" });
@@ -12053,6 +13139,8 @@ Object.assign(CARDIAC.content.partAlias, {
     syncChrome(); syncControls(); syncPlayButton(); renderRail();
     buildAbout();
     wire();
+
+    if (/[?&]tour=1(&|$)/.test(location.search)) startTour();
 
     app._raf = requestAnimationFrame(tick);
 
@@ -12116,6 +13204,12 @@ Object.assign(CARDIAC.content.partAlias, {
     });
 
     on("displaySelect", "change", function (e) { applyDisplay(e.target.value); });
+
+    /* Permanent rather than a first-run banner. A one-time banner has to
+     * remember it has been shown, and the About box states publicly that nothing
+     * about your progress is stored — so a button that is simply always there is
+     * both cheaper and honest. */
+    on("tourBtn", "click", function () { startTour(); });
 
     on("themeToggle", "click", function () {
       var root = document.documentElement;
@@ -12281,6 +13375,8 @@ Object.assign(CARDIAC.content.partAlias, {
     if (f && ["anatomy", "conduction", "contraction", "flow", "integrated"].indexOf(f) >= 0) app.state.focus = f;
     var d = q.get("display");
     if (d && DISPLAY_PRESETS[d]) app.state.display = d;
+    // The assignment route: one link drops a whole class inside step one.
+    if (q.get("tour") === "1") app.state.tab = "learn";
     if (app.state.leadView === "twelve") app.state.labelSet = "none";
     var seed = parseInt(q.get("seed"), 10);
     if (isFinite(seed) && seed >= 0) app.state.seed = seed >>> 0;

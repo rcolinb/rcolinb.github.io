@@ -212,6 +212,7 @@
       if (r === app._hoverPart) return;
       app._hoverPart = r;
       C.render.heart.setHoverLabel(app.heartView, r);
+      app._dirty = true;      // so the label repositions beside the structure
       svg.style.cursor = r ? "pointer" : "";
       var p = r && C.content.parts[r];
       svg.setAttribute("title", p ? p.label : "");
@@ -220,6 +221,7 @@
     svg.addEventListener("pointerleave", function () {
       app._hoverPart = null;
       C.render.heart.setHoverLabel(app.heartView, null);
+      app._dirty = true;
       svg.style.cursor = "";
     });
 
@@ -262,7 +264,14 @@
 
   /* Reuses the wave explainer's panel rather than adding a second explaining
    * surface competing for the same space. */
-  function selectPart(key, opener) {
+  /* opts.source  — "user" (a real click or arrow key) or "lesson". Only user
+   *                 input can satisfy a guided step's action gate.
+   * opts.focusExplainer — false when a lesson opens this. Moving focus is right
+   *                 for a click and wrong for a step: pressing Next would throw
+   *                 focus out of the rail and a keyboard learner would have to
+   *                 tab all the way back to reach Next again. */
+  function selectPart(key, opener, opts) {
+    opts = opts || {};
     app._selectedPart = key || null;
     var box = document.getElementById("waveExplainer");
     if (!key) {
@@ -312,21 +321,24 @@
 
     box.hidden = false;
     if (box.scrollIntoView) box.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    var wt = document.getElementById("waveTitle");
-    if (wt) { wt.setAttribute("tabindex", "-1"); wt.focus({ preventScroll: true }); }
+    if (opts.focusExplainer !== false) {
+      var wt = document.getElementById("waveTitle");
+      if (wt) { wt.setAttribute("tabindex", "-1"); wt.focus({ preventScroll: true }); }
+    }
     api.announce(part.label + ". " + doing);
     app._dirty = true;
+    C.bus.emit("part-selected", { key: key, source: opts.source || "user" });
   }
 
   /* Walk the link the other way: from a structure to the wave it explains. */
-  function jumpToWave(waveKey) {
+  function jumpToWave(waveKey, opts) {
     var layout = app._stripLayout;
     var regions = layout
       ? C.render.ecg.waveRegions(app.wave, app.schedule, layout.t0, layout.durMs)
       : null;
     if (regions) {
       for (var i = 0; i < regions.length; i++) {
-        if (regions[i].key === waveKey) { selectWave(regions[i]); return; }
+        if (regions[i].key === waveKey) { selectWave(regions[i], opts); return; }
       }
     }
     api.setHighlight((C.content.waveGuide[waveKey] || {}).tags || []);
@@ -380,6 +392,16 @@
     api.announce(app.state.hideName
       ? "Rhythm challenge in progress. The rhythm name is hidden until you commit."
       : F.describe(app, app.frame || F.frameAt(app, app.tMs)));
+  }
+
+  function startTour() {
+    /* The Presenting preset collapses this panel, and it persists. Without this
+     * a student who last used the projection setup — or who opened a teacher's
+     * shared link — starts the walkthrough unable to see a word of it. */
+    setRail(true);
+    api.setTab("learn");
+    var pane = document.getElementById("pane-learn");
+    if (C.ui.lessons && C.ui.lessons.start) C.ui.lessons.start("tour-basics", api, pane);
   }
 
   function setLabel(id, text) {
@@ -559,7 +581,8 @@
 
   /* Selecting a wave pauses there, spotlights what the heart is doing at that
    * instant, and explains it beside the tracing. One click, three connections. */
-  function selectWave(region) {
+  function selectWave(region, opts) {
+    opts = opts || {};
     app._selectedWave = region || null;
     var box = document.getElementById("waveExplainer");
     if (!region) {
@@ -602,10 +625,13 @@
     // The panel scrolls, so an explainer that opens below the fold reads as
     // nothing having happened.
     if (box.scrollIntoView) box.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    var wt = document.getElementById("waveTitle");
-    if (wt) { wt.setAttribute("tabindex", "-1"); wt.focus({ preventScroll: true }); }
+    if (opts.focusExplainer !== false) {
+      var wt = document.getElementById("waveTitle");
+      if (wt) { wt.setAttribute("tabindex", "-1"); wt.focus({ preventScroll: true }); }
+    }
     api.announce(g.label + ". " + g.mechanical);
     app._dirty = true;
+    C.bus.emit("wave-selected", { key: region.key, source: opts.source || "user" });
   }
 
   /* -------------------------------------------------------------- readouts */
@@ -787,6 +813,7 @@
       app.tMs = e.onsetMs;
       setOrigin(); app._dirty = true;
       api.announce(F.eventLabel(e));
+      C.bus.emit("stepped", { dir: dir, source: "user" });
     },
 
     setMode: function (mode) {
@@ -816,21 +843,29 @@
       rebuild(false);
       syncControls(); renderRail();
       var rec = C.content.rhythms[id];
-      if (rec && !app.state.hideName) api.announce(rec.label + ". " + rec.headline);
+      // A guided step announces its own sentence; two announcements 30 ms apart
+      // race, and the survivor is not guaranteed to be the later one.
+      if (rec && !app.state.hideName && !(opts && opts.quiet)) {
+        api.announce(rec.label + ". " + rec.headline);
+      }
     },
 
-    setCondition: function (id) {
+    setCondition: function (id, opts) {
       app.state.condition = id;
       app.state.physiology = null;
       rebuild(true); syncControls(); renderRail();
       var rec = C.content.conditions[id];
-      if (rec && !app.state.hideName) api.announce(rec.label + ". " + (rec.headline || ""));
+      if (rec && !app.state.hideName && !(opts && opts.quiet)) {
+        api.announce(rec.label + ". " + (rec.headline || ""));
+      }
     },
 
-    setLead: function (lead) {
+    setLead: function (lead, opts) {
       if (C.LEAD_ORDER.indexOf(lead) < 0) return;
       app.state.selectedLead = lead;
       syncControls(); app._dirty = true;
+      C.bus.emit("control-used", { control: "lead", value: lead,
+                                   source: (opts && opts.source) || "user" });
     },
 
     setLeadView: function (v) {
@@ -852,9 +887,24 @@
       app.state.focus = f;
       if (f === "conduction" && app.state.labelSet === "chambers") app.state.labelSet = "conduction";
       applyHeartFocus(); syncControls(); app._dirty = true;
+      C.bus.emit("control-used", { control: "focus", value: f, source: "user" });
     },
 
-    setLabelSet: function (l) { app.state.labelSet = l; applyHeartFocus(); app._dirty = true; },
+    setLabelSet: function (l, opts) {
+      app.state.labelSet = l; applyHeartFocus(); app._dirty = true;
+      C.bus.emit("control-used", { control: "labels", value: l,
+                                   source: (opts && opts.source) || "user" });
+    },
+
+    /* Let a guided step drive the same code paths a learner's click drives,
+     * rather than reimplementing them. Marked source:"lesson" so a step can
+     * never satisfy its own action gate. */
+    inspectPart: function (key) {
+      selectPart(key || null, null, { source: "lesson", focusExplainer: false });
+    },
+    showWave: function (key) {
+      jumpToWave(key, { source: "lesson", focusExplainer: false });
+    },
 
     setSpotlight: function (regions) { app.state.spotlight = regions || []; applyHeartFocus(); app._dirty = true; },
 
@@ -909,7 +959,10 @@
 
     revealName: function () { app.state.hideName = false; syncControls(); renderRail(); },
 
-    setTab: function (t) { app.state.tab = t; renderRail(); }
+    setTab: function (t) {
+      app.state.tab = t; renderRail();
+      C.bus.emit("tab-changed", { tab: t, source: "user" });
+    }
   };
 
   /* -------------------------------------------------------------- chrome */
@@ -1111,7 +1164,8 @@
       "Not kept anywhere: quiz answers, challenge scores, lesson progress — those " +
         "last only while the page is open, so a shared machine never hands your " +
         "work to the next person.",
-      "Nothing is sent anywhere. There is no account and no network call after the page loads."
+      "Nothing is sent anywhere. There is no account and no network call after the page loads.",
+      "Nothing tracks whether you have done the walkthrough \u2014 the Start here button is always there."
     ]));
 
     var prefRow = h("div", { class: "about-actions" });
@@ -1168,6 +1222,8 @@
     syncChrome(); syncControls(); syncPlayButton(); renderRail();
     buildAbout();
     wire();
+
+    if (/[?&]tour=1(&|$)/.test(location.search)) startTour();
 
     app._raf = requestAnimationFrame(tick);
 
@@ -1231,6 +1287,12 @@
     });
 
     on("displaySelect", "change", function (e) { applyDisplay(e.target.value); });
+
+    /* Permanent rather than a first-run banner. A one-time banner has to
+     * remember it has been shown, and the About box states publicly that nothing
+     * about your progress is stored — so a button that is simply always there is
+     * both cheaper and honest. */
+    on("tourBtn", "click", function () { startTour(); });
 
     on("themeToggle", "click", function () {
       var root = document.documentElement;
@@ -1396,6 +1458,8 @@
     if (f && ["anatomy", "conduction", "contraction", "flow", "integrated"].indexOf(f) >= 0) app.state.focus = f;
     var d = q.get("display");
     if (d && DISPLAY_PRESETS[d]) app.state.display = d;
+    // The assignment route: one link drops a whole class inside step one.
+    if (q.get("tour") === "1") app.state.tab = "learn";
     if (app.state.leadView === "twelve") app.state.labelSet = "none";
     var seed = parseInt(q.get("seed"), 10);
     if (isFinite(seed) && seed >= 0) app.state.seed = seed >>> 0;

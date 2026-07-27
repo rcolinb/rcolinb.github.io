@@ -72,22 +72,22 @@ Object.assign(CARDIAC.content.parts, {
 
   "tricuspid": {
     label: "Tricuspid valve",
-    what: "Between the right atrium and right ventricle. Opens to let the ventricle fill and shuts when ventricular pressure rises above atrial pressure.",
+    what: "Between the right atrium and right ventricle, with three leaflets — which is where the name comes from. It opens to let the ventricle fill and shuts when ventricular pressure rises above atrial pressure.",
     ecg: ["qrs", "tp"]
   },
   "mitral": {
     label: "Mitral valve",
-    what: "Between the left atrium and left ventricle. It shuts at the start of ventricular contraction — that closure, with the tricuspid, is the first heart sound.",
+    what: "Between the left atrium and left ventricle, and the only heart valve with two leaflets rather than three. It shuts at the start of ventricular contraction — that closure, with the tricuspid, is the first heart sound.",
     ecg: ["qrs", "tp"]
   },
   "pulmonic": {
     label: "Pulmonic valve",
-    what: "Guards the outlet from the right ventricle into the pulmonary trunk. It opens only once right ventricular pressure exceeds pulmonary artery pressure.",
+    what: "Guards the outlet from the right ventricle into the pulmonary trunk. Three cup-shaped cusps that fill and swing shut from above, and it opens only once right ventricular pressure exceeds pulmonary artery pressure.",
     ecg: ["st", "t"]
   },
   "aortic": {
     label: "Aortic valve",
-    what: "Guards the outlet from the left ventricle into the aorta. Its closure, with the pulmonic, is the second heart sound.",
+    what: "Guards the outlet from the left ventricle into the aorta, with three cup-shaped cusps like the pulmonic. Its closure, with the pulmonic, is the second heart sound.",
     ecg: ["st", "t"]
   },
   "papillary": {
@@ -113,6 +113,7 @@ Object.assign(CARDIAC.content.parts, {
     what: "Carries deoxygenated blood from the right ventricle to the lungs. It is the only artery in the body carrying deoxygenated blood, and it passes in front of the aortic root before dividing.",
     ecg: ["st", "t"]
   },
+
 
   /* ------------------------------------------------------- conduction system */
 

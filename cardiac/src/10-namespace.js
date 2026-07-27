@@ -17,7 +17,8 @@
       lessons: [],
       waveGuide: {},
       parts: {},
-      partAlias: {}
+      partAlias: {},
+      glossary: {}
     },
     /* Diagnostics. Populated by the render loop's error boundary and by the two
      * places that legitimately swallow a geometry exception, so a harness can
@@ -47,6 +48,45 @@
   CARDIAC.REGIONS = ["sa-node", "right-atrium", "left-atrium", "av-node",
     "his-bundle", "right-bundle", "left-bundle", "right-purkinje",
     "left-purkinje", "right-ventricle", "left-ventricle"];
+
+  /* ---------- event bus ----------
+   *
+   * Exists so a guided step can wait for the learner to actually do something
+   * without the lesson module and the inspector learning about each other. The
+   * inspector emits "a part was selected, by a user"; the lesson module listens.
+   * Neither reaches into the other's state, and the only shared vocabulary is an
+   * event name and a key both already use.
+   *
+   * `source` matters: a step that says "click the mitral valve" must not be able
+   * to satisfy itself by opening that valve programmatically. Only "user" counts.
+   */
+
+  CARDIAC.bus = (function () {
+    var listeners = {};
+    return {
+      on: function (type, fn) {
+        (listeners[type] || (listeners[type] = [])).push(fn);
+      },
+      off: function (type, fn) {
+        var a = listeners[type];
+        if (!a) return;
+        var i = a.indexOf(fn);
+        if (i >= 0) a.splice(i, 1);
+      },
+      emit: function (type, detail) {
+        var a = listeners[type];
+        if (!a || !a.length) return;
+        // Copy first: a handler may remove itself, which it does on every
+        // satisfied gate.
+        a.slice().forEach(function (fn) {
+          try { fn(detail); }
+          catch (e) { CARDIAC.diag.errors.push({ where: "bus:" + type, message: String(e && e.message || e) }); }
+        });
+      },
+      // Only so a harness can prove listeners are not leaking across steps.
+      count: function (type) { return (listeners[type] || []).length; }
+    };
+  })();
 
   /* ---------- deterministic PRNG (mulberry32) ---------- */
 

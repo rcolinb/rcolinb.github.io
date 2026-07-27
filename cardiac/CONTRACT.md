@@ -25,27 +25,34 @@ window.CARDIAC = {
 00-doc-open.html          <!doctype, head, opening body -->
 05-style.css              (wrapped in <style>)
 10-namespace.js           (wrapped in <script>)
+11-store.js               (display preferences only — see its header)
 20-content-sources.js
-21-content-rhythms.js
-22-content-conditions.js
-23-content-mechanisms.js
+21a/b/c/d-rhythms-*.js
+22a/b-conditions-*.js
 24-content-questions.js
+24a-content-tour.js       (loads before 25 so the walkthrough heads the index)
 25-content-lessons.js
+26-content-waveguide.js
+27-content-parts.js
+28-content-glossary.js
 30-engine-vector.js
 31-engine-rhythm.js
 32-engine-ecg.js
 33-engine-hemo.js
 34-engine-frame.js
-40-svg-heart.html         (inert SVG markup template, hidden)
+35-engine-partstate.js
+40-heart-geometry.js
 41-render-heart.js
 42-render-ecg.js
 43-render-timeline.js
-50-ui-controls.js
+50-ui-glossary.js
 51-ui-panels.js
 52-ui-quiz.js
 53-ui-lessons.js
 60-app.js
 90-doc-close.html
+
+_harness.js               NOT shipped — build.py skips any file starting with "_"
 ```
 
 ---
@@ -191,6 +198,7 @@ Deep-dive expansions keyed by chain-link id. Optional; a link without an entry j
   label: "…",
   level: "basic",
   blurb: "≤ 100 chars",
+  next: "<lesson id>",              // optional: chain straight into another sequence
   steps: [{
     id, title: "≤ 45 chars",
     // exactly ONE contextual sentence, <= 30 words:
@@ -198,10 +206,51 @@ Deep-dive expansions keyed by chain-link id. Optional; a link without an entry j
     focus: "anatomy"|"conduction"|"contraction"|"flow"|"integrated",
     seek: { kind:"event", eventType:"…", occurrence:1 } | { kind:"time", ms:0 } | { kind:"start" },
     highlight: ["sa-node", …],       // region ids to spotlight
-    predict: { q: "≤ 20 words", options: ["…","…","…"], correct: 0, reveal: "≤ 45 words" } | null
+    labelSet: "chambers"|"valves"|"vessels"|"conduction"|"none",   // optional
+    inspect: "<content.parts key>",  // optional: open the inspector on a structure
+    wave:    "<content.waveGuide key>",  // optional: light a stretch of the tracing
+    point:   "#someSelector",        // optional: outline a control outside this panel
+
+    // A step may have `predict` OR `gate`, never both — two blockers is a wall.
+    predict: { q: "≤ 20 words", options: ["…","…","…"], correct: 0, reveal: "≤ 45 words" } | null,
+    gate: {
+      kind: "part"|"wave"|"tab"|"control",
+      value: "mitral",               // "*" means any
+      prompt: "imperative, always shown",
+      hint:   "shown after a miss, and by Show me where",   // REQUIRED: always a way forward
+      wrong:  "optional correction"
+    } | null
   }]
 }
 ```
+
+**`seek.eventType` must be an event the scheduler actually emits for that step's
+rhythm.** An unresolvable type silently falls back to the schedule start, so the
+step still renders and nobody notices — `pump-consequences-2` sought
+`atrial-systole` while showing atrial fibrillation, which cannot occur, for as
+long as the lesson existed. `_harness.js` checks every one against a real schedule.
+
+**Only real user input satisfies a `gate`.** Selections made by a step itself are
+tagged `source: "lesson"` and are ignored, so a step cannot satisfy its own gate
+and a later step's `inspect` cannot retroactively clear an earlier one.
+
+### `CARDIAC.content.glossary` — one plain sentence per term
+
+```js
+"diastole": {
+  term:  "Diastole",               // display form
+  short: "one sentence, ≤ 30 words, containing no other jargon",
+  also:  ["diastolic", …],         // spelling and inflection variants
+  see:   "<content.parts key>" | null,
+  wave:  "<content.waveGuide key>" | null
+}
+```
+
+Terms are linkified into already-rendered prose by `C.ui.glossary.decorate`, so
+adding an entry makes it clickable everywhere it already appears — no lesson text
+is edited. Definitions are read out of context and therefore carry the honesty
+rules alone: nothing electrical may be described in mechanical words, and "pulse"
+must say it is *felt*.
 
 ---
 

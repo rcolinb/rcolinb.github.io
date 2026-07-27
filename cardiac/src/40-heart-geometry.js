@@ -576,14 +576,17 @@
   function valveGeometry(descend, lvThicken) {
     var drop = (descend || 0) * 9;
     return {
-      tricuspid: { x1: 126, x2: 194, y: 250 + drop, axis: 1,  span: 18 },
-      mitral:    { x1: 288, x2: 354, y: 246 + drop, axis: 1,  span: 18 },
+      /* Leaflet counts are the naming. The tricuspid is named for having three
+       * and was drawn with two; the mitral genuinely has two, which is what
+       * makes it the exception worth pointing at. */
+      tricuspid: { x1: 126, x2: 194, y: 250 + drop, axis: 1,  span: 18, leaflets: 3 },
+      mitral:    { x1: 288, x2: 354, y: 246 + drop, axis: 1,  span: 18, leaflets: 2 },
       // Both semilunar valves sit at the TOP OF THEIR OWN VENTRICLE. Placed any
       // higher they hover between the atria, and the great artery above them
       // reads as if it drains an atrium — which is the single most misleading
       // thing this drawing could say.
-      pulmonic:  { x1: 168, x2: 206, y: 246 + drop * 0.6, axis: -1, span: 13 },
-      aortic:    { x1: 252, x2: 290, y: 250 + drop * 0.6, axis: -1, span: 13 }
+      pulmonic:  { x1: 168, x2: 206, y: 246 + drop * 0.6, axis: -1, span: 13, leaflets: 3 },
+      aortic:    { x1: 252, x2: 290, y: 250 + drop * 0.6, axis: -1, span: 13, leaflets: 3 }
     };
   }
 

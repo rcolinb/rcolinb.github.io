@@ -684,6 +684,9 @@ button, select, input { font: inherit; color: inherit; }
   display: flex; align-items: center; gap: var(--s2);
   padding: var(--s2) var(--s4); border-top: 1px solid var(--rule);
   background: var(--paper); flex-wrap: wrap;
+  /* The stage above is 1fr, so anything that changes this bar's height resizes
+     the drawing. Hold a floor so a reflow here can never shrink the heart. */
+  min-height: 60px;
 }
 .transport .btn-icon { min-width: 44px; min-height: 44px; flex: 0 0 auto; }
 .transport .spacer { flex: 0 0 var(--s2); }
@@ -693,12 +696,32 @@ button, select, input { font: inherit; color: inherit; }
   font-size: 14px; font-weight: 600; color: var(--ink);
   background: var(--white); border: 1px solid var(--rule-strong);
   border-radius: 999px; padding: 6px 15px; min-height: 36px;
-  flex: 1 1 auto; min-width: 0; max-width: 72ch;
+  /* Basis 0, not auto. With an auto basis the chip sizes from its own text, so
+     a longer event label grew the chip, tipped this flex row into wrapping, and
+     doubled the transport height — which shrank the stage above it. The heart
+     jumped 52px several times a beat. Basis 0 makes the width depend only on
+     the space left over, so text length cannot move anything. */
+  flex: 1 1 0; min-width: 0; max-width: 72ch;
 }
 .event-chip > span:last-child {
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .event-chip .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--conduction); flex: 0 0 auto; }
+
+/* Below about this width the longest event labels no longer fit on one line,
+   and ellipsis would eat exactly the clause that links the event to the wave —
+   "drawn as the QRS". Let them wrap, but reserve the second line ALWAYS, so a
+   one-line label and a two-line label occupy identical height and the bar still
+   never changes size mid-beat. */
+@media (max-width: 1100px) {
+  .event-chip { min-height: 56px; align-items: center; }
+  .event-chip > span:last-child {
+    white-space: normal; overflow: hidden; text-overflow: clip;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    line-height: 1.25;
+  }
+  .transport { min-height: 76px; }
+}
 
 .speed-wrap { display: flex; align-items: center; gap: var(--s2); }
 .speed-wrap input[type="range"] { width: 116px; accent-color: var(--accent); height: 28px; }
@@ -812,6 +835,10 @@ button, select, input { font: inherit; color: inherit; }
 }
 
 @media (max-width: 900px) {
+  /* Its own row. Below here the stage is already stacked and the page scrolls,
+     so the extra line is free — and the chip stops competing with eight
+     controls for the same strip of space. */
+  .event-chip { order: 10; flex-basis: 100%; max-width: 100%; }
   body { overflow: auto; }
   .app { height: auto; min-height: 100vh; }
   .stage {
@@ -830,7 +857,7 @@ button, select, input { font: inherit; color: inherit; }
 @media (max-width: 560px) {
   .brand { font-size: 15px; }
   .transport { gap: 5px; padding: var(--s2); }
-  .event-chip { max-width: 100%; order: 10; flex-basis: 100%; }
+  .event-chip { max-width: 100%; }
   .segmented button { padding: 7px 11px; font-size: 13px; }
 }
 
@@ -854,6 +881,52 @@ button, select, input { font: inherit; color: inherit; }
 
 /* Links from an inspected structure back to the stretch of tracing it explains. */
 .part-ecg { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 0; }
+
+/* The way in, for someone who has just arrived. */
+.lesson-card.is-primary { border-color: var(--accent); border-left: 3px solid var(--accent); }
+
+/* ---- guided steps: do-it blocks, glossary terms, pointing ---- */
+
+/* "Now you try." Visually distinct from the prediction box so a learner can see
+   at a glance whether this step wants an answer or an action. */
+.step-do {
+  margin: var(--s3) 0 0; padding: 11px 13px;
+  border: 1px solid var(--accent-soft); border-left: 3px solid var(--accent);
+  border-radius: var(--radius); background: var(--paper);
+}
+.step-do.is-done { border-color: var(--sage); border-left-color: var(--sage); }
+.step-do .do-prompt { margin: 0; font-weight: 600; font-size: 14px; }
+.step-do.is-done .do-prompt::before { content: "\2713  "; color: var(--sage); }
+.step-do .do-hint { margin: 6px 0 0; font-size: 13.5px; color: var(--muted); }
+.step-do .pill { margin-top: 9px; }
+
+/* A defined term inside otherwise ordinary prose. Underlined rather than
+   coloured alone, so it survives greyscale and colour-blindness. */
+.gloss {
+  appearance: none; background: none; border: 0; padding: 0;
+  font: inherit; color: inherit; cursor: pointer;
+  text-decoration: underline dotted var(--accent); text-underline-offset: 3px;
+}
+.gloss:hover { color: var(--accent); }
+.gloss[aria-expanded="true"] { color: var(--accent); text-decoration-style: solid; }
+
+.gloss-def {
+  margin: 6px 0 2px; padding: 9px 11px;
+  border-left: 3px solid var(--accent-soft); border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--paper); font-size: 13.5px; line-height: 1.5;
+}
+.gloss-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+.gloss-list { margin: var(--s3) 0 0; font-size: 13.5px; }
+.gloss-list dt { font-weight: 700; margin-top: 9px; }
+.gloss-list dd { margin: 2px 0 0; color: var(--muted); }
+
+/* Pointing at a control that lives outside this panel. Static outline, no
+   animation — it has to survive reduced-motion and forced-colors intact. */
+.is-pointed {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
 
 .about-actions { display: flex; flex-wrap: wrap; gap: var(--s2); margin: var(--s3) 0 0; }
 .share-box {

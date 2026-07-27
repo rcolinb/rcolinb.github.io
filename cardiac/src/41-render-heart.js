@@ -34,6 +34,9 @@
      * ventricle's silhouette until the ventricle has ended, it still enters the
      * right atrium from below and the junction is visible. */
     { id: "ivc", cls: "deox", w: 26, layer: 0, d: "M104,516 C100,442 96,368 96,290 C96,262 110,240 142,234" },
+    /* Two drawn, though there are four in a real heart. Drawing all four added
+     * lines without adding anything a learner of this material needs: the point
+     * here is only that oxygenated blood arrives at the left atrium. */
     { id: "pv1", cls: "ox", w: 15, layer: 0, d: "M470,150 C438,158 410,166 384,176" },
     { id: "pv2", cls: "ox", w: 15, layer: 0, d: "M466,230 C438,220 410,208 384,202" },
 
@@ -184,10 +187,12 @@
     var valveEls = {};
     ["tricuspid", "mitral", "pulmonic", "aortic"].forEach(function (v) {
       var g = el("g", { class: "valve valve-" + v, "data-region": v }, layers.valves);
+      var count = (GEO.valveGeometry(0, 1)[v] || {}).leaflets || 2;
+      var leaves = [];
+      for (var li = 0; li < count; li++) leaves.push(el("path", { class: "leaflet" }, g));
       valveEls[v] = {
         group: g,
-        a: el("path", { class: "leaflet" }, g),
-        b: el("path", { class: "leaflet" }, g),
+        leaves: leaves,
         dot: el("circle", { class: "valve-dot", r: 3.4 }, g)
       };
     });
@@ -513,21 +518,26 @@
     ["tricuspid", "mitral", "pulmonic", "aortic"].forEach(function (name) {
       var v = frame.valves[name], geo = vg[name], e = view.valves[name];
       var open = v.openFraction;
-      var mid = (geo.x1 + geo.x2) / 2, half = (geo.x2 - geo.x1) / 2;
+      var mid = (geo.x1 + geo.x2) / 2;
       var span = geo.span * geo.axis;
+      var n = e.leaves.length;
 
-      // Shut: both tips meet at the midline. Open: each tip retreats toward its
-      // own hinge and the leaflet lies almost flat against the wall.
-      var tipL = M.lerp(mid, geo.x1 + half * 0.22, open);
-      var tipR = M.lerp(mid, geo.x2 - half * 0.22, open);
-      var tipY = geo.y + span * (1 - 0.45 * open);
-
-      e.a.setAttribute("d", "M" + geo.x1.toFixed(1) + "," + geo.y.toFixed(1) +
-        " Q" + (M.lerp(geo.x1, tipL, .55)).toFixed(1) + "," + (geo.y + span * 0.72).toFixed(1) +
-        " " + tipL.toFixed(1) + "," + tipY.toFixed(1));
-      e.b.setAttribute("d", "M" + geo.x2.toFixed(1) + "," + geo.y.toFixed(1) +
-        " Q" + (M.lerp(geo.x2, tipR, .55)).toFixed(1) + "," + (geo.y + span * 0.72).toFixed(1) +
-        " " + tipR.toFixed(1) + "," + tipY.toFixed(1));
+      /* One stroke per leaflet, hinged at its own share of the annulus and
+       * meeting the others near the middle. Shut, the tips converge and seal;
+       * open, each retreats toward its hinge and lies back against the wall.
+       * With three, the middle cusp sits a little shallower so it reads as the
+       * one behind rather than as a line through the other two. */
+      e.leaves.forEach(function (leaf, i) {
+        var hinge = n === 1 ? geo.x1 : M.lerp(geo.x1, geo.x2, i / (n - 1));
+        var inward = hinge <= mid ? 1 : -1;
+        var rest = hinge + (mid - hinge) * 0.78;
+        var tipX = M.lerp(rest, hinge + inward * Math.abs(mid - hinge) * 0.18, open);
+        var depth = (n > 2 && i > 0 && i < n - 1) ? 0.68 : 1;
+        var tipY = geo.y + span * depth * (1 - 0.45 * open);
+        leaf.setAttribute("d", "M" + hinge.toFixed(1) + "," + geo.y.toFixed(1) +
+          " Q" + (M.lerp(hinge, tipX, .55)).toFixed(1) + "," + (geo.y + span * depth * 0.72).toFixed(1) +
+          " " + tipX.toFixed(1) + "," + tipY.toFixed(1));
+      });
 
       e.dot.setAttribute("cx", mid);
       e.dot.setAttribute("cy", geo.y);
@@ -754,8 +764,12 @@
     // Vessels: a point measured along the drawn path itself.
     var VESSEL_AT = { "svc": 0.62, "ivc": 0.42, "aorta": 0.26,
                       "pulmonary-artery": 0.55, "pulmonary-veins": 0.40 };
+    /* Any label NOT anchored here keeps its static gutter position, which the
+     * hover repositioning below never sees — that is how the coronary label came
+     * to hang off the right edge of the narrow crop. */
+    var VESSEL_SOURCE = { "pulmonary-veins": "pv1" };
     for (var vk in VESSEL_AT) {
-      var vp = view.vessels[vk === "pulmonary-veins" ? "pv1" : vk];
+      var vp = view.vessels[VESSEL_SOURCE[vk] || vk];
       if (!vp || !vp.getTotalLength) continue;
       try {
         var pt = vp.getPointAtLength(vp.getTotalLength() * VESSEL_AT[vk]);
@@ -796,10 +810,35 @@
       if (!lab) continue;
       var L = GEO.LABELS[dk];
       var dot = lab.querySelector(".anno-dot"), line = lab.querySelector(".anno-line");
+      var txt = lab.querySelector(".anno-text");
       dot.setAttribute("cx", dyn[dk].x.toFixed(1));
       dot.setAttribute("cy", dyn[dk].y.toFixed(1));
-      line.setAttribute("d", "M" + L.tx + "," + L.ty + " L" +
+
+      /* A label summoned by hovering, with no label set pinned, cannot use the
+       * gutters — the drawing is cropped tighter and the text ran off the edge.
+       * Widening the crop was the first fix and it was wrong: it rescaled the
+       * whole illustration, so the picture jumped every time the pointer moved
+       * on or off. Put the text beside the structure instead. The crop never
+       * changes, and a name next to the thing it names reads better than one at
+       * the end of a long leader line anyway. */
+      var beside = (dk === view._hoverLabel) && lab.getAttribute("data-pinned") !== "1";
+      var tx = L.tx, ty = L.ty, anchorEnd = L.tx < 260;
+      if (beside) {
+        var box = (view.svg.getAttribute("viewBox") || "").split(/\s+/).map(Number);
+        var right = box.length === 4 ? box[0] + box[2] : 554;
+        var left = box.length === 4 ? box[0] : -52;
+        var toRight = (right - dyn[dk].x) > (dyn[dk].x - left);
+        tx = dyn[dk].x + (toRight ? 20 : -20);
+        ty = dyn[dk].y - 10;
+        anchorEnd = !toRight;
+      }
+      line.setAttribute("d", "M" + tx.toFixed(1) + "," + ty.toFixed(1) + " L" +
                         dyn[dk].x.toFixed(1) + "," + dyn[dk].y.toFixed(1));
+      if (txt) {
+        txt.setAttribute("x", (tx + (anchorEnd ? -6 : 6)).toFixed(1));
+        txt.setAttribute("y", (ty + 4).toFixed(1));
+        txt.setAttribute("text-anchor", anchorEnd ? "end" : "start");
+      }
     }
 
     /* Pathology: wall thickness is real geometry, not a colour wash. */
@@ -850,6 +889,11 @@
   var BOX_LABELLED_LARGE = "-62 14 632 522";
   var BOX_BARE = "86 14 400 522";
 
+  function labelledBox() {
+    return document.documentElement.getAttribute("data-size") === "large"
+      ? BOX_LABELLED_LARGE : BOX_LABELLED;
+  }
+
   function applyFocus(view, focus, labelSet, highlight) {
     var map = FOCUS_LAYERS[focus] || FOCUS_LAYERS.integrated;
     // Naming conduction structures while the conduction layer is dimmed to a
@@ -859,10 +903,9 @@
       map.conduction = 1;
     }
     var wantsLabels = labelSet && labelSet !== "none";
-    var bigText = document.documentElement.getAttribute("data-size") === "large";
-    view.svg.setAttribute("viewBox", wantsLabels
-      ? (bigText ? BOX_LABELLED_LARGE : BOX_LABELLED)
-      : BOX_BARE);
+    view._labelledBox = labelledBox();
+    view._restBox = wantsLabels ? view._labelledBox : BOX_BARE;
+    view.svg.setAttribute("viewBox", view._restBox);
     map.wavefront = map.conduction;
     Object.keys(view.layers).forEach(function (name) {
       var o = map[name];
@@ -965,6 +1008,7 @@
     if (view._hoverLabel === region) return;
     view._hoverLabel = region;
 
+
     var hoverKey = null;
     Object.keys(view.labels).forEach(function (key) {
       var g = view.labels[key];
@@ -980,6 +1024,7 @@
      * hovered label comes from outside that set and can land on top of one.
      * The hovered label is the thing being asked about, so it wins and whatever
      * it covers steps aside until the pointer leaves. */
+    if (view._onHoverChange) view._onHoverChange();
     var hb = textBox(view.labels[hoverKey]);
     if (!hb) return;
     Object.keys(view.labels).forEach(function (key) {
