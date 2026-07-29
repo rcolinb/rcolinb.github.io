@@ -33,6 +33,9 @@
   --wave-highlight: rgba(237, 181, 46, 0.26);
 
   --layer-cellular: #6C4E8C;
+  --chorda: #EFE6D8;
+  --leaflet: #A98B76;
+  --flow-arrow-edge: #1A1A1A;
 
   --myo: #D8C4B4;
   --myo-edge: #A98B76;
@@ -75,6 +78,9 @@
   --wave-highlight: rgba(237, 181, 46, 0.20);
 
   --layer-cellular: #B79AD4;
+  --chorda: #D7CDBC;
+  --leaflet: #E4DCCB;
+  --flow-arrow-edge: #17140E;
 
   --myo: #4A4034;
   --myo-edge: #6E6050;
@@ -95,6 +101,7 @@
     --ecg-grid-minor: #38251F; --ecg-grid-major: #55322A;
     --wave-highlight: rgba(237, 181, 46, 0.20);
     --layer-cellular: #B79AD4;
+    --chorda: #D7CDBC; --leaflet: #E4DCCB; --flow-arrow-edge: #17140E;
     --myo: #4A4034; --myo-edge: #6E6050; --blood-ox: #8E4433; --blood-deox: #2F5F70;
     --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
   }
@@ -114,6 +121,13 @@ html, body {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Two different breakpoints, deliberately. 1023 is where the page stops being a
+ * fixed app frame and starts scrolling; 1180 is where .stage drops the rail
+ * beside the drawing. They do not need to agree, because between them the stage
+ * is still two-column and every .panel-body scrolls internally — verified with
+ * real viewport resizes at 1024, 1100 and 1179, down to a 500px-tall window,
+ * with the longest (advanced-mode) rail content on every tab: nothing is ever
+ * cut off with no way to reach it. Align them only if that stops being true. */
 body { overflow: hidden; }
 @media (max-width: 1023px) { body { overflow: auto; } }
 
@@ -307,6 +321,10 @@ button, select, input { font: inherit; color: inherit; }
   stroke: var(--conduction-bright); stroke-width: 7;
   filter: url(#condGlow); pointer-events: none;
 }
+/* Held and refractory after the P wave. The glow filter says "a wavefront is
+   crossing here now" — exactly the wrong thing to say during the PR segment,
+   when the atria have already fired and the AV node is the one doing something. */
+.atrial-glow.is-held { filter: none; stroke-width: 4; stroke: var(--conduction); }
 .atrial-glow.is-chaotic { stroke-dasharray: 3 6; }
 .av-junction { fill: var(--myo); stroke: var(--myo-edge); stroke-width: 1.2; }
 /* The outflow tract is the same blood as the ventricle it leaves, so the route
@@ -327,9 +345,8 @@ button, select, input { font: inherit; color: inherit; }
    both the wall behind them and the chamber around them. */
 .papillary { fill: color-mix(in srgb, var(--myo) 72%, var(--myo-edge)); stroke: var(--myo-edge); stroke-width: 1.3; }
 .trabecula { stroke: var(--myo-edge); stroke-width: 2; opacity: .38; stroke-linecap: round; }
-.chorda { stroke: #EFE6D8; stroke-width: 1.1; opacity: .62; }
+.chorda { stroke: var(--chorda); stroke-width: 1.1; opacity: .62; }
 .chorda.is-taut { stroke-width: 1.5; opacity: .92; }
-:root[data-theme="dark"] .chorda, html.dark .chorda { stroke: #D7CDBC; }
 
 /* Radiating sinus-node fibres and the internodal tracts. */
 .cond-radial {
@@ -345,9 +362,7 @@ button, select, input { font: inherit; color: inherit; }
 /* Leaflets need to read against pale myocardium in the light theme and against
    dark myocardium in the dark one, so they take their colour from the wall edge
    rather than being a fixed near-white. */
-.leaflet { stroke: var(--myo-edge); stroke-width: 3.6; stroke-linecap: round; fill: none; }
-:root[data-theme="dark"] .leaflet, html.dark .leaflet { stroke: #E4DCCB; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .leaflet { stroke: #E4DCCB; } }
+.leaflet { stroke: var(--leaflet); stroke-width: 3.6; stroke-linecap: round; fill: none; }
 .valve-dot { fill: var(--ink); opacity: .5; }
 .valve.is-open .leaflet { stroke: var(--sage); }
 
@@ -406,10 +421,9 @@ button, select, input { font: inherit; color: inherit; }
 /* Flow arrows. A dark outline keeps them legible wherever they cross — a red
    arrow over the red left ventricle, a blue one over the blue right — and gives
    the two circulations a non-colour difference as well as a hue one. */
-.flow-arrow path { stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; paint-order: stroke; }
+.flow-arrow path { stroke: var(--flow-arrow-edge); stroke-width: 1.1; stroke-linejoin: round; paint-order: stroke; }
 .flow-ox path { fill: var(--flow-ox); }
 .flow-deox path { fill: var(--flow-deox); }
-:root[data-theme="dark"] .flow-arrow path, html.dark .flow-arrow path { stroke: #17140E; }
 
 .anno-line { stroke: var(--quiet); stroke-width: 1; fill: none; }
 .anno-dot { fill: var(--accent); }

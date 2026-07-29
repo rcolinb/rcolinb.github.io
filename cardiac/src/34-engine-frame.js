@@ -27,6 +27,22 @@
 
   var IDLE = { level: 0, state: "idle", progress: 0 };
 
+  /* Events that represent electrical activity. Everything else the scheduler
+   * emits — atrial-systole, the valve events, ventricular-ejection — is
+   * mechanical and belongs to the hemodynamic model, not to this one. */
+  var ELECTRICAL = {
+    "pacemaker-fire": 1, "atrial-depolarization": 1,
+    "av-arrival": 1, "av-release": 1,
+    "his-activation": 1, "bundle-activation": 1, "purkinje-activation": 1,
+    "ventricular-depolarization": 1, "ventricular-repolarization": 1
+  };
+
+  var NO_AFTERGLOW = { "av-arrival": 1, "atrial-depolarization": 1 };
+
+  var ATRIA = ["right-atrium", "left-atrium"];
+  var ATRIAL_REFRACTORY_MS = 150;
+  var ATRIAL_HELD_LEVEL = 0.22;
+
   function regionActivation(schedule, tMs) {
     var map = {};
     for (var r = 0; r < C.REGIONS.length; r++) map[C.REGIONS[r]] = { level: 0, state: "idle", progress: 0 };
@@ -59,8 +75,19 @@
     for (var i = 0; i < events.length; i++) {
       var e = events[i];
       if (e.onsetMs > tMs + 1) break;
-      var tail = e.type === "av-arrival" ? 0 : 90;   // brief afterglow so a fast
-                                                     // event is still visible
+      /* This map is the ELECTRICAL one. Mechanical events must not feed it:
+       * atrial-systole targets right-atrium/left-atrium, the same keys the
+       * conduction glow reads, so the atrial squeeze was lighting the atria as
+       * though a wavefront were still crossing them all through the PR segment.
+       * Filtering on the `mech` field cannot separate them — atrial-systole and
+       * atrial-depolarization are both tagged "atrial". */
+      if (!ELECTRICAL[e.type]) continue;
+      /* Brief afterglow so a FAST event is still visible — bundle activation is
+       * 16 ms and would otherwise flicker past. The P wave is 95 ms and needs no
+       * help; giving it a tail meant a decaying "active" wavefront kept
+       * outranking the depolarised hold for most of the PR segment, which is the
+       * exact impression this change exists to remove. */
+      var tail = NO_AFTERGLOW[e.type] ? 0 : 90;
       var u = (tMs - e.onsetMs) / e.durMs;
       var within = u >= 0 && u < 1;
       var glow = within ? 1 : (tMs - (e.onsetMs + e.durMs)) / tail;
@@ -90,6 +117,30 @@
         if (level >= map[key].level || state === "blocked") {
           map[key] = { level: Math.max(level, map[key].level), state: state,
                        progress: M.clamp(u, 0, 1), eventId: e.id, origin: e.origin };
+        }
+      }
+    }
+
+    /* After the P wave the atria are DEPOLARISED, not depolarising — held and
+     * refractory, with no wavefront left to travel. Showing them still lit
+     * through the PR segment made the pause read as atrial conduction rather
+     * than as the AV node holding, which is the one thing that stretch of flat
+     * line exists to teach. A low steady level says "already fired"; zero would
+     * say nothing happened here at all.
+     *
+     * Refractoriness genuinely outlasts the QRS onset, so this does not stop at
+     * the PR segment — it is dim enough not to compete with the ventricles. */
+    for (var p = 0; p < events.length; p++) {
+      var d = events[p];
+      if (d.onsetMs > tMs) break;
+      if (d.type !== "atrial-depolarization") continue;
+      var endP = d.onsetMs + d.durMs;
+      if (tMs < endP || tMs >= endP + ATRIAL_REFRACTORY_MS) continue;
+      for (var ai = 0; ai < ATRIA.length; ai++) {
+        var ak = ATRIA[ai];
+        if (map[ak] && map[ak].level < ATRIAL_HELD_LEVEL) {
+          map[ak] = { level: ATRIAL_HELD_LEVEL, state: "depolarised",
+                      progress: 0, eventId: d.id };
         }
       }
     }

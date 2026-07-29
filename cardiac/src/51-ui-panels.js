@@ -77,6 +77,21 @@
       pane.appendChild(h("div", { class: "callout variable" }, kids));
     }
 
+    /* The flutter ratio is the single most instructive control in the app and it
+     * lives two tabs away, rendered only when flutter is already selected. Say
+     * so here, where the learner actually is when they pick the rhythm. */
+    if (s.rhythm === "aflutter") {
+      var fr = String(s.flutterRatio) === "variable" ? "variable" : String(s.flutterRatio) + ":1";
+      pane.appendChild(h("div", { class: "callout" }, [
+        h("p", { text: "Conducting " + fr + " — the atrial rate is fixed, and how many "
+                     + "flutter waves reach the ventricles is what sets the pulse." }),
+        h("button", {
+          type: "button", class: "pill", text: "Change the conduction ratio",
+          onclick: function () { app.setTab("setup"); }
+        })
+      ]));
+    }
+
     if (r.features) {
       var tb = h("tbody");
       [["Rate", "rate"], ["Regularity", "regularity"], ["P waves", "pWaves"],

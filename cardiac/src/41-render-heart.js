@@ -67,12 +67,15 @@
     host.innerHTML = "";
     var svg = el("svg", {
       viewBox: G.viewBox, class: "heart-svg",
-      role: "img", "aria-labelledby": "heartTitle heartDesc",
+      role: "img", "aria-label": "Semi-anatomic cutaway of the heart",
+      "aria-describedby": "heartDesc",
       preserveAspectRatio: "xMidYMid meet"
     }, host);
 
-    var title = el("title", { id: "heartTitle" }, svg);
-    title.textContent = "Semi-anatomic cutaway of the heart";
+    /* The accessible name lives in aria-label rather than a <title> child: a
+     * <title> that is a direct child of the root <svg> is rendered by browsers
+     * as a native hover tooltip over the entire drawing, which competes with the
+     * hover labels. <desc> carries no such behaviour. */
     var desc = el("desc", { id: "heartDesc" }, svg);
     desc.textContent = "Four chambers, valves, great vessels and the electrical conduction system, animated in step with the ECG.";
 
@@ -163,7 +166,8 @@
       var g = el("g", { class: "endo endo-" + side,
         "data-region": side === "left" ? "left-ventricle" : "right-ventricle" }, layers.chambers);
       var trab = [], pap = [], chord = [];
-      for (var t = 0; t < 10; t++) trab.push(el("path", { class: "trabecula", fill: "none" }, g));
+      var trabCount = GEO.trabeculae(side, 0, 1, 0).length;
+      for (var t = 0; t < trabCount; t++) trab.push(el("path", { class: "trabecula", fill: "none" }, g));
       for (var pmi = 0; pmi < 2; pmi++) {
         pap.push(el("path", { class: "papillary", "data-region": "papillary" }, g));
         chord.push(el("path", { class: "chorda", fill: "none", "data-region": "chordae" }, g));
@@ -422,12 +426,6 @@
     var rvShrink = excursion(rvVol, 0.60);
     var descend = M.clamp(lvShrink / 0.66, 0, 1);
 
-    // Fuller chamber, deeper blood. Gives filling a second visual channel
-    // besides shape, which is much easier to read at speed.
-    var fullness = function (v) { return M.clamp((v - 0.12) / 0.55, 0, 1); };
-    view.chambers.lv.blood.style.setProperty("--fill", fullness(lvVol).toFixed(3));
-    view.chambers.rv.blood.style.setProperty("--fill", fullness(rvVol).toFixed(3));
-
     var lvCav = GEO.lvCavityPoints(lvShrink, descend);
     var lvOut = GEO.lvOuterPoints(lvThick, descend);
     var rvCav = GEO.rvCavityPoints(rvShrink, lvThick, descend);
@@ -440,9 +438,6 @@
     view.chambers.lv.wall.setAttribute("d", GEO.smoothClosedPath(lvOut) + lvCavD);
     view.chambers.rv.wall.setAttribute("d", GEO.smoothClosedPath(rvOut) + rvCavD);
 
-    var aFill = M.clamp((frame.volumes.atria - 0.45) / 0.45, 0, 1);
-    view.chambers.ra.blood.style.setProperty("--fill", aFill.toFixed(3));
-    view.chambers.la.blood.style.setProperty("--fill", aFill.toFixed(3));
     var aShrink = M.clamp(frame.volumes.atrialContraction * 0.34, 0, 0.36);
     var quiver = frame.volumes.quiver ? (Math.sin(frame.tMs / 22) * 0.012) : 0;
     var raCav = GEO.atriumPoints(G.ra, aShrink + quiver, 0);
@@ -628,6 +623,8 @@
       var lvl = st ? M.clamp(st.level - spec[2] * 0.5, 0, 1) : 0;
       g.setAttribute("opacity", lvl.toFixed(2));
       g.classList.toggle("is-chaotic", !!st && st.state === "chaotic");
+      // Depolarised is a state, not an event: no glow, because nothing is moving.
+      g.classList.toggle("is-held", !!st && st.state === "depolarised");
     });
 
     /* Place the travelling marker on whichever segment of the pathway the

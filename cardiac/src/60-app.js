@@ -215,7 +215,6 @@
       app._dirty = true;      // so the label repositions beside the structure
       svg.style.cursor = r ? "pointer" : "";
       var p = r && C.content.parts[r];
-      svg.setAttribute("title", p ? p.label : "");
     });
 
     svg.addEventListener("pointerleave", function () {
@@ -356,6 +355,8 @@
              "focus=" + app.state.focus,
              "display=" + app.state.display,
              "seed=" + app.state.seed];
+    // Only meaningful for flutter, and noise in every other link.
+    if (app.state.rhythm === "aflutter") q.push("ratio=" + app.state.flutterRatio);
     return location.origin + location.pathname + "?" + q.join("&");
   }
 
@@ -1450,6 +1451,13 @@
     if (m === "advanced" || m === "basic") { app.state.mode = m; app.state.leadView = m === "advanced" ? "twelve" : "single"; }
     var r = q.get("rhythm");
     if (r && R.DEFS[r]) app.state.rhythm = r;
+    /* After the rhythm, always: setRhythm forces flutterRatio back to 2 whenever
+     * aflutter is selected, so a ratio read before the rhythm would be silently
+     * clobbered the moment this stops assigning app.state.rhythm directly. */
+    var fr = q.get("ratio");
+    if (fr && ["2", "3", "4", "variable"].indexOf(fr) >= 0) {
+      app.state.flutterRatio = fr === "variable" ? "variable" : parseInt(fr, 10);
+    }
     var c = q.get("condition");
     if (c && C.content.conditions[c]) app.state.condition = c;
     var l = q.get("lead");
