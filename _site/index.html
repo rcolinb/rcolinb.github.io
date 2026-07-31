@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Analytics -->
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X88EXVCJZJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-X88EXVCJZJ');
+</script>
+
+<title>R.C. Blenis — Poet, Nurse, Essayist</title>
+<meta name="theme-color" content="#16161C">
+<meta name="description" content="R.C. Blenis is a poet, nurse, and essayist based in Atlanta. Work in the Massachusetts Review, JAMA, River Teeth, Fourth Genre, the American Journal of Nursing, Pulse, Heavy Feather Review, and elsewhere.">
+<link rel="canonical" href="https://www.rcblenis.com">
+
+<!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<!-- Open Graph -->
+<meta property="og:title" content="R.C. Blenis — Poet, Nurse, Essayist">
+<meta property="og:description" content="Poetry, creative nonfiction, and essays at the intersection of nursing, contemplative practice, and the ethics of attention.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.rcblenis.com">
+<meta property="og:site_name" content="R.C. Blenis">
+<meta property="og:image" content="https://www.rcblenis.com/og-image.jpg">
+
+<!-- Twitter/X Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="R.C. Blenis — Poet, Nurse, Essayist">
+<meta name="twitter:description" content="Poetry, creative nonfiction, and essays at the intersection of nursing, contemplative practice, and the ethics of attention.">
+<meta name="twitter:image" content="https://www.rcblenis.com/og-image.jpg">
+
+<!-- Structured Data -->
+<script type="application/ld+json" id="person-jsonld">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "R.C. Blenis",
+  "alternateName": "Colin Blenis",
+  "url": "https://www.rcblenis.com",
+  "sameAs": [
+    "https://rcblenis.substack.com",
+    "https://instagram.com/hillbillypilgrim",
+    "https://orcid.org/0000-0002-8751-9854"
+  ],
+  "jobTitle": "Poet, Nurse, Essayist",
+  "description": "Poet, nurse, and essayist based in Atlanta. Work explores suffering, compassion, and clinical witness.",
+  "image": "https://www.rcblenis.com/author-photo.jpg",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Atlanta",
+    "addressRegion": "GA",
+    "addressCountry": "US"
+  },
+  "alumniOf": [
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "Georgia Institute of Technology"
+    },
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "Cornell University"
+    },
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "Emory University"
+    }
+  ],
+  "knowsAbout": [
+    "Poetry",
+    "Nursing",
+    "Creative Nonfiction",
+    "Buddhist Practice",
+    "Medical Humanities"
+  ]
+}
+</script>
+
+<!-- Fonts: load only used weights -->
+<link rel="preload" href="https://fonts.gstatic.com/s/ebgaramond/v27/SlGDmQSNjdsmc35JDF1K5E55YMjF_7DPuGi-6_RUA4V-e6yHgQ.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Source+Sans+3:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ═══ NAVIGATION ═══ -->
+
+<nav id="mainNav">
+  <a class="nav-name" href="#home">R.C. Blenis</a>
+  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#work">Work</a></li>
+    <!-- INCANTATIONS_NAV:START -->
+    <!-- INCANTATIONS_NAV:END -->
+    <li><a href="publications.html">Publications</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+
+<section id="home">
+  <h1 class="hero-name">R.C. Blenis</h1>
+  <p class="hero-descriptor">Poet &nbsp;·&nbsp; Nurse &nbsp;·&nbsp; Essayist</p>
+  <div class="hero-line"></div>
+  <p class="hero-highlight" id="hero-highlight"></p>
+  <div class="home-subscribe">
+    <a href="https://rcblenis.substack.com" target="_blank" rel="noopener">Follow the work</a>
+  </div>
+  <div class="scroll-indicator">
+    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </div>
+</section>
+
+<!-- ═══ WORK ═══ -->
+
+<section id="work">
+  <div class="section-content">
+    <div class="section-header reveal">
+      <h2 class="section-title">Work</h2>
+      <p class="section-subtitle">Selected work</p>
+    </div>
+
+    <!-- A short curated selection; the full record lives on the publications page -->
+    <div class="work-category reveal">
+      <div id="selected-work"></div>
+    </div>
+
+    <div class="view-all-wrap reveal">
+      <a class="view-all-link" href="publications.html">View all publications &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- INCANTATIONS_FEATURE:START -->
+<!-- INCANTATIONS_FEATURE:END -->
+
+<!-- ═══ BOOKS IN PROGRESS ═══ -->
+
+<section id="projects">
+  <div class="section-content">
+    <div class="projects-header reveal">
+      <div class="section-divider" style="margin-bottom: 3rem;"></div>
+      <h2 class="projects-title">Book in Progress</h2>
+    </div>
+
+    <div class="projects-grid">
+      <div class="project-card reveal">
+        <h3 class="project-title">Listen for Water</h3>
+        <p class="project-genre">Poetry Collection</p>
+        <p class="project-description">
+          Poems written from the bedside: ICU, psychiatric unit, emergency department.
+          A nurse's witness to the body's silences and the language we reach for
+          when clinical vocabulary fails.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ABOUT ═══ -->
+
+<section id="about">
+  <div class="section-content">
+    <div class="section-header reveal">
+      <div class="section-divider" style="margin-bottom: 3rem;"></div>
+      <h2 class="section-title">About</h2>
+    </div>
+
+    <div class="about-photo reveal">
+      <img src="author-photo.jpg" alt="R.C. Blenis in a pine forest" loading="lazy">
+    </div>
+
+    <div class="about-content reveal">
+      <p>
+        Before I was a nurse, I was a researcher. Before I was a researcher, I was a kid in Georgia who read too much and asked questions that made adults uncomfortable. The through-line is the same: I want to understand how people make sense of suffering, their own and others', and what it means to show up for someone when fixing isn't possible.
+      </p>
+
+      <p>
+        I studied psychology at Georgia Tech and developmental psychology at Cornell, where I spent years in a memory lab studying how people construct the stories they tell about their lives. I left the PhD to sit at bedsides rather than behind data sets. I earned my nursing degree from Emory and went to work in an emergency department.
+      </p>
+
+      <p>
+        What followed was an education no classroom could have given me. I worked a COVID ICU in Brooklyn during the first wave of the pandemic. I managed pediatric and adult psychiatric units, learning what it looks like when systems meant to hold people instead break them. I carried what I saw into notebooks, and into poems and essays that tried to be honest about the gap between what we promise patients and what we can actually deliver.
+      </p>
+
+      <div class="about-epigraph">
+        Attention is the beginning of devotion.
+        <span class="attribution">— Mary Oliver</span>
+      </div>
+
+      <p>
+        The word <em>patient</em> comes from the Latin <em>patiens</em>: to endure suffering. <em>Compassion</em> means to suffer with. Nursing bridges the two. So does writing.
+      </p>
+
+      <p>
+        I've practiced Buddhism for seventeen years, and while I don't think of my writing as Buddhist writing, the practice has shaped everything about how I look at the world and what I believe language can do.
+      </p>
+
+      <p>
+        I live in Atlanta with my wife and two dogs, where we train together in weightlifting and yoga and argue about whose turn it is to pick the YouTube video.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACT ═══ -->
+
+<section id="contact">
+  <div class="section-content">
+    <div class="contact-inner reveal">
+      <div class="section-divider" style="margin-bottom: 3rem;"></div>
+      <h2 class="section-title" style="margin-bottom: 2rem;">Get in Touch</h2>
+      <p class="contact-intro">
+        For publication inquiries, readings, collaboration,
+        or just a conversation worth having.
+      </p>
+      <a class="contact-email" id="contact-email" href="#"></a>
+
+      <div class="contact-divider-line"></div>
+
+      <div class="contact-subscribe">
+        <h3>Follow the Work</h3>
+        <p>
+          Occasional notes on new publications, readings, and the writing life. No schedule, no spam: just word when there's something worth sharing.
+        </p>
+        <a class="subscribe-btn" href="https://rcblenis.substack.com" target="_blank" rel="noopener">Subscribe</a>
+      </div>
+
+      <div class="contact-social">
+        <a href="https://instagram.com/hillbillypilgrim" target="_blank" rel="noopener">Instagram</a>
+        <div class="contact-social-divider"></div>
+        <a href="https://rcblenis.substack.com" target="_blank" rel="noopener">Substack</a>
+        <div class="contact-social-divider"></div>
+        <a href="https://orcid.org/0000-0002-8751-9854" target="_blank" rel="noopener">ORCID</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+
+<footer>
+  &copy; 2026 R.C. Blenis. All rights reserved.
+</footer>
+
+<!-- ═══ DATA ═══ -->
+
+<script src="publications.js"></script>
+
+<!-- ═══ JAVASCRIPT ═══ -->
+
+<script>
+  // Render publications from the shared data source
+  renderHero();
+  renderSelected();
+
+  // Navbar scroll effect
+  window.addEventListener('scroll', () => {
+    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // Mobile nav toggle
+  function toggleNav() {
+    const links = document.getElementById('navLinks');
+    const button = document.querySelector('.nav-toggle');
+    const isOpen = links.classList.toggle('open');
+    button.setAttribute('aria-expanded', String(isOpen));
+  }
+
+  // Close mobile nav on link click
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.getElementById('navLinks').classList.remove('open');
+      document.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // Active nav highlighting on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navItems = document.querySelectorAll('.nav-links a');
+
+  function updateActiveNav() {
+    const scrollY = window.scrollY + 120;
+    sections.forEach(section => {
+      const top = section.offsetTop;
+      const height = section.offsetHeight;
+      const id = section.getAttribute('id');
+      if (scrollY >= top && scrollY < top + height) {
+        navItems.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + id) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+    // Remove active states when at the very top
+    if (window.scrollY < 200) {
+      navItems.forEach(link => link.classList.remove('active'));
+    }
+  }
+
+  window.addEventListener('scroll', updateActiveNav);
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  // Email obfuscation (prevents bot harvesting)
+  (function() {
+    var u = 'colinblenis';
+    var d = 'gmail.com';
+    var el = document.getElementById('contact-email');
+    el.href = 'mai' + 'lto:' + u + '@' + d;
+    el.textContent = u + '@' + d;
+  })();
+
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

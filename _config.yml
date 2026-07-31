@@ -1,6 +1,7 @@
 exclude:
   - _incantations.json
   - _scripts
+  - _drafts
   - README.md
   # The cardiac simulator publishes as a single built file; its build inputs
   # stay in the repository but are not served.

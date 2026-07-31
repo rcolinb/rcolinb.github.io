@@ -43,46 +43,55 @@
 <script type="application/ld+json" id="person-jsonld">
 {
   "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "R.C. Blenis",
-  "alternateName": "Colin Blenis",
-  "url": "https://rcblenis.com",
-  "sameAs": [
-    "https://rcblenis.substack.com",
-    "https://instagram.com/hillbillypilgrim",
-    "https://orcid.org/0000-0002-8751-9854"
-  ],
-  "jobTitle": "Poet, Nurse, Essayist",
-  "description": "Poet, nurse, and essayist based in Atlanta. Work explores suffering, compassion, and clinical witness.",
-  "image": "https://rcblenis.com/author-photo.jpg",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Atlanta",
-    "addressRegion": "GA",
-    "addressCountry": "US"
-  },
-  "alumniOf": [
-    {
-      "@type": "CollegeOrUniversity",
-      "name": "Georgia Institute of Technology"
+  "@type": "ProfilePage",
+  "mainEntity": {
+    "@type": "Person",
+    "name": "R. Colin Blenis",
+    "alternateName": [
+      "R.C. Blenis",
+      "Robert Colin Blenis",
+      "Colin Blenis"
+    ],
+    "url": "https://rcblenis.com",
+    "sameAs": [
+      "https://rcblenis.substack.com",
+      "https://instagram.com/hillbillypilgrim",
+      "https://orcid.org/0000-0002-8751-9854"
+    ],
+    "jobTitle": "Assistant Professor of Nursing",
+    "description": "Poet, nurse, and essayist based in Atlanta. Work explores suffering, compassion, and clinical witness.",
+    "image": "https://rcblenis.com/author-photo.jpg",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Atlanta",
+      "addressRegion": "GA",
+      "addressCountry": "US"
     },
-    {
-      "@type": "CollegeOrUniversity",
-      "name": "Cornell University"
-    },
-    {
-      "@type": "CollegeOrUniversity",
-      "name": "Emory University"
-    }
-  ],
-  "knowsAbout": [
-    "Poetry",
-    "Nursing",
-    "Creative Nonfiction",
-    "Buddhist Practice",
-    "Medical Humanities"
-  ],
-  "award": "Winner of the 2026 Indiana Review Creative Nonfiction Prize"
+    "alumniOf": [
+      {
+        "@type": "CollegeOrUniversity",
+        "name": "Georgia Institute of Technology"
+      },
+      {
+        "@type": "CollegeOrUniversity",
+        "name": "Cornell University"
+      },
+      {
+        "@type": "CollegeOrUniversity",
+        "name": "Emory University"
+      }
+    ],
+    "knowsAbout": [
+      "Poetry",
+      "Creative Nonfiction",
+      "Nursing",
+      "Nursing Education",
+      "Health Humanities",
+      "Buddhist Practice",
+      "Medical Humanities"
+    ],
+    "award": "Winner of the 2026 Indiana Review Creative Nonfiction Prize"
+  }
 }
 </script>
 
@@ -94,6 +103,8 @@
 </head>
 <body>
 
+<a class="skip-link" href="#home">Skip to content</a>
+
 <!-- ═══ NAVIGATION ═══ -->
 
 <nav id="mainNav">
@@ -102,10 +113,11 @@
     <span></span><span></span><span></span>
   </button>
   <ul class="nav-links" id="navLinks">
-    <li><a href="#work">Work</a></li>
+    <li><a href="#home">Home</a></li>
     <!-- INCANTATIONS_NAV:START -->
     <!-- INCANTATIONS_NAV:END -->
-    <li><a href="publications.html">Publications</a></li>
+    <li><a href="publications.html">Writing</a></li>
+    <li><a href="research.html">Research</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -113,7 +125,7 @@
 
 <!-- ═══ HERO ═══ -->
 
-<section id="home">
+<section id="home" tabindex="-1">
   <h1 class="hero-name">R.C. Blenis</h1>
   <p class="hero-descriptor">Poet &nbsp;·&nbsp; Nurse &nbsp;·&nbsp; Essayist</p>
   <div class="hero-line"></div>
@@ -125,10 +137,6 @@
     <div class="essay-actions"><a class="essay-action" href="https://www.instagram.com/p/DbGP1PPkadH/?img_index=1" target="_blank" rel="noopener">View the announcement →</a></div>
   </div>
   <!-- INCANTATIONS_HERO:END -->
-  <div class="home-subscribe">
-    <a href="https://rcblenis.substack.com" target="_blank" rel="noopener">Follow the work</a>
-    <a href="#contact">Get in touch</a>
-  </div>
   <div class="scroll-indicator">
     <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
   </div>
@@ -143,13 +151,42 @@
       <p class="section-subtitle">Essays &amp; poetry</p>
     </div>
 
-    <!-- A short curated selection; the full record lives on the publications page -->
+    <!-- A short curated selection; the full record lives on the Writing page.
+         Pre-rendered so crawlers and no-JS visitors see it; renderSelected()
+         in publications.js skips rendering when entries are present. Keep
+         these entries in sync with the `selected` flags there. -->
     <div class="work-category reveal">
-      <div id="selected-work"></div>
+      <div id="selected-work">
+        <p class="pub-status-label">Essays</p>
+        <div class="publication-item">
+          <span class="pub-title">&ldquo;Without Identifiable Antecedent&rdquo;</span> &middot;
+          <span class="pub-venue">Fourth Genre: Explorations in Nonfiction</span>
+          <span class="pub-year"> &middot; Forthcoming</span>
+        </div>
+        <div class="publication-item">
+          <span class="pub-title"><a href="https://www.westtradereview.com/onlineexclusiveW25Blenis.html" target="_blank" rel="noopener">&ldquo;The Thread You Follow&rdquo;</a></span> &middot;
+          <span class="pub-venue">West Trade Review</span>
+          <span class="pub-year"> &middot; January 2026</span>
+          <a class="pub-link" href="https://www.westtradereview.com/onlineexclusiveW25Blenis.html" target="_blank" rel="noopener" aria-label="Read &ldquo;The Thread You Follow&rdquo;">Read &rarr;</a>
+        </div>
+        <p class="pub-status-label">Poetry</p>
+        <div class="publication-item">
+          <span class="pub-title"><a href="https://massreview.org/issue/volume-67-issue-2" target="_blank" rel="noopener">&ldquo;Camera Review&rdquo;</a></span> &middot;
+          <span class="pub-venue">Massachusetts Review</span>
+          <span class="pub-year"> &middot; Vol. 67.2, 2026</span>
+          <a class="pub-link" href="https://massreview.org/issue/volume-67-issue-2" target="_blank" rel="noopener" aria-label="View issue &ldquo;Camera Review&rdquo;">View issue &rarr;</a>
+        </div>
+        <div class="publication-item">
+          <span class="pub-title"><a href="https://doi.org/10.1001/jama.2026.1799" target="_blank" rel="noopener">&ldquo;Mechanism of Action&rdquo;</a></span> &middot;
+          <span class="pub-venue">JAMA</span>
+          <span class="pub-year"> &middot; April 2026</span>
+          <a class="pub-link" href="https://doi.org/10.1001/jama.2026.1799" target="_blank" rel="noopener" aria-label="Read &ldquo;Mechanism of Action&rdquo;">Read &rarr;</a>
+        </div>
+      </div>
     </div>
 
     <div class="view-all-wrap reveal">
-      <a class="view-all-link" href="publications.html">View all publications &rarr;</a>
+      <a class="view-all-link" href="publications.html">View all writing &rarr;</a>
     </div>
   </div>
 </section>
@@ -185,6 +222,22 @@
   </div>
 </section>
 
+<!-- ═══ RESEARCH BRIDGE ═══ -->
+
+<section id="research-bridge">
+  <div class="section-content">
+    <div class="research-bridge reveal">
+      <div class="section-divider" style="margin-bottom: 3rem;"></div>
+      <p>
+        My scholarship examines recognition under uncertainty, nursing
+        education and institutional culture, and memory as a mechanism of
+        therapeutic communication.
+      </p>
+      <a class="view-all-link" href="research.html">Explore the research &rarr;</a>
+    </div>
+  </div>
+</section>
+
 <!-- ═══ ABOUT ═══ -->
 
 <section id="about">
@@ -200,11 +253,11 @@
 
     <div class="about-content reveal">
       <p>
-        Before I was a nurse, I was a researcher. Before I was a researcher, I was a kid in a Georgia pew with more questions than the sermon had answers for. The through-line is the same: I want to understand how people make sense of suffering, their own and others', and what it means to show up for someone when fixing isn't possible.
+        Before I was a nurse, I was a kid in a Georgia pew with more questions than the sermon had answers for. The through-line is the same: I want to understand how people make sense of suffering, their own and others', and what it means to show up for someone when fixing isn't possible.
       </p>
 
       <p>
-        I studied psychology at Georgia Tech and developmental psychology at Cornell, where I spent years in a memory lab studying how people construct the stories they tell about their lives. I left the PhD to sit at bedsides rather than behind data sets.
+        I studied psychology at Georgia Tech and developmental psychology at Cornell, where I spent years in a memory lab studying how people construct the stories they tell about their lives. I left the PhD program to become a nurse, and clinical practice eventually led me back to research.
       </p>
 
       <p>
@@ -237,7 +290,9 @@
       <div class="section-divider" style="margin-bottom: 3rem;"></div>
       <h2 class="section-title" style="margin-bottom: 2rem;">Get in Touch</h2>
       <p class="contact-intro">
-        For inquiries, readings, collaboration, or conversation.
+        I welcome inquiries about representation and permissions, readings and
+        talks, research collaborations, nursing education, and editorial or
+        consulting work.
       </p>
       <a class="contact-email" id="contact-email" href="#"></a>
       <noscript><span class="contact-email">colinblenis [at] gmail.com</span></noscript>
@@ -246,9 +301,7 @@
 
       <div class="contact-subscribe">
         <a class="subscribe-btn" href="https://rcblenis.substack.com" target="_blank" rel="noopener">Subscribe</a>
-        <p>
-          Occasional updates, no schedule, no spam, just word when there's something worth sharing.
-        </p>
+        <p>Occasional notes when there&rsquo;s something worth sharing.</p>
       </div>
 
       <div class="contact-social">
@@ -257,8 +310,6 @@
         <a href="https://rcblenis.substack.com" target="_blank" rel="noopener">Substack</a>
         <div class="contact-social-divider"></div>
         <a href="https://orcid.org/0000-0002-8751-9854" target="_blank" rel="noopener">ORCID</a>
-        <div class="contact-social-divider"></div>
-        <a href="/cardiac/">Cardiac Simulator</a>
       </div>
     </div>
   </div>
@@ -267,7 +318,14 @@
 <!-- ═══ FOOTER ═══ -->
 
 <footer>
-  &copy; 2026 R.C. Blenis. All rights reserved.
+  <nav class="footer-links" aria-label="Footer">
+    <a href="publications.html">Writing</a>
+    <a href="research.html">Research</a>
+    <a href="https://orcid.org/0000-0002-8751-9854" target="_blank" rel="noopener">ORCID</a>
+    <!-- CV: add a link here when the sanitized public CV PDF exists. -->
+    <a href="#contact">Contact</a>
+  </nav>
+  <p>&copy; 2026 R.C. Blenis. All rights reserved. Views expressed here are my own.</p>
 </footer>
 
 <!-- ═══ DATA ═══ -->

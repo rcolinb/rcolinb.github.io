@@ -228,10 +228,16 @@ function publicationItemHtml(publication) {
     ? `\n        <div class="pub-note pub-award-note">${publication.awardNote}</div>`
     : "";
   const announcement = publication.announcementUrl
-    ? `\n        <a class="pub-link pub-announcement-link" href="${escapeHtml(publication.announcementUrl)}" target="_blank" rel="noopener">Announcement &rarr;</a>`
+    ? `\n        <a class="pub-link pub-announcement-link" href="${escapeHtml(publication.announcementUrl)}" target="_blank" rel="noopener" aria-label="View the announcement for &ldquo;${publication.title}&rdquo;">Announcement &rarr;</a>`
     : "";
+  // Descriptive accessible name; keep this rule in sync with pubItem() in
+  // publications.js and the hand-authored pub-link anchors in the HTML.
+  const linkText = publication.linkText || "Read &rarr;";
+  const linkBase = linkText.replace(/\s*&rarr;\s*$/, "");
+  const quotedTitle = `&ldquo;${publication.title}&rdquo;`;
+  const linkLabel = linkBase.includes(quotedTitle) ? linkBase : `${linkBase} ${quotedTitle}`;
   const publicationLink = publication.url
-    ? `\n        <a class="pub-link" href="${escapeHtml(publication.url)}" target="_blank" rel="noopener">${publication.linkText || "Read &rarr;"}</a>`
+    ? `\n        <a class="pub-link" href="${escapeHtml(publication.url)}" target="_blank" rel="noopener" aria-label="${linkLabel}">${linkText}</a>`
     : "";
 
   return `      <div class="publication-item">
@@ -375,6 +381,8 @@ ${generatedPageMarker}
 </head>
 <body>
 
+<a class="skip-link" href="#main">Skip to content</a>
+
 <nav id="mainNav">
   <a class="nav-name" href="index.html">R.C. Blenis</a>
   <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
@@ -382,14 +390,15 @@ ${generatedPageMarker}
   </button>
   <ul class="nav-links" id="navLinks">
     <li><a href="index.html">Home</a></li>
-    <li><a href="incantations.html" class="active">Incantations</a></li>
-    <li><a href="publications.html">Publications</a></li>
+    <li><a href="incantations.html" class="active" aria-current="page">Incantations</a></li>
+    <li><a href="publications.html">Writing</a></li>
+    <li><a href="research.html">Research</a></li>
     <li><a href="index.html#about">About</a></li>
     <li><a href="index.html#contact">Contact</a></li>
   </ul>
 </nav>
 
-<main class="essay-page">
+<main id="main" class="essay-page" tabindex="-1">
   <article class="section-content essay-page-content">
     <header class="essay-page-header reveal">
       <p class="essay-kicker">${escapeHtml(config.award)}</p>
@@ -411,7 +420,14 @@ ${optionalSectionsMarkup}
 </main>
 
 <footer>
-  &copy; 2026 R.C. Blenis. All rights reserved.
+  <nav class="footer-links" aria-label="Footer">
+    <a href="publications.html">Writing</a>
+    <a href="research.html">Research</a>
+    <a href="https://orcid.org/0000-0002-8751-9854" target="_blank" rel="noopener">ORCID</a>
+    <!-- CV: add a link here when the sanitized public CV PDF exists. -->
+    <a href="index.html#contact">Contact</a>
+  </nav>
+  <p>&copy; 2026 R.C. Blenis. All rights reserved. Views expressed here are my own.</p>
 </footer>
 
 <script>
@@ -476,13 +492,16 @@ async function updatePersonStructuredData(source, config, visible) {
     /<script type="application\/ld\+json" id="person-jsonld">\s*([\s\S]*?)\s*<\/script>/;
   const match = source.match(pattern);
   if (!match) throw new Error("Could not find Person structured data.");
-  const person = JSON.parse(match[1]);
+  const data = JSON.parse(match[1]);
+  // The block is a ProfilePage wrapping the Person in mainEntity; resolve the
+  // Person either way so the award update keeps working.
+  const person = data.mainEntity ?? data;
   if (visible) {
     person.award = config.award;
   } else {
     delete person.award;
   }
-  const replacement = `<script type="application/ld+json" id="person-jsonld">\n${JSON.stringify(person, null, 2)}\n</script>`;
+  const replacement = `<script type="application/ld+json" id="person-jsonld">\n${JSON.stringify(data, null, 2)}\n</script>`;
   return source.replace(pattern, replacement);
 }
 
@@ -509,6 +528,7 @@ async function copyProductionSnapshot(dedicatedPageEnabled) {
     "og-image.jpg",
     "publications.html",
     "publications.js",
+    "research.html",
     "styles.css",
     "submittable-filter",
   ];

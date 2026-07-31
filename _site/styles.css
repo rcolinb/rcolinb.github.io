@@ -51,37 +51,9 @@
     outline-offset: 4px;
   }
 
-  /* ═══ ACCESSIBILITY ═══ */
-
-  .skip-link {
-    position: fixed;
-    top: -100%;
-    left: 1rem;
-    z-index: 200;
-    padding: 0.7rem 1.2rem;
-    background: var(--linen);
-    border: 1px solid var(--clay-light);
-    color: var(--clay);
-    font-family: var(--sans);
-    font-size: 0.8rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    text-decoration: none;
-  }
-
-  .skip-link:focus {
-    top: 0.6rem;
-  }
-
-  [tabindex="-1"]:focus {
-    outline: none;
-  }
-
   /* ═══ NAVIGATION ═══ */
 
-  /* Scoped to the masthead id: other nav landmarks (e.g. the footer links)
-     must not inherit the fixed-header treatment. */
-  #mainNav {
+  nav {
     position: fixed;
     top: 0;
     width: 100%;
@@ -97,7 +69,7 @@
     transition: all 0.4s ease;
   }
 
-  #mainNav.scrolled {
+  nav.scrolled {
     padding: 0.8rem 2rem;
     box-shadow: 0 2px 24px rgba(0,0,0,0.45);
   }
@@ -239,6 +211,31 @@
   .hero-highlight em {
     font-style: normal;
     color: var(--clay);
+  }
+
+  .home-subscribe {
+    margin-top: 3.5rem;
+    text-align: center;
+  }
+
+  .home-subscribe a {
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--mist);
+    text-decoration: none;
+    padding: 0.7rem 1.8rem;
+    border: 1px solid var(--parchment);
+    transition: all 0.4s ease;
+    display: inline-block;
+  }
+
+  .home-subscribe a:hover {
+    color: var(--clay);
+    border-color: var(--clay-light);
+    background: var(--clay-glow);
   }
 
   .scroll-indicator {
@@ -537,13 +534,7 @@
     color: var(--stone);
     line-height: 1.8;
     max-width: 460px;
-    margin-bottom: 2.2rem;
-  }
-
-  .contact-inner .topic-list {
-    text-align: left;
-    max-width: 460px;
-    margin: 0 auto 1.8rem;
+    margin-bottom: 2.5rem;
   }
 
   .contact-email {
@@ -567,14 +558,20 @@
 
   .contact-subscribe { max-width: 400px; }
 
-  /* The note sits under the button, so the gap belongs above it. */
+  .contact-subscribe h3 {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.6rem;
+  }
+
   .contact-subscribe p {
     font-family: var(--serif);
     font-size: 0.95rem;
     color: var(--stone);
     line-height: 1.7;
-    margin-top: 1.2rem;
-    margin-bottom: 0;
+    margin-bottom: 1.5rem;
   }
 
   .subscribe-btn {
@@ -604,10 +601,6 @@
     display: flex;
     gap: 2rem;
     align-items: center;
-    /* Wrap rather than overflow. The row is clipped by body{overflow-x:hidden},
-       so anything past the edge is not scrollable to — it is simply gone. */
-    flex-wrap: wrap;
-    row-gap: 1rem;
   }
 
   .contact-social a {
@@ -640,26 +633,6 @@
     border-top: 1px solid var(--parchment);
   }
 
-  .footer-links {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1.6rem;
-    margin-bottom: 0.9rem;
-  }
-
-  .footer-links a {
-    font-family: var(--sans);
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--mist);
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-
-  .footer-links a:hover { color: var(--clay); }
-
   /* ═══ ANIMATIONS ═══ */
 
   @keyframes gentleBounce {
@@ -669,17 +642,12 @@
 
   /* Scroll reveal */
   .reveal {
-    opacity: 1;
-    transform: none;
-  }
-
-  .js .reveal {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.6s ease, transform 0.6s ease;
   }
 
-  .js .reveal.visible {
+  .reveal.visible {
     opacity: 1;
     transform: translateY(0);
   }
@@ -710,11 +678,6 @@
     .about-epigraph { padding: 1.5rem 1.8rem; }
     .about-photo { max-width: 300px; }
     .contact-email { font-size: 1.3rem; }
-    /* Tighter spacing keeps the four links on one line where it fits; dropping
-       the rules means a wrapped line never begins or ends with an orphan one. */
-    .contact-social { gap: 1.25rem; }
-    .contact-social-divider { display: none; }
-    .footer-links { gap: 1rem; }
   }
   /* ═══ PRINT ═══ */
 
@@ -727,7 +690,7 @@
     }
     body { background: white; color: var(--charcoal); font-size: 12pt; }
     body::before { display: none; }
-    nav, .scroll-indicator, .hero-line,
+    nav, .scroll-indicator, .home-subscribe, .hero-line,
     .section-divider, .contact-social, .subscribe-btn,
     .contact-subscribe, .contact-divider-line, footer { display: none; }
     #home { min-height: auto; padding: 2rem 0; }
@@ -796,124 +759,7 @@
     margin-top: 0.6rem;
   }
 
-  /* ═══ RESEARCH & ACADEMIC ═══ */
-
-  /* Shared by the academic subpages and the contact inquiry list. */
-  .topic-list {
-    list-style: none;
-  }
-
-  .topic-list li {
-    font-family: var(--serif);
-    font-size: 1.02rem;
-    color: var(--charcoal);
-    line-height: 1.8;
-    position: relative;
-    padding-left: 1.3rem;
-    margin-bottom: 0.4rem;
-  }
-
-  .topic-list li::before {
-    content: '·';
-    color: var(--clay);
-    position: absolute;
-    left: 0.25rem;
-  }
-
-  .area-item { margin-bottom: 1.6rem; }
-
-  .area-item h3 {
-    font-family: var(--serif);
-    font-size: 1.15rem;
-    font-weight: 500;
-    color: var(--ink);
-    margin-bottom: 0.35rem;
-  }
-
-  .area-item p {
-    font-family: var(--serif);
-    font-size: 1rem;
-    color: var(--stone);
-    line-height: 1.8;
-  }
-
-  #research-bridge { padding-bottom: 4rem; }
-
-  .research-bridge { text-align: center; }
-
-  .research-bridge p {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 1.08rem;
-    color: var(--stone);
-    line-height: 1.9;
-    max-width: 560px;
-    margin: 0 auto 1.8rem;
-  }
-
-  /* Note: .essay-prose, .essay-actions, and .essay-action below are shared
-     by research.html (and any future academic pages) in addition to the
-     Incantations hero and the dormant dedicated-page template. */
-
   /* ═══ INCANTATIONS ═══ */
-
-  .hero-prize {
-    max-width: 620px;
-    padding: 0 1.5rem;
-    position: relative;
-    text-align: center;
-  }
-
-  .hero-prize-title {
-    color: var(--ink);
-    font-family: var(--serif);
-    font-size: 1.9rem;
-    font-weight: 400;
-    line-height: 1.2;
-    margin-bottom: 0.7rem;
-  }
-
-  .hero-prize-title a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .hero-prize-title a:hover {
-    color: var(--clay);
-  }
-
-  .hero-prize-award {
-    color: var(--clay);
-    font-family: var(--sans);
-    font-size: 0.73rem;
-    font-weight: 400;
-    letter-spacing: 0.15em;
-    line-height: 1.7;
-    text-transform: uppercase;
-  }
-
-  .hero-prize-status {
-    color: var(--stone);
-    font-family: var(--serif);
-    font-size: 1.02rem;
-    line-height: 1.7;
-    margin-top: 0.55rem;
-  }
-
-  .hero-prize-status span {
-    color: var(--clay);
-    padding: 0 0.35rem;
-  }
-
-  .hero-prize-status em {
-    font-style: italic;
-    white-space: nowrap;
-  }
-
-  .hero-prize .essay-actions {
-    justify-content: center;
-    margin-top: 1.25rem;
-  }
 
   .essay-feature-section {
     padding: 4rem 0 1rem;
@@ -985,19 +831,6 @@
   .essay-action:hover {
     background: var(--clay);
     color: var(--cream);
-  }
-
-  .pub-award-note {
-    color: var(--stone);
-    font-family: var(--serif);
-    font-size: 0.9rem;
-    margin-top: 0.55rem;
-  }
-
-  .pub-announcement-link {
-    display: inline-block;
-    margin-left: 0;
-    margin-top: 0.55rem;
   }
 
   .recognition-section {
@@ -1161,22 +994,6 @@
   }
 
   @media (max-width: 768px) {
-    .hero-prize {
-      max-width: 360px;
-    }
-
-    .hero-prize-title {
-      font-size: 1.65rem;
-    }
-
-    .hero-prize-award {
-      font-size: 0.68rem;
-    }
-
-    .hero-prize-status {
-      font-size: 0.96rem;
-    }
-
     .essay-feature-section {
       padding-top: 3rem;
     }

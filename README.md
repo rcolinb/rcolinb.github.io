@@ -11,6 +11,32 @@ python3 _scripts/serve.py
 Serves the site root at http://localhost:4173 (optional port argument),
 including the custom 404 page. Uses only the Python standard library.
 
+## Pages and the hand-sync rule
+
+- `index.html` — home (hero, Selected Work, Books in Progress, research
+  bridge, About, Contact)
+- `publications.html` — the creative record, labeled **Writing** in the nav
+  and H1 (the URL is deliberately unchanged; GitHub Pages has no server
+  redirects)
+- `research.html` — static academic page; the build does not process it, it
+  only copies it into `_site`
+- `_drafts/teaching.html` — deferred Teaching page draft awaiting prose
+  rework; underscore directories are not deployed by GitHub Pages
+- `404.html` — standalone; `/cardiac/` — built teaching artifact, currently
+  unlinked from the site
+
+Node is not installed on the editing machine, so the generated regions
+(`INCANTATIONS_NAV`, `INCANTATIONS_HERO`, `INCANTATIONS_EDITOR_RESOURCES`,
+`PUBLICATIONS_LIST`, `INCANTATIONS_PUBLICATION`) and the `person-jsonld`
+block are maintained by editing the committed files **and** the matching
+template functions in `_scripts/build-incantations.mjs` in lockstep. A later
+`node _scripts/build-incantations.mjs` must reproduce, never revert, the
+committed state. The Selected Work block in `index.html` and the Books in
+Progress card copies (`index.html` + `publications.html`) are hand-synced
+with `publications.js` and each other. If the Teaching page returns from
+`_drafts/`, restore its nav/footer links on every page and in the build
+templates, and add it back to `publicPaths`.
+
 ## Incantations release states
 
 The essay update is controlled in one place: `_incantations.json`.
