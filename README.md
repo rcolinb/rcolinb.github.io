@@ -20,8 +20,8 @@ including the custom 404 page. Uses only the Python standard library.
   redirects)
 - `research.html` — static academic page; the build does not process it, it
   only copies it into `_site`
-- `_drafts/teaching.html` — deferred Teaching page draft awaiting prose
-  rework; underscore directories are not deployed by GitHub Pages
+- `_drafts/teaching.html` — revised Teaching page draft awaiting publication;
+  underscore directories are not deployed by GitHub Pages
 - `404.html` — standalone; `/cardiac/` — built teaching artifact, currently
   unlinked from the site
 

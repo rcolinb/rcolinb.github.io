@@ -1,0 +1,28 @@
+N326 preliminary assessment analysis
+Generated: 2026-07-31 09:59:39 EDT
+
+Assessments: 24; attempts: 331; items: 663; item results: 9175
+Quiz 3 administrations: 3; Quiz 3 items: 45
+Quiz 3 mean scores by session: Jan 2026 85.8%; Mar 2026 85.3%; May 2026 94.5%
+Quiz 3 exploratory raw alpha by session: Jan 2026 -0.27; Mar 2026 0.38; May 2026 -3.18
+Quiz 3 exploratory standardized alpha by session: Jan 2026 -0.58; Mar 2026 0.40; May 2026 -1.82
+Quiz 3 items with >=95% facility: 17 of 45
+Quiz 3 items with negative/very-low local item-rest correlation (<.10): 20 plus 17 with no variance
+Correlation between vendor/PDF PB and local corrected item-rest correlation for Quiz 3: 0.26
+
+Paired Quiz 3 -> Exam 2 N: 43
+Pooled Pearson r: 0.13; Spearman rho: 0.22
+Session-adjusted Quiz 3 slope: 0.13; p=0.296; adjusted R-squared=0.03
+Quiz 3 pass but Exam 2 below 75%: 7
+At the 75% Quiz 3 cutoff, sensitivity for Exam 2 <75%: 0%
+Largest pooled prior-assessment correlation with Exam 2: Quiz 4 (r=0.42)
+
+July Exam 1 mean: 79.3%; prior Exam 1 pooled mean: 84.9%
+July minus prior pooled Exam 1: -5.6 percentage points; Welch p=0.045; Hedges g=-0.97
+Exact common Exam 1 items: 11 of 56; common-item facility difference: -7.7 percentage points
+
+Interpretation cautions:
+- Cohorts are small (approximately 10-19 students), so item correlations and alpha estimates are unstable.
+- Reused items and ceiling scores reduce independence and make a single pooled estimate look more precise than it is.
+- Vendor/PDF psychometrics appear to persist across reused items; local item-rest statistics are calculated separately here.
+- These are quality-improvement signals, not proof that an item is valid or invalid.

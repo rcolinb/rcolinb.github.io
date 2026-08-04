@@ -1,0 +1,846 @@
+/* Teaching page prototype. Kept in _drafts/ so GitHub Pages will not publish it. */
+
+.teaching-page {
+  --teaching-sage: #8ba899;
+  --teaching-sage-bright: #b3c8bd;
+  --teaching-blue: #8096b5;
+  --teaching-gold: #d4aa64;
+  --teaching-coral: #c67862;
+  overflow: hidden;
+}
+
+.teaching-page [id] {
+  scroll-margin-top: 6rem;
+}
+
+.teaching-shell {
+  margin: 0 auto;
+  max-width: 1120px;
+  padding-left: clamp(1.25rem, 4vw, 3rem);
+  padding-right: clamp(1.25rem, 4vw, 3rem);
+  width: 100%;
+}
+
+.teaching-kicker {
+  align-items: center;
+  color: var(--clay);
+  display: flex;
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 400;
+  gap: 0.65rem;
+  letter-spacing: 0.18em;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.teaching-kicker::before {
+  background: currentColor;
+  content: '';
+  height: 1px;
+  width: 1.6rem;
+}
+
+.teaching-hero {
+  align-items: center;
+  background:
+    radial-gradient(circle at 75% 45%, rgba(139, 168, 153, 0.13), transparent 27rem),
+    linear-gradient(145deg, #14151a 0%, #19191f 58%, #171820 100%);
+  display: flex;
+  min-height: 100svh;
+  padding: 8.5rem 0 5rem;
+  position: relative;
+}
+
+.teaching-hero::before {
+  background-image:
+    linear-gradient(rgba(236, 230, 218, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(236, 230, 218, 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  content: '';
+  inset: 0;
+  mask-image: linear-gradient(to bottom, transparent 5%, black 38%, transparent 100%);
+  pointer-events: none;
+  position: absolute;
+}
+
+.teaching-hero-grid {
+  align-items: center;
+  display: grid;
+  gap: clamp(3rem, 7vw, 7rem);
+  grid-template-columns: minmax(0, 1.1fr) minmax(330px, 0.9fr);
+  position: relative;
+  z-index: 1;
+}
+
+.teaching-hero-copy .back-home {
+  margin-bottom: 2.4rem;
+}
+
+.teaching-hero h1 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(3.6rem, 7.2vw, 6.7rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  max-width: 780px;
+}
+
+.teaching-deck {
+  color: var(--stone);
+  font-family: var(--serif);
+  font-size: clamp(1.08rem, 1.6vw, 1.35rem);
+  line-height: 1.75;
+  margin-top: 2rem;
+  max-width: 650px;
+}
+
+.course-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  list-style: none;
+  margin-top: 2.4rem;
+}
+
+.course-chips li {
+  border: 1px solid rgba(139, 168, 153, 0.34);
+  border-radius: 999px;
+  color: var(--teaching-sage-bright);
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  padding: 0.55rem 0.8rem;
+  text-transform: uppercase;
+}
+
+.teaching-hero-signal {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.signal-ring {
+  border: 1px solid rgba(139, 168, 153, 0.3);
+  border-radius: 50%;
+  position: absolute;
+}
+
+.signal-ring-one {
+  height: 92%;
+  width: 92%;
+}
+
+.signal-ring-two {
+  border-color: rgba(208, 138, 78, 0.35);
+  height: 70%;
+  width: 70%;
+}
+
+.signal-ring-three {
+  border-color: rgba(128, 150, 181, 0.38);
+  height: 49%;
+  width: 49%;
+}
+
+.signal-ring::after {
+  background: currentColor;
+  border-radius: 50%;
+  box-shadow: 0 0 18px currentColor;
+  content: '';
+  height: 7px;
+  left: 50%;
+  position: absolute;
+  top: -4px;
+  width: 7px;
+}
+
+.signal-ring-one {
+  animation: teaching-spin 26s linear infinite;
+  color: var(--teaching-sage);
+}
+
+.signal-ring-two {
+  animation: teaching-spin 20s linear infinite reverse;
+  color: var(--clay);
+}
+
+.signal-ring-three {
+  animation: teaching-spin 16s linear infinite;
+  color: var(--teaching-blue);
+}
+
+.signal-core {
+  align-items: center;
+  background: rgba(30, 30, 38, 0.9);
+  border: 1px solid rgba(236, 230, 218, 0.16);
+  border-radius: 50%;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.38);
+  display: flex;
+  flex-direction: column;
+  height: 42%;
+  justify-content: center;
+  min-height: 180px;
+  min-width: 180px;
+  padding: 1.5rem;
+  text-align: center;
+  width: 42%;
+}
+
+.signal-core span,
+.signal-core small {
+  color: var(--stone);
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  line-height: 1.45;
+  max-width: 130px;
+  text-transform: uppercase;
+}
+
+.signal-core strong {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(3.5rem, 6vw, 5.4rem);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 0.9;
+  margin: 0.35rem 0;
+}
+
+.teaching-scroll-cue {
+  bottom: 1.6rem;
+  color: var(--mist);
+  font-family: var(--sans);
+  font-size: 0.61rem;
+  left: 50%;
+  letter-spacing: 0.16em;
+  position: absolute;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+}
+
+.teaching-scroll-cue span {
+  color: var(--clay);
+  margin-left: 0.55rem;
+}
+
+.teaching-section {
+  padding: clamp(5rem, 9vw, 8rem) 0;
+}
+
+.teaching-section-intro {
+  display: grid;
+  gap: 1rem 4rem;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.7fr);
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.teaching-section-intro .teaching-kicker {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
+.teaching-section-intro h2,
+.philosophy-statement h2,
+.teaching-background h2 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(2.6rem, 5vw, 4.7rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.teaching-section-intro > p:last-child,
+.philosophy-statement > p:last-child {
+  color: var(--stone);
+  font-family: var(--serif);
+  font-size: 1.08rem;
+  line-height: 1.8;
+}
+
+.teaching-results {
+  background: #1b1b22;
+  border-bottom: 1px solid rgba(236, 230, 218, 0.08);
+  border-top: 1px solid rgba(236, 230, 218, 0.08);
+}
+
+.metric-grid {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: clamp(4rem, 7vw, 6rem);
+  overflow: hidden;
+}
+
+.metric-card {
+  background: #202028;
+  min-height: 220px;
+  padding: clamp(1.4rem, 2.7vw, 2.3rem);
+}
+
+.metric-card-primary {
+  background: var(--clay);
+}
+
+.metric-value {
+  color: var(--ink);
+  display: block;
+  font-family: var(--serif);
+  font-size: clamp(2.6rem, 4.4vw, 4.25rem);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 0.95;
+  white-space: nowrap;
+}
+
+.metric-card-primary .metric-value,
+.metric-card-primary p,
+.metric-card-primary > small {
+  color: #17171c;
+}
+
+.metric-value small,
+.metric-value span {
+  font-size: 0.42em;
+  letter-spacing: 0;
+}
+
+.metric-card p {
+  color: var(--charcoal);
+  font-family: var(--serif);
+  font-size: 1.08rem;
+  line-height: 1.45;
+  margin-top: 1.4rem;
+}
+
+.metric-card > small {
+  color: var(--mist);
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.67rem;
+  letter-spacing: 0.07em;
+  line-height: 1.5;
+  margin-top: 0.75rem;
+  text-transform: uppercase;
+}
+
+.rating-profile {
+  background: #17171d;
+  border: 1px solid rgba(236, 230, 218, 0.1);
+  padding: clamp(1.4rem, 3.7vw, 3.3rem);
+}
+
+.rating-profile figcaption {
+  align-items: end;
+  border-bottom: 1px solid rgba(236, 230, 218, 0.1);
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1.8rem;
+}
+
+.rating-profile h3 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.rating-profile figcaption > p {
+  color: var(--mist);
+  font-family: var(--sans);
+  font-size: 0.64rem;
+  letter-spacing: 0.09em;
+  line-height: 1.5;
+  max-width: 240px;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.rating-chart {
+  display: grid;
+  gap: 0.72rem;
+}
+
+.rating-row {
+  align-items: center;
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: minmax(190px, 1.2fr) minmax(220px, 2fr) 3.2rem;
+}
+
+.rating-label {
+  color: var(--charcoal);
+  font-family: var(--sans);
+  font-size: 0.76rem;
+  line-height: 1.3;
+}
+
+.rating-track {
+  background: rgba(236, 230, 218, 0.08);
+  height: 7px;
+  overflow: hidden;
+  position: relative;
+}
+
+.rating-fill {
+  background: linear-gradient(90deg, var(--teaching-sage), var(--clay-light));
+  display: block;
+  height: 100%;
+  transform-origin: left;
+  width: var(--score);
+}
+
+.rating-row strong {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  font-weight: 400;
+  text-align: right;
+}
+
+.voice-section {
+  background: var(--cream);
+}
+
+.voice-intro {
+  margin-bottom: 3.5rem;
+}
+
+.theme-explorer {
+  border: 1px solid rgba(236, 230, 218, 0.12);
+  display: grid;
+  grid-template-columns: 0.72fr 1.28fr;
+}
+
+.theme-tabs {
+  background: #191920;
+  border-right: 1px solid rgba(236, 230, 218, 0.12);
+  display: flex;
+  flex-direction: column;
+}
+
+.theme-tabs button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(236, 230, 218, 0.09);
+  cursor: pointer;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  min-height: 78px;
+  padding: 1.2rem 1.35rem;
+  text-align: left;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.theme-tabs button span {
+  color: var(--stone);
+  font-family: var(--serif);
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.theme-tabs button small {
+  color: var(--mist);
+  font-family: var(--sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.theme-tabs button[aria-selected='true'] {
+  background: var(--clay);
+}
+
+.theme-tabs button[aria-selected='true'] span,
+.theme-tabs button[aria-selected='true'] small {
+  color: #17171c;
+}
+
+.theme-tabs button:hover:not([aria-selected='true']) {
+  background: rgba(208, 138, 78, 0.08);
+}
+
+.theme-panel {
+  background:
+    radial-gradient(circle at 90% 20%, rgba(139, 168, 153, 0.09), transparent 16rem),
+    var(--linen);
+  min-height: 560px;
+  padding: clamp(1.7rem, 4vw, 3.6rem);
+}
+
+.theme-panel-heading {
+  max-width: 620px;
+}
+
+.theme-panel-heading h3 {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(2.1rem, 4vw, 3.6rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.theme-panel-heading > p:last-child {
+  color: var(--stone);
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  line-height: 1.75;
+  margin-top: 1rem;
+}
+
+.quote-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 2.6rem;
+}
+
+.student-quote {
+  background: rgba(22, 22, 28, 0.68);
+  border-left: 2px solid var(--teaching-sage);
+  display: flex;
+  flex-direction: column;
+  min-height: 250px;
+  padding: 1.5rem;
+}
+
+.student-quote blockquote {
+  flex: 1;
+}
+
+.student-quote blockquote p {
+  color: var(--charcoal);
+  font-family: var(--serif);
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+  line-height: 1.7;
+}
+
+.student-quote figcaption {
+  color: var(--mist);
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+  margin-top: 1.5rem;
+  text-transform: uppercase;
+}
+
+.student-quote figcaption span {
+  color: var(--teaching-sage-bright);
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.philosophy-section {
+  background: var(--clay);
+  color: #18181d;
+}
+
+.philosophy-grid {
+  align-items: center;
+  display: grid;
+  gap: clamp(3rem, 7vw, 7rem);
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+}
+
+.philosophy-section .teaching-kicker,
+.philosophy-section .philosophy-statement h2,
+.philosophy-section .philosophy-statement > p:last-child {
+  color: #18181d;
+}
+
+.philosophy-statement h2 {
+  margin-bottom: 1.8rem;
+}
+
+.reflection-quote {
+  border-bottom: 1px solid rgba(24, 24, 29, 0.34);
+  border-top: 1px solid rgba(24, 24, 29, 0.34);
+  padding: 2.2rem 0;
+}
+
+.reflection-quote p {
+  color: #18181d;
+  font-family: var(--serif);
+  font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.reflection-quote cite {
+  color: rgba(24, 24, 29, 0.72);
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.63rem;
+  font-style: normal;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  margin-top: 1.6rem;
+  text-transform: uppercase;
+}
+
+.teaching-background {
+  background: #1a1a21;
+}
+
+.background-grid {
+  display: grid;
+  gap: clamp(2.5rem, 7vw, 7rem);
+  grid-template-columns: minmax(0, 0.85fr) minmax(320px, 1.15fr);
+}
+
+.teaching-background .essay-prose {
+  border-left: 1px solid rgba(236, 230, 218, 0.14);
+  padding-left: clamp(1.5rem, 4vw, 3rem);
+}
+
+.teaching-methods {
+  background: #16161c;
+  border-top: 1px solid rgba(236, 230, 218, 0.1);
+  padding: 3.5rem 0 5rem;
+}
+
+.teaching-methods details {
+  border-bottom: 1px solid rgba(236, 230, 218, 0.12);
+  border-top: 1px solid rgba(236, 230, 218, 0.12);
+}
+
+.teaching-methods summary {
+  color: var(--stone);
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  padding: 1.25rem 0;
+  text-transform: uppercase;
+}
+
+.teaching-methods summary::marker {
+  color: var(--clay);
+}
+
+.methods-copy {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 0.7rem 0 2rem;
+}
+
+.methods-copy p {
+  color: var(--mist);
+  font-family: var(--serif);
+  font-size: 0.92rem;
+  line-height: 1.75;
+}
+
+.teaching-actions {
+  margin-top: 2.4rem;
+}
+
+@keyframes teaching-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 900px) {
+  .teaching-hero-grid {
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .theme-explorer {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-tabs {
+    border-bottom: 1px solid rgba(236, 230, 218, 0.12);
+    border-right: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .theme-tabs button {
+    min-height: 92px;
+  }
+}
+
+@media (max-width: 700px) {
+  .teaching-hero {
+    min-height: auto;
+    padding-bottom: 6rem;
+  }
+
+  .teaching-hero-grid,
+  .philosophy-grid,
+  .background-grid,
+  .teaching-section-intro {
+    grid-template-columns: 1fr;
+  }
+
+  .teaching-hero-copy {
+    position: relative;
+    z-index: 2;
+  }
+
+  .teaching-hero-signal {
+    margin: -1rem auto 0;
+    max-width: 390px;
+    width: 88vw;
+  }
+
+  .teaching-scroll-cue {
+    display: none;
+  }
+
+  .metric-card {
+    min-height: 190px;
+  }
+
+  .rating-profile figcaption {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .rating-profile figcaption > p {
+    text-align: left;
+  }
+
+  .rating-row {
+    gap: 0.6rem 0.8rem;
+    grid-template-columns: minmax(0, 1fr) 3rem;
+  }
+
+  .rating-label {
+    grid-column: 1;
+  }
+
+  .rating-track {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .rating-row strong {
+    grid-column: 2;
+    grid-row: 1 / 3;
+  }
+
+  .theme-tabs {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .theme-tabs button {
+    flex: 0 0 210px;
+    scroll-snap-align: start;
+  }
+
+  .quote-grid,
+  .methods-copy {
+    grid-template-columns: 1fr;
+  }
+
+  .student-quote {
+    min-height: 220px;
+  }
+
+  .teaching-background .essay-prose {
+    border-left: 0;
+    border-top: 1px solid rgba(236, 230, 218, 0.14);
+    padding-left: 0;
+    padding-top: 2rem;
+  }
+}
+
+@media (max-width: 460px) {
+  .teaching-hero h1 {
+    font-size: 3.25rem;
+  }
+
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-card {
+    min-height: 170px;
+  }
+
+  .signal-core {
+    min-height: 150px;
+    min-width: 150px;
+  }
+
+  .course-chips {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signal-ring {
+    animation: none;
+  }
+}
+
+@media print {
+  #mainNav,
+  .teaching-scroll-cue,
+  .theme-tabs,
+  .teaching-actions,
+  footer {
+    display: none;
+  }
+
+  .teaching-hero,
+  .teaching-section,
+  .teaching-methods {
+    background: #fff;
+    color: #111;
+    min-height: auto;
+    padding: 2rem 0;
+  }
+
+  .teaching-hero h1,
+  .teaching-section h2,
+  .teaching-section h3,
+  .teaching-section p,
+  .teaching-section span,
+  .teaching-section strong,
+  .teaching-section small,
+  .teaching-section cite,
+  .teaching-methods p,
+  .teaching-methods summary {
+    color: #111;
+  }
+
+  .teaching-hero-signal {
+    max-width: 330px;
+  }
+
+  .theme-explorer {
+    display: block;
+  }
+
+  .theme-panel,
+  .metric-card,
+  .student-quote,
+  .rating-profile {
+    background: #fff;
+    border: 1px solid #bbb;
+  }
+}

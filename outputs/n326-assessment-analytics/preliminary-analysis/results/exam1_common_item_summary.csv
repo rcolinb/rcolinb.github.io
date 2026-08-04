@@ -1,0 +1,12 @@
+"Metric","Value"
+"July exact-common items",11
+"July unique items",45
+"Points on exact-common items",27.5
+"Points on unique items",112.5
+"July weighted facility on common items",0.707070707070707
+"Prior weighted facility for same common items",0.783581267217631
+"Common-item facility difference",-0.0765105601469238
+"July weighted facility on unique items",0.814320986666667
+"Common items declining by at least 15 points",3
+"Common stems with unchanged response sets across prior administrations",10
+"Common stems with unchanged keys across prior administrations",11

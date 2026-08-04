@@ -1,0 +1,9 @@
+Analysis Parameters,,,
+,,,
+"Editable starter thresholds. These are screening heuristics, not absolute rules; interpret in context.",,,
+Parameter,Interpretation,Interpretation,Interpretation
+Low point-biserial threshold,Items below this value are marked for review.,Items below this value are marked for review.,Items below this value are marked for review.
+Very low point-biserial threshold,Items below this value receive high review priority.,Items below this value receive high review priority.,Items below this value receive high review priority.
+Difficult item threshold,Difficulty/facility below this value is labeled difficult.,Difficulty/facility below this value is labeled difficult.,Difficulty/facility below this value is labeled difficult.
+Very easy item threshold,Difficulty/facility at or above this value is labeled very easy.,Difficulty/facility at or above this value is labeled very easy.,Difficulty/facility at or above this value is labeled very easy.
+Student performance benchmark,Used for benchmark rates and below-benchmark flags.,Used for benchmark rates and below-benchmark flags.,Used for benchmark rates and below-benchmark flags.
