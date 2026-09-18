@@ -160,13 +160,13 @@ function publicationStatus(config) {
     : `Published in ${journal}`;
 }
 
-function homepageHero(config, dedicatedPageEnabled) {
+function homepageWritingFeature(config, dedicatedPageEnabled) {
   const action = primaryAction(config);
   const title = dedicatedPageEnabled
     ? `<a href="incantations.html">&ldquo;${escapeHtml(config.title)}&rdquo;</a>`
     : `&ldquo;${escapeHtml(config.title)}&rdquo;`;
   return `<div class="hero-prize">
-    <h2 class="hero-prize-title">${title}</h2>
+    <h3 class="hero-prize-title">${title}</h3>
     <p class="hero-prize-award">${escapeHtml(config.award)}</p>
     <p class="hero-prize-status">Selected by ${escapeHtml(config.judge)} <span aria-hidden="true">&middot;</span> ${publicationStatus(config)}</p>${action ? `\n    <div class="essay-actions">${action}</div>` : ""}
   </div>`;
@@ -259,8 +259,8 @@ function publicationsListHtml(publications) {
     { key: "fiction", label: "Fiction" },
   ];
   const statuses = [
-    { key: "forthcoming", label: "Forthcoming" },
     { key: "published", label: "Published" },
+    { key: "forthcoming", label: "Forthcoming" },
   ];
 
   return genres
@@ -283,6 +283,19 @@ ${groups}
     })
     .filter(Boolean)
     .join("\n");
+}
+
+function selectedWorkHtml(publications) {
+  const genres = [
+    { key: "cnf", label: "Essays" },
+    { key: "poetry", label: "Poetry" },
+    { key: "fiction", label: "Fiction" },
+  ];
+  return genres.map((genre) => {
+    const items = publications.filter((item) => item.selected && item.genre === genre.key);
+    if (!items.length) return "";
+    return `        <p class="pub-status-label">${genre.label}</p>\n${items.map(publicationItemHtml).join("\n")}`;
+  }).filter(Boolean).join("\n");
 }
 
 function publicationDetailSections(config) {
@@ -340,7 +353,6 @@ function dedicatedPage(config) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>document.documentElement.classList.add('js');</script>
 
 ${generatedPageMarker}
 <!-- Google Analytics -->
@@ -354,7 +366,7 @@ ${generatedPageMarker}
 </script>
 
 <title>&ldquo;${escapeHtml(config.title)}&rdquo; | R.C. Blenis</title>
-<meta name="theme-color" content="#16161C">
+<meta name="theme-color" content="#fdfdfb">
 <meta name="description" content="Winner of the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay.">
 <link rel="canonical" href="https://rcblenis.com/incantations.html">
 
@@ -366,33 +378,32 @@ ${generatedPageMarker}
 <meta property="og:description" content="Winner of the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://rcblenis.com/incantations.html">
-<meta property="og:site_name" content="R.C. Blenis">
-<meta property="og:image" content="https://rcblenis.com/og-image.jpg">
+<meta property="og:site_name" content="R. Colin Blenis">
+<meta property="og:image" content="https://rcblenis.com/social-card.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="R. Colin Blenis — Nursing scholarship and writing">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="&ldquo;${escapeHtml(config.title)}&rdquo; | R.C. Blenis">
 <meta name="twitter:description" content="Winner of the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay.">
-<meta name="twitter:image" content="https://rcblenis.com/og-image.jpg">
+<meta name="twitter:image" content="https://rcblenis.com/social-card.jpg">
+<meta name="twitter:image:alt" content="R. Colin Blenis — Nursing scholarship and writing">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&amp;family=Source+Sans+3:wght@300;400&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <a class="skip-link" href="#main">Skip to content</a>
 
-<nav id="mainNav">
-  <a class="nav-name" href="index.html">R.C. Blenis</a>
-  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
-    <span></span><span></span><span></span>
-  </button>
+<nav id="mainNav" aria-label="Main">
+  <a class="nav-name" href="index.html">R. Colin Blenis</a>
   <ul class="nav-links" id="navLinks">
     <li><a href="index.html">Home</a></li>
-    <li><a href="incantations.html" class="active" aria-current="page">Incantations</a></li>
-    <li><a href="publications.html">Writing</a></li>
     <li><a href="research.html">Research</a></li>
+    <li><a href="publications.html">Writing</a></li>
+    <li><a href="incantations.html" class="active" aria-current="page">Incantations</a></li>
     <li><a href="index.html#about">About</a></li>
     <li><a href="index.html#contact">Contact</a></li>
   </ul>
@@ -421,8 +432,8 @@ ${optionalSectionsMarkup}
 
 <footer>
   <nav class="footer-links" aria-label="Footer">
-    <a href="publications.html">Writing</a>
     <a href="research.html">Research</a>
+    <a href="publications.html">Writing</a>
     <a href="https://orcid.org/0000-0002-8751-9854" target="_blank" rel="noopener">ORCID</a>
     <!-- CV: add a link here when the sanitized public CV PDF exists. -->
     <a href="index.html#contact">Contact</a>
@@ -430,33 +441,7 @@ ${optionalSectionsMarkup}
   <p>&copy; 2026 R.C. Blenis. All rights reserved. Views expressed here are my own.</p>
 </footer>
 
-<script>
-  window.addEventListener('scroll', () => {
-    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 40);
-  });
-
-  function toggleNav() {
-    const links = document.getElementById('navLinks');
-    const button = document.querySelector('.nav-toggle');
-    const isOpen = links.classList.toggle('open');
-    button.setAttribute('aria-expanded', String(isOpen));
-  }
-
-  document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => {
-      document.getElementById('navLinks').classList.remove('open');
-      document.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false');
-    });
-  });
-
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
-    });
-  }, { threshold: 0.15 });
-  reveals.forEach(el => observer.observe(el));
-</script>
+<script src="site.js"></script>
 
 </body>
 </html>
@@ -525,11 +510,12 @@ async function copyProductionSnapshot(dedicatedPageEnabled) {
     "favicon-32.png",
     "favicon.ico",
     "index.html",
-    "og-image.jpg",
+    "social-card.jpg",
     "publications.html",
     "publications.js",
     "research.html",
     "styles.css",
+    "site.js",
     "submittable-filter",
   ];
   if (dedicatedPageEnabled) publicPaths.push("incantations.html");
@@ -568,19 +554,15 @@ const dedicatedPageEnabled = visible && config.dedicatedPage;
 const navItem = dedicatedPageEnabled
   ? '    <li><a href="incantations.html">Incantations</a></li>'
   : "";
-const defaultDescription =
-  "R.C. Blenis is a poet, nurse, and essayist based in Atlanta. Work in the Massachusetts Review, JAMA, River Teeth, Fourth Genre, the American Journal of Nursing, Pulse, Heavy Feather Review, and elsewhere.";
-const defaultSocialDescription =
-  "Creative nonfiction, poetry, and fiction at the intersection of nursing, contemplative practice, and the ethics of attention.";
-const awardDescription =
-  "R.C. Blenis is a poet, nurse, and essayist whose essay “Incantations” won the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay.";
+const scholarshipDescription =
+  "R. Colin Blenis is a nurse educator, researcher, and writer based in Atlanta. His scholarship explores nursing education, ethics, memory, and the health humanities.";
 
 let indexHtml = await readFile(join(root, "index.html"), "utf8");
 indexHtml = replaceHtmlRegion(indexHtml, "INCANTATIONS_NAV", navItem);
 indexHtml = replaceHtmlRegion(
   indexHtml,
   "INCANTATIONS_HERO",
-  visible ? homepageHero(config, dedicatedPageEnabled) : defaultHeroContent(),
+  visible ? homepageWritingFeature(config, dedicatedPageEnabled) : defaultHeroContent(),
 );
 // The "For Editors & Press" box was removed from the site; keep this region
 // empty so a rebuild does not reinstate it.
@@ -588,20 +570,19 @@ indexHtml = replaceHtmlRegion(indexHtml, "INCANTATIONS_EDITOR_RESOURCES", "");
 indexHtml = updateMetaContent(
   indexHtml,
   "site-description",
-  visible ? awardDescription : defaultDescription,
+  scholarshipDescription,
 );
 indexHtml = updateMetaContent(
   indexHtml,
   "og-description",
-  visible ? awardDescription : defaultSocialDescription,
+  scholarshipDescription,
 );
 indexHtml = updateMetaContent(
   indexHtml,
   "twitter-description",
-  visible ? awardDescription : defaultSocialDescription,
+  scholarshipDescription,
 );
 indexHtml = await updatePersonStructuredData(indexHtml, config, visible);
-await writeIfChanged(join(root, "index.html"), indexHtml);
 
 let publicationsJs = await readFile(join(root, "publications.js"), "utf8");
 publicationsJs = replaceJsRegion(
@@ -610,6 +591,8 @@ publicationsJs = replaceJsRegion(
   visible ? incantationsPublication(config) : "",
 );
 await writeIfChanged(join(root, "publications.js"), publicationsJs);
+indexHtml = replaceHtmlRegion(indexHtml, "SELECTED_WORK", selectedWorkHtml(readPublicationsData(publicationsJs)));
+await writeIfChanged(join(root, "index.html"), indexHtml);
 
 let publicationsHtml = await readFile(join(root, "publications.html"), "utf8");
 publicationsHtml = replaceHtmlRegion(publicationsHtml, "INCANTATIONS_NAV", navItem);

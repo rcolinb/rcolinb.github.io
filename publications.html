@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>document.documentElement.classList.add('js');</script>
 
 <!-- Google Analytics -->
 <link rel="preconnect" href="https://www.googletagmanager.com">
@@ -16,7 +15,7 @@
 </script>
 
 <title>Writing — R.C. Blenis</title>
-<meta name="theme-color" content="#16161C">
+<meta name="theme-color" content="#fdfdfb">
 <meta name="description" content="The creative record of R.C. Blenis: creative nonfiction, poetry, and fiction in the Massachusetts Review, JAMA, River Teeth, Fourth Genre, the American Journal of Nursing, Pulse, and elsewhere.">
 <link rel="canonical" href="https://rcblenis.com/publications.html">
 
@@ -30,13 +29,19 @@
 <meta property="og:description" content="Creative nonfiction, poetry, and fiction at the intersection of nursing, contemplative practice, and the ethics of attention.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rcblenis.com/publications.html">
-<meta property="og:site_name" content="R.C. Blenis">
-<meta property="og:image" content="https://rcblenis.com/og-image.jpg">
+<meta property="og:site_name" content="R. Colin Blenis">
+<meta property="og:image" content="https://rcblenis.com/social-card.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="R. Colin Blenis — Nursing scholarship and writing">
 
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Source+Sans+3:wght@300;400&display=swap" rel="stylesheet">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Writing — R.C. Blenis">
+<meta name="twitter:description" content="Creative nonfiction, poetry, and fiction at the intersection of nursing, contemplative practice, and the ethics of attention.">
+<meta name="twitter:image" content="https://rcblenis.com/social-card.jpg">
+<meta name="twitter:image:alt" content="R. Colin Blenis — Nursing scholarship and writing">
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -46,17 +51,14 @@
 
 <!-- ═══ NAVIGATION ═══ -->
 
-<nav id="mainNav">
-  <a class="nav-name" href="index.html">R.C. Blenis</a>
-  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
-    <span></span><span></span><span></span>
-  </button>
+<nav id="mainNav" aria-label="Main">
+  <a class="nav-name" href="index.html">R. Colin Blenis</a>
   <ul class="nav-links" id="navLinks">
     <li><a href="index.html">Home</a></li>
+    <li><a href="research.html">Research</a></li>
+    <li><a href="publications.html" class="active" aria-current="page">Writing</a></li>
     <!-- INCANTATIONS_NAV:START -->
     <!-- INCANTATIONS_NAV:END -->
-    <li><a href="publications.html" class="active" aria-current="page">Writing</a></li>
-    <li><a href="research.html">Research</a></li>
     <li><a href="index.html#about">About</a></li>
     <li><a href="index.html#contact">Contact</a></li>
   </ul>
@@ -72,11 +74,30 @@
       <p class="section-subtitle">Creative nonfiction, poetry &amp; fiction</p>
     </div>
 
+    <nav class="page-jumps" aria-label="Writing categories">
+      <a href="#cnf-heading">Essays</a>
+      <a href="#poetry-heading">Poetry</a>
+      <a href="#fiction-heading">Fiction</a>
+    </nav>
+
     <!-- The full record is generated here from publications.js for crawlability. -->
     <div id="pub-list-full">
       <!-- PUBLICATIONS_LIST:START -->
     <section class="work-category reveal" aria-labelledby="cnf-heading">
       <h2 class="work-category-title" id="cnf-heading">Creative Nonfiction</h2>
+      <p class="pub-status-label">Published</p>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://journals.lww.com/ajnonline/citation/2026/05000/the_body_knows_first.14.aspx" target="_blank" rel="noopener">&ldquo;The Body Knows First&rdquo;</a></span> &middot;
+        <span class="pub-venue">American Journal of Nursing</span>
+        <span class="pub-year"> &middot; Vol. 126.5, May 2026</span>
+        <a class="pub-link" href="https://journals.lww.com/ajnonline/citation/2026/05000/the_body_knows_first.14.aspx" target="_blank" rel="noopener" aria-label="Read &ldquo;The Body Knows First&rdquo;">Read &rarr;</a>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://www.westtradereview.com/onlineexclusiveW25Blenis.html" target="_blank" rel="noopener">&ldquo;The Thread You Follow&rdquo;</a></span> &middot;
+        <span class="pub-venue">West Trade Review</span>
+        <span class="pub-year"> &middot; January 2026</span>
+        <a class="pub-link" href="https://www.westtradereview.com/onlineexclusiveW25Blenis.html" target="_blank" rel="noopener" aria-label="Read &ldquo;The Thread You Follow&rdquo;">Read &rarr;</a>
+      </div>
       <p class="pub-status-label">Forthcoming</p>
       <div class="publication-item">
         <span class="pub-title">&ldquo;Incantations&rdquo;</span> &middot;
@@ -101,43 +122,9 @@
         <span class="pub-year"> &middot; Forthcoming</span>
         <div class="pub-note">Reflections</div>
       </div>
-      <p class="pub-status-label">Published</p>
-      <div class="publication-item">
-        <span class="pub-title"><a href="https://journals.lww.com/ajnonline/citation/2026/05000/the_body_knows_first.14.aspx" target="_blank" rel="noopener">&ldquo;The Body Knows First&rdquo;</a></span> &middot;
-        <span class="pub-venue">American Journal of Nursing</span>
-        <span class="pub-year"> &middot; Vol. 126.5, May 2026</span>
-        <a class="pub-link" href="https://journals.lww.com/ajnonline/citation/2026/05000/the_body_knows_first.14.aspx" target="_blank" rel="noopener" aria-label="Read &ldquo;The Body Knows First&rdquo;">Read &rarr;</a>
-      </div>
-      <div class="publication-item">
-        <span class="pub-title"><a href="https://www.westtradereview.com/onlineexclusiveW25Blenis.html" target="_blank" rel="noopener">&ldquo;The Thread You Follow&rdquo;</a></span> &middot;
-        <span class="pub-venue">West Trade Review</span>
-        <span class="pub-year"> &middot; January 2026</span>
-        <a class="pub-link" href="https://www.westtradereview.com/onlineexclusiveW25Blenis.html" target="_blank" rel="noopener" aria-label="Read &ldquo;The Thread You Follow&rdquo;">Read &rarr;</a>
-      </div>
     </section>
     <section class="work-category reveal" aria-labelledby="poetry-heading">
       <h2 class="work-category-title" id="poetry-heading">Poetry</h2>
-      <p class="pub-status-label">Forthcoming</p>
-      <div class="publication-item">
-        <span class="pub-title">&ldquo;Perseveration&rdquo;</span> &middot;
-        <span class="pub-venue">The Examined Life Journal</span>
-        <span class="pub-year"> &middot; Forthcoming, 2026</span>
-      </div>
-      <div class="publication-item">
-        <span class="pub-title">&ldquo;morning coffee&rdquo;</span> &middot;
-        <span class="pub-venue">Presence</span>
-        <span class="pub-year"> &middot; Forthcoming, Issue 83</span>
-      </div>
-      <div class="publication-item">
-        <span class="pub-title">&ldquo;wildfire smoke&rdquo;</span> &middot;
-        <span class="pub-venue">Modern Haiku</span>
-        <span class="pub-year"> &middot; Forthcoming, Issue 57.2</span>
-      </div>
-      <div class="publication-item">
-        <span class="pub-title">&ldquo;Archeological Inheritance&rdquo;</span> &middot;
-        <span class="pub-venue">Flyway: Journal of Writing &amp; Environment</span>
-        <span class="pub-year"> &middot; Forthcoming, 2026</span>
-      </div>
       <p class="pub-status-label">Published</p>
       <div class="publication-item">
         <span class="pub-title"><a href="https://stonecirclereview.com/asterixis/" target="_blank" rel="noopener">&ldquo;Asterixis&rdquo;</a></span> &middot;
@@ -187,44 +174,41 @@
         <span class="pub-year"> &middot; November 2025</span>
         <a class="pub-link" href="https://thedewdrop.org/2025/11/24/dewdrops-autumn-week-8-2/" target="_blank" rel="noopener" aria-label="Read &ldquo;stepping away now&rdquo;">Read &rarr;</a>
       </div>
+      <p class="pub-status-label">Forthcoming</p>
+      <div class="publication-item">
+        <span class="pub-title">&ldquo;Perseveration&rdquo;</span> &middot;
+        <span class="pub-venue">The Examined Life Journal</span>
+        <span class="pub-year"> &middot; Forthcoming, 2026</span>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title">&ldquo;morning coffee&rdquo;</span> &middot;
+        <span class="pub-venue">Presence</span>
+        <span class="pub-year"> &middot; Forthcoming, Issue 83</span>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title">&ldquo;wildfire smoke&rdquo;</span> &middot;
+        <span class="pub-venue">Modern Haiku</span>
+        <span class="pub-year"> &middot; Forthcoming, Issue 57.2</span>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title">&ldquo;Archeological Inheritance&rdquo;</span> &middot;
+        <span class="pub-venue">Flyway: Journal of Writing &amp; Environment</span>
+        <span class="pub-year"> &middot; Forthcoming, 2026</span>
+      </div>
     </section>
     <section class="work-category reveal" aria-labelledby="fiction-heading">
       <h2 class="work-category-title" id="fiction-heading">Fiction</h2>
-      <p class="pub-status-label">Forthcoming</p>
+      <p class="pub-status-label">Published</p>
       <div class="publication-item">
-        <span class="pub-title">&ldquo;Applied Encounter Design&rdquo;</span> &middot;
+        <span class="pub-title"><a href="https://www.feignlit.com/featured/applied-encounter-design-by-rc-blenis" target="_blank" rel="noopener">&ldquo;Applied Encounter Design&rdquo;</a></span> &middot;
         <span class="pub-venue">Feign</span>
-        <span class="pub-year"> &middot; Forthcoming</span>
+        <span class="pub-year"> &middot; 2026</span>
+        <a class="pub-link" href="https://www.feignlit.com/featured/applied-encounter-design-by-rc-blenis" target="_blank" rel="noopener" aria-label="Read &ldquo;Applied Encounter Design&rdquo;">Read &rarr;</a>
       </div>
     </section>
       <!-- PUBLICATIONS_LIST:END -->
     </div>
 
-    <!-- Books in Progress — static copy of the homepage cards (index.html #projects).
-         Hand-sync: when either copy changes, update both. Kept outside
-         #pub-list-full so the build's PUBLICATIONS_LIST region never touches it. -->
-    <section class="work-category reveal" aria-labelledby="books-heading">
-      <h2 class="work-category-title" id="books-heading">Books in Progress</h2>
-      <div class="projects-grid">
-        <div class="project-card">
-          <h3 class="project-title">The Net</h3>
-          <p class="project-genre">Essay Collection</p>
-          <p class="project-description">
-            Essays on the work of care: triage, restraint, recovery, and the hours
-            the chart doesn't record. The title essay is forthcoming in River Teeth.
-          </p>
-        </div>
-        <div class="project-card">
-          <h3 class="project-title">Listen for Water</h3>
-          <p class="project-genre">Poetry Collection</p>
-          <p class="project-description">
-            Poems written from the bedside: ICU, psychiatric unit, emergency department.
-            A nurse's witness to the body's silences and the language we reach for
-            when clinical vocabulary fails.
-          </p>
-        </div>
-      </div>
-    </section>
   </div>
 </main>
 
@@ -232,8 +216,8 @@
 
 <footer>
   <nav class="footer-links" aria-label="Footer">
-    <a href="publications.html">Writing</a>
     <a href="research.html">Research</a>
+    <a href="publications.html">Writing</a>
     <a href="https://orcid.org/0000-0002-8751-9854" target="_blank" rel="noopener">ORCID</a>
     <!-- CV: add a link here when the sanitized public CV PDF exists. -->
     <a href="index.html#contact">Contact</a>
@@ -247,39 +231,7 @@
 
 <!-- ═══ JAVASCRIPT ═══ -->
 
-<script>
-  // Render the full publication list
-  renderFullList();
-
-  // Navbar scroll effect
-  window.addEventListener('scroll', () => {
-    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 40);
-  });
-
-  // Mobile nav toggle
-  function toggleNav() {
-    const links = document.getElementById('navLinks');
-    const button = document.querySelector('.nav-toggle');
-    const isOpen = links.classList.toggle('open');
-    button.setAttribute('aria-expanded', String(isOpen));
-  }
-  document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => {
-      document.getElementById('navLinks').classList.remove('open');
-      document.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false');
-    });
-  });
-
-  // Scroll reveal. The publication categories are tall, so use a low
-  // threshold: with 0.15 a long list stays hidden until well into view.
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
-    });
-  }, { threshold: 0.05 });
-  reveals.forEach(el => observer.observe(el));
-</script>
+<script src="site.js"></script>
 
 </body>
 </html>

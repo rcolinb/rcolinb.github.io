@@ -10,10 +10,10 @@
      url      optional — makes the title a link and adds a Read link
      linkText optional — overrides the default 'Read →'
      note     optional — small line under the entry (e.g. a column name)
-     featured optional true — appears in the homepage hero, but only while
+     featured optional true — appears in the homepage writing feature, but only while
               the Incantations feature is in the 'hidden' state (the build
               restores the #hero-highlight element renderHero targets)
-     selected optional true — appears in the homepage "Selected Work" list
+     selected optional true — appears in the homepage "Selected Writing" list
      form     optional — e.g. 'haiku' (tagging only; not displayed yet)
    ───────────────────────────────────────────────────────────── */
 
@@ -36,15 +36,14 @@ window.PUBLICATIONS = [
   // INCANTATIONS_PUBLICATION:START
   {"genre":"cnf","status":"forthcoming","title":"Incantations","awardNote":"Winner of the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay","venue":"Indiana Review","date":"Forthcoming","announcementUrl":"https://www.instagram.com/p/DbGP1PPkadH/?img_index=1"},
   // INCANTATIONS_PUBLICATION:END
-  { genre:'cnf', status:'forthcoming', selected:true, title:'Without Identifiable Antecedent', venue:'Fourth Genre: Explorations in Nonfiction', date:'Forthcoming' },
+  { genre:'cnf', status:'forthcoming', title:'Without Identifiable Antecedent', venue:'Fourth Genre: Explorations in Nonfiction', date:'Forthcoming' },
   { genre:'cnf', status:'forthcoming', title:'The Net', venue:'River Teeth: A Journal of Nonfiction Narrative', date:'Forthcoming' },
   { genre:'cnf', status:'forthcoming', title:'Holding', venue:'American Journal of Nursing', date:'Forthcoming', note:'Reflections' },
-  { genre:'cnf', status:'published', title:'The Body Knows First', venue:'American Journal of Nursing', date:'Vol. 126.5, May 2026', url:'https://journals.lww.com/ajnonline/citation/2026/05000/the_body_knows_first.14.aspx' },
+  { genre:'cnf', status:'published', selected:true, title:'The Body Knows First', venue:'American Journal of Nursing', date:'Vol. 126.5, May 2026', url:'https://journals.lww.com/ajnonline/citation/2026/05000/the_body_knows_first.14.aspx' },
   { genre:'cnf', status:'published', selected:true, title:'The Thread You Follow', venue:'West Trade Review', date:'January 2026', url:'https://www.westtradereview.com/onlineexclusiveW25Blenis.html' },
 
   // ── Fiction ──
-  // Journal: https://www.feignlit.com/ — add `url` once the piece is live.
-  { genre:'fiction', status:'forthcoming', title:'Applied Encounter Design', venue:'Feign', date:'Forthcoming' },
+  { genre:'fiction', status:'published', selected:true, title:'Applied Encounter Design', venue:'Feign', date:'2026', url:'https://www.feignlit.com/featured/applied-encounter-design-by-rc-blenis' },
 ];
 
 /* ── Rendering ───────────────────────────────────────────────── */
@@ -79,7 +78,7 @@ function pubItem(p){
   return div;
 }
 
-/* Homepage hero — the marquee pieces.
+/* Homepage writing feature — retains the legacy renderHero function name.
    Live only in the 'hidden' Incantations state: the announced/published
    states replace #hero-highlight with the build-generated prize block,
    so this becomes a no-op until the build restores that element. */
@@ -122,7 +121,7 @@ function renderFullList(){
   if (!root) return;
   if (root.querySelector('.work-category')) return;
   const genres = [ {key:'cnf', label:'Creative Nonfiction'}, {key:'poetry', label:'Poetry'}, {key:'fiction', label:'Fiction'} ];
-  const statuses = [ {key:'forthcoming', label:'Forthcoming'}, {key:'published', label:'Published'} ];
+  const statuses = [ {key:'published', label:'Published'}, {key:'forthcoming', label:'Forthcoming'} ];
   genres.forEach(function(g){
     const items = window.PUBLICATIONS.filter(function(p){ return p.genre === g.key; });
     if (!items.length) return;

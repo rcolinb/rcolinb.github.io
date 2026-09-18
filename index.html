@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>document.documentElement.classList.add('js');</script>
 
 <!-- Google Analytics -->
 <link rel="preconnect" href="https://www.googletagmanager.com">
@@ -15,9 +14,9 @@
   gtag('config', 'G-X88EXVCJZJ');
 </script>
 
-<title>R.C. Blenis — Poet, Nurse, Essayist</title>
-<meta name="theme-color" content="#16161C">
-<meta name="description" id="site-description" content="R.C. Blenis is a poet, nurse, and essayist whose essay “Incantations” won the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay.">
+<title>R. Colin Blenis — Nursing Scholarship &amp; Writing</title>
+<meta name="theme-color" content="#fdfdfb">
+<meta name="description" id="site-description" content="R. Colin Blenis is a nurse educator, researcher, and writer based in Atlanta. His scholarship explores nursing education, ethics, memory, and the health humanities.">
 <link rel="canonical" href="https://rcblenis.com">
 
 <!-- Favicon -->
@@ -26,18 +25,23 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 
 <!-- Open Graph -->
-<meta property="og:title" content="R.C. Blenis — Poet, Nurse, Essayist">
-<meta property="og:description" id="og-description" content="R.C. Blenis is a poet, nurse, and essayist whose essay “Incantations” won the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay.">
+<meta property="og:title" content="R. Colin Blenis — Nursing Scholarship &amp; Writing">
+<meta property="og:description" id="og-description" content="R. Colin Blenis is a nurse educator, researcher, and writer based in Atlanta. His scholarship explores nursing education, ethics, memory, and the health humanities.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://rcblenis.com">
-<meta property="og:site_name" content="R.C. Blenis">
-<meta property="og:image" content="https://rcblenis.com/og-image.jpg">
+<meta property="og:site_name" content="R. Colin Blenis">
+<meta property="og:image" content="https://rcblenis.com/social-card.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="R. Colin Blenis — Nursing scholarship and writing">
 
 <!-- Twitter/X Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="R.C. Blenis — Poet, Nurse, Essayist">
-<meta name="twitter:description" id="twitter-description" content="R.C. Blenis is a poet, nurse, and essayist whose essay “Incantations” won the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay.">
-<meta name="twitter:image" content="https://rcblenis.com/og-image.jpg">
+<meta name="twitter:title" content="R. Colin Blenis — Nursing Scholarship &amp; Writing">
+<meta name="twitter:description" id="twitter-description" content="R. Colin Blenis is a nurse educator, researcher, and writer based in Atlanta. His scholarship explores nursing education, ethics, memory, and the health humanities.">
+<meta name="twitter:image" content="https://rcblenis.com/social-card.jpg">
+<meta name="twitter:image:alt" content="R. Colin Blenis — Nursing scholarship and writing">
 
 <!-- Structured Data -->
 <script type="application/ld+json" id="person-jsonld">
@@ -59,7 +63,7 @@
       "https://orcid.org/0000-0002-8751-9854"
     ],
     "jobTitle": "Assistant Professor of Nursing",
-    "description": "Poet, nurse, and essayist based in Atlanta. Work explores suffering, compassion, and clinical witness.",
+    "description": "Nurse educator, researcher, and writer based in Atlanta. Scholarship explores nursing education, ethics, memory, and the health humanities.",
     "image": "https://rcblenis.com/author-photo.jpg",
     "address": {
       "@type": "PostalAddress",
@@ -82,11 +86,11 @@
       }
     ],
     "knowsAbout": [
-      "Poetry",
-      "Creative Nonfiction",
       "Nursing",
       "Nursing Education",
       "Health Humanities",
+      "Poetry",
+      "Creative Nonfiction",
       "Buddhist Practice",
       "Medical Humanities"
     ],
@@ -95,29 +99,22 @@
 }
 </script>
 
-<!-- Fonts: load only used weights -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Source+Sans+3:wght@300;400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="home-page">
 
 <a class="skip-link" href="#home">Skip to content</a>
 
 <!-- ═══ NAVIGATION ═══ -->
 
-<nav id="mainNav">
-  <a class="nav-name" href="#home">R.C. Blenis</a>
-  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
-    <span></span><span></span><span></span>
-  </button>
+<nav id="mainNav" aria-label="Main">
+  <a class="nav-name" href="#home">R. Colin Blenis</a>
   <ul class="nav-links" id="navLinks">
-    <li><a href="#home">Home</a></li>
+    <li><a href="#home" aria-current="page">Home</a></li>
+    <li><a href="research.html">Research</a></li>
+    <li><a href="publications.html">Writing</a></li>
     <!-- INCANTATIONS_NAV:START -->
     <!-- INCANTATIONS_NAV:END -->
-    <li><a href="publications.html">Writing</a></li>
-    <li><a href="research.html">Research</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -125,20 +122,49 @@
 
 <!-- ═══ HERO ═══ -->
 
-<section id="home" tabindex="-1">
-  <h1 class="hero-name">R.C. Blenis</h1>
-  <p class="hero-descriptor">Poet &nbsp;·&nbsp; Nurse &nbsp;·&nbsp; Essayist</p>
-  <div class="hero-line"></div>
-  <!-- INCANTATIONS_HERO:START -->
-<div class="hero-prize">
-    <h2 class="hero-prize-title">&ldquo;Incantations&rdquo;</h2>
-    <p class="hero-prize-award">Winner of the 2026 Indiana Review Creative Nonfiction Prize</p>
-    <p class="hero-prize-status">Selected by Ross Gay <span aria-hidden="true">&middot;</span> Forthcoming in <em>Indiana Review</em></p>
-    <div class="essay-actions"><a class="essay-action" href="https://www.instagram.com/p/DbGP1PPkadH/?img_index=1" target="_blank" rel="noopener">View the announcement →</a></div>
+<main>
+<section id="home" tabindex="-1" aria-labelledby="home-title">
+  <div class="home-hero-inner">
+    <header class="manuscript-title">
+      <h1 class="hero-name" id="home-title">R. Colin Blenis</h1>
+    </header>
+    <h2 class="statement-heading">Research Statement</h2>
+    <p class="hero-context">I study how nurses learn to recognize and care for people: how education and institutional culture shape clinical practice, and how memory and narrative shape our understanding of one another.</p>
+    <div class="hero-actions">
+      <a class="essay-action action-primary" href="research.html">Research &amp; publications <span aria-hidden="true">&rarr;</span></a>
+    </div>
   </div>
-  <!-- INCANTATIONS_HERO:END -->
-  <div class="scroll-indicator">
-    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+</section>
+
+<!-- ═══ SCHOLARSHIP ═══ -->
+
+<section id="research-bridge" aria-labelledby="scholarship-heading">
+  <div class="section-content">
+    <div class="section-header">
+      <h2 class="section-title" id="scholarship-heading">Selected Scholarship</h2>
+      <p class="section-subtitle">Nursing education, memory &amp; ethics</p>
+    </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://doi.org/10.1097/ANS.0000000000000692" target="_blank" rel="noopener">Interruption, Not Transmission: Denaturalizing Punitive Culture in Nursing Education.</a></span>
+        <span class="pub-citation"><em>Advances in Nursing Science</em>, <time datetime="2026-09-16">2026</time>.</span>
+        <div class="pub-note">Argues that punitive culture in nursing education persists through socialization, and that education is where the cycle can be interrupted rather than transmitted onward.</div>
+        <a class="pub-link" href="https://doi.org/10.1097/ANS.0000000000000692" target="_blank" rel="noopener" aria-label="View publication: Interruption, Not Transmission: Denaturalizing Punitive Culture in Nursing Education">View publication &rarr;</a>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://doi.org/10.1177/10783903261484904" target="_blank" rel="noopener">Therapeutic Communication as Autobiographical Memory Scaffolding: Bridging Developmental Science and Psychiatric Nursing Practice.</a></span>
+        <span class="pub-citation"><em>Journal of the American Psychiatric Nurses Association</em>, <time datetime="2026-09-11">2026</time>.</span>
+        <div class="pub-note">Frames therapeutic communication as support for autobiographical memory, with implications for culturally responsive assessment and narrative construction.</div>
+        <a class="pub-link" href="https://doi.org/10.1177/10783903261484904" target="_blank" rel="noopener" aria-label="View publication: Therapeutic Communication as Autobiographical Memory Scaffolding: Bridging Developmental Science and Psychiatric Nursing Practice">View publication &rarr;</a>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://doi.org/10.1111/nin.70137" target="_blank" rel="noopener">What We Owe: A Liberatory Ethics of Harm Reduction.</a></span>
+        <span class="pub-citation"><em>Nursing Inquiry</em>, <time datetime="2026">2026</time>.</span>
+        <div class="pub-note">Grounds harm reduction in a liberatory ethics of obligation rather than in risk management alone.</div>
+        <a class="pub-link" href="https://doi.org/10.1111/nin.70137" target="_blank" rel="noopener" aria-label="View publication: What We Owe: A Liberatory Ethics of Harm Reduction">View publication &rarr;</a>
+      </div>
+    <div class="view-all-wrap">
+      <a class="view-all-link" href="research.html">All research &amp; publications &rarr;</a>
+    </div>
   </div>
 </section>
 
@@ -147,41 +173,59 @@
 <section id="work">
   <div class="section-content">
     <div class="section-header reveal">
-      <h2 class="section-title">Selected Work</h2>
-      <p class="section-subtitle">Essays &amp; poetry</p>
+      <h2 class="section-title">Selected Writing</h2>
+      <p class="section-subtitle">Essays, poetry &amp; fiction</p>
     </div>
 
-    <!-- A short curated selection; the full record lives on the Writing page.
-         Pre-rendered so crawlers and no-JS visitors see it; renderSelected()
-         in publications.js skips rendering when entries are present. Keep
-         these entries in sync with the `selected` flags there. -->
+    <div class="writing-feature">
+  <!-- INCANTATIONS_HERO:START -->
+<div class="hero-prize">
+    <h3 class="hero-prize-title">&ldquo;Incantations&rdquo;</h3>
+    <p class="hero-prize-award">Winner of the 2026 Indiana Review Creative Nonfiction Prize</p>
+    <p class="hero-prize-status">Selected by Ross Gay <span aria-hidden="true">&middot;</span> Forthcoming in <em>Indiana Review</em></p>
+    <div class="essay-actions"><a class="essay-action" href="https://www.instagram.com/p/DbGP1PPkadH/?img_index=1" target="_blank" rel="noopener">View the announcement →</a></div>
+  </div>
+  <!-- INCANTATIONS_HERO:END -->
+    </div>
+
+    <!-- Generated from the selected flags in publications.js. -->
     <div class="work-category reveal">
       <div id="selected-work">
+        <!-- SELECTED_WORK:START -->
         <p class="pub-status-label">Essays</p>
-        <div class="publication-item">
-          <span class="pub-title">&ldquo;Without Identifiable Antecedent&rdquo;</span> &middot;
-          <span class="pub-venue">Fourth Genre: Explorations in Nonfiction</span>
-          <span class="pub-year"> &middot; Forthcoming</span>
-        </div>
-        <div class="publication-item">
-          <span class="pub-title"><a href="https://www.westtradereview.com/onlineexclusiveW25Blenis.html" target="_blank" rel="noopener">&ldquo;The Thread You Follow&rdquo;</a></span> &middot;
-          <span class="pub-venue">West Trade Review</span>
-          <span class="pub-year"> &middot; January 2026</span>
-          <a class="pub-link" href="https://www.westtradereview.com/onlineexclusiveW25Blenis.html" target="_blank" rel="noopener" aria-label="Read &ldquo;The Thread You Follow&rdquo;">Read &rarr;</a>
-        </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://journals.lww.com/ajnonline/citation/2026/05000/the_body_knows_first.14.aspx" target="_blank" rel="noopener">&ldquo;The Body Knows First&rdquo;</a></span> &middot;
+        <span class="pub-venue">American Journal of Nursing</span>
+        <span class="pub-year"> &middot; Vol. 126.5, May 2026</span>
+        <a class="pub-link" href="https://journals.lww.com/ajnonline/citation/2026/05000/the_body_knows_first.14.aspx" target="_blank" rel="noopener" aria-label="Read &ldquo;The Body Knows First&rdquo;">Read &rarr;</a>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://www.westtradereview.com/onlineexclusiveW25Blenis.html" target="_blank" rel="noopener">&ldquo;The Thread You Follow&rdquo;</a></span> &middot;
+        <span class="pub-venue">West Trade Review</span>
+        <span class="pub-year"> &middot; January 2026</span>
+        <a class="pub-link" href="https://www.westtradereview.com/onlineexclusiveW25Blenis.html" target="_blank" rel="noopener" aria-label="Read &ldquo;The Thread You Follow&rdquo;">Read &rarr;</a>
+      </div>
         <p class="pub-status-label">Poetry</p>
-        <div class="publication-item">
-          <span class="pub-title"><a href="https://massreview.org/issue/volume-67-issue-2" target="_blank" rel="noopener">&ldquo;Camera Review&rdquo;</a></span> &middot;
-          <span class="pub-venue">Massachusetts Review</span>
-          <span class="pub-year"> &middot; Vol. 67.2, 2026</span>
-          <a class="pub-link" href="https://massreview.org/issue/volume-67-issue-2" target="_blank" rel="noopener" aria-label="View issue &ldquo;Camera Review&rdquo;">View issue &rarr;</a>
-        </div>
-        <div class="publication-item">
-          <span class="pub-title"><a href="https://doi.org/10.1001/jama.2026.1799" target="_blank" rel="noopener">&ldquo;Mechanism of Action&rdquo;</a></span> &middot;
-          <span class="pub-venue">JAMA</span>
-          <span class="pub-year"> &middot; April 2026</span>
-          <a class="pub-link" href="https://doi.org/10.1001/jama.2026.1799" target="_blank" rel="noopener" aria-label="Read &ldquo;Mechanism of Action&rdquo;">Read &rarr;</a>
-        </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://massreview.org/issue/volume-67-issue-2" target="_blank" rel="noopener">&ldquo;Camera Review&rdquo;</a></span> &middot;
+        <span class="pub-venue">Massachusetts Review</span>
+        <span class="pub-year"> &middot; Vol. 67.2, 2026</span>
+        <a class="pub-link" href="https://massreview.org/issue/volume-67-issue-2" target="_blank" rel="noopener" aria-label="View issue &ldquo;Camera Review&rdquo;">View issue &rarr;</a>
+      </div>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://doi.org/10.1001/jama.2026.1799" target="_blank" rel="noopener">&ldquo;Mechanism of Action&rdquo;</a></span> &middot;
+        <span class="pub-venue">JAMA</span>
+        <span class="pub-year"> &middot; April 2026</span>
+        <a class="pub-link" href="https://doi.org/10.1001/jama.2026.1799" target="_blank" rel="noopener" aria-label="Read &ldquo;Mechanism of Action&rdquo;">Read &rarr;</a>
+      </div>
+        <p class="pub-status-label">Fiction</p>
+      <div class="publication-item">
+        <span class="pub-title"><a href="https://www.feignlit.com/featured/applied-encounter-design-by-rc-blenis" target="_blank" rel="noopener">&ldquo;Applied Encounter Design&rdquo;</a></span> &middot;
+        <span class="pub-venue">Feign</span>
+        <span class="pub-year"> &middot; 2026</span>
+        <a class="pub-link" href="https://www.feignlit.com/featured/applied-encounter-design-by-rc-blenis" target="_blank" rel="noopener" aria-label="Read &ldquo;Applied Encounter Design&rdquo;">Read &rarr;</a>
+      </div>
+        <!-- SELECTED_WORK:END -->
       </div>
     </div>
 
@@ -191,67 +235,23 @@
   </div>
 </section>
 
-<!-- ═══ BOOKS IN PROGRESS ═══ -->
-
-<section id="projects">
-  <div class="section-content">
-    <div class="projects-header reveal">
-      <div class="section-divider" style="margin-bottom: 3rem;"></div>
-      <h2 class="projects-title">Books in Progress</h2>
-    </div>
-
-    <div class="projects-grid">
-      <div class="project-card reveal">
-        <h3 class="project-title">The Net</h3>
-        <p class="project-genre">Essay Collection</p>
-        <p class="project-description">
-          Essays on the work of care: triage, restraint, recovery, and the hours
-          the chart doesn't record. The title essay is forthcoming in River Teeth.
-        </p>
-      </div>
-      <div class="project-card reveal">
-        <h3 class="project-title">Listen for Water</h3>
-        <p class="project-genre">Poetry Collection</p>
-        <p class="project-description">
-          Poems written from the bedside: ICU, psychiatric unit, emergency department.
-          A nurse's witness to the body's silences and the language we reach for
-          when clinical vocabulary fails.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ RESEARCH BRIDGE ═══ -->
-
-<section id="research-bridge">
-  <div class="section-content">
-    <div class="research-bridge reveal">
-      <div class="section-divider" style="margin-bottom: 3rem;"></div>
-      <p>
-        My scholarship examines recognition under uncertainty, nursing
-        education and institutional culture, and memory as a mechanism of
-        therapeutic communication.
-      </p>
-      <a class="view-all-link" href="research.html">Explore the research &rarr;</a>
-    </div>
-  </div>
-</section>
-
 <!-- ═══ ABOUT ═══ -->
 
 <section id="about">
   <div class="section-content">
     <div class="section-header reveal">
-      <div class="section-divider" style="margin-bottom: 3rem;"></div>
       <h2 class="section-title">About</h2>
     </div>
 
     <div class="about-photo reveal">
-      <img src="author-photo.jpg" alt="R.C. Blenis in a pine forest, holding a small dog" loading="lazy">
+      <img src="author-photo.jpg" alt="R.C. Blenis in a pine forest, holding a small dog" width="800" height="1050" loading="lazy">
     </div>
 
     <div class="about-content reveal">
+      <p>
+        I am an assistant professor of nursing in Atlanta. My scholarship brings nursing practice into conversation with psychology, ethics, and the health humanities, with a particular interest in how institutions shape the care people receive.
+      </p>
+
       <p>
         Before I was a nurse, I was a kid in a Georgia pew with more questions than the sermon had answers for. The through-line is the same: I want to understand how people make sense of suffering, their own and others', and what it means to show up for someone when fixing isn't possible.
       </p>
@@ -273,7 +273,7 @@
       </p>
 
       <p>
-        These days I teach nursing as an assistant professor in Atlanta, where I live with my wife and two dogs. We train together in weightlifting and yoga and argue about whose turn it is to pick the YouTube video.
+        I live in Atlanta with my wife and two dogs. We train together in weightlifting and yoga and argue about whose turn it is to pick the YouTube video.
       </p>
     </div>
 
@@ -287,29 +287,17 @@
 <section id="contact">
   <div class="section-content">
     <div class="contact-inner reveal">
-      <div class="section-divider" style="margin-bottom: 3rem;"></div>
-      <h2 class="section-title" style="margin-bottom: 2rem;">Get in Touch</h2>
+      <h2 class="section-title">Correspondence</h2>
       <p class="contact-intro">
-        I welcome inquiries about representation and permissions, readings and
-        talks, research collaborations, nursing education, and editorial or
-        consulting work.
+        I welcome inquiries about research collaborations, nursing education,
+        talks, and editorial or consulting work, as well as readings,
+        representation, and permissions.
       </p>
-      <a class="contact-email" id="contact-email" href="#"></a>
-      <noscript><span class="contact-email">colinblenis [at] gmail.com</span></noscript>
-
-      <div class="contact-divider-line"></div>
-
-      <div class="contact-subscribe">
-        <a class="subscribe-btn" href="https://rcblenis.substack.com" target="_blank" rel="noopener">Subscribe</a>
-        <p>Occasional notes when there&rsquo;s something worth sharing.</p>
-      </div>
+      <a class="contact-email" id="contact-email" href="mailto:colinblenis&#64;gmail.com">colinblenis&#64;gmail.com</a>
 
       <div class="contact-social">
-        <a href="https://instagram.com/hillbillypilgrim" target="_blank" rel="noopener">Instagram</a>
-        <div class="contact-social-divider"></div>
         <a href="https://rcblenis.substack.com" target="_blank" rel="noopener">Substack</a>
-        <div class="contact-social-divider"></div>
-        <a href="https://orcid.org/0000-0002-8751-9854" target="_blank" rel="noopener">ORCID</a>
+        <a href="https://instagram.com/hillbillypilgrim" target="_blank" rel="noopener">Instagram</a>
       </div>
     </div>
   </div>
@@ -317,10 +305,12 @@
 
 <!-- ═══ FOOTER ═══ -->
 
+</main>
+
 <footer>
   <nav class="footer-links" aria-label="Footer">
-    <a href="publications.html">Writing</a>
     <a href="research.html">Research</a>
+    <a href="publications.html">Writing</a>
     <a href="https://orcid.org/0000-0002-8751-9854" target="_blank" rel="noopener">ORCID</a>
     <!-- CV: add a link here when the sanitized public CV PDF exists. -->
     <a href="#contact">Contact</a>
@@ -334,80 +324,7 @@
 
 <!-- ═══ JAVASCRIPT ═══ -->
 
-<script>
-  // Render publications from the shared data source
-  renderHero();
-  renderSelected();
-
-  // Navbar scroll effect
-  window.addEventListener('scroll', () => {
-    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 40);
-  });
-
-  // Mobile nav toggle
-  function toggleNav() {
-    const links = document.getElementById('navLinks');
-    const button = document.querySelector('.nav-toggle');
-    const isOpen = links.classList.toggle('open');
-    button.setAttribute('aria-expanded', String(isOpen));
-  }
-
-  // Close mobile nav on link click
-  document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => {
-      document.getElementById('navLinks').classList.remove('open');
-      document.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false');
-    });
-  });
-
-  // Active nav highlighting on scroll
-  const sections = document.querySelectorAll('section[id]');
-  const navItems = document.querySelectorAll('.nav-links a');
-
-  function updateActiveNav() {
-    const scrollY = window.scrollY + 120;
-    sections.forEach(section => {
-      const top = section.offsetTop;
-      const height = section.offsetHeight;
-      const id = section.getAttribute('id');
-      if (scrollY >= top && scrollY < top + height) {
-        navItems.forEach(link => {
-          link.classList.remove('active');
-          if (link.getAttribute('href') === '#' + id) {
-            link.classList.add('active');
-          }
-        });
-      }
-    });
-    // Remove active states when at the very top
-    if (window.scrollY < 200) {
-      navItems.forEach(link => link.classList.remove('active'));
-    }
-  }
-
-  window.addEventListener('scroll', updateActiveNav);
-
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.15 });
-
-  // Email obfuscation (prevents bot harvesting)
-  (function() {
-    var u = 'colinblenis';
-    var d = 'gmail.com';
-    var el = document.getElementById('contact-email');
-    el.href = 'mai' + 'lto:' + u + '@' + d;
-    el.textContent = u + '@' + d;
-  })();
-
-  reveals.forEach(el => observer.observe(el));
-</script>
+<script src="site.js"></script>
 
 </body>
 </html>
