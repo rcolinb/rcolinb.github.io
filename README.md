@@ -13,14 +13,20 @@ including the custom 404 page. Uses only the Python standard library.
 
 ## Pages and the hand-sync rule
 
-- `index.html` — home (introduction, Selected Scholarship, Selected Writing, About, Contact)
+- `index.html` — home (introduction, Selected Scholarship, Teaching, Selected Writing, About, Contact)
 - `publications.html` — the creative record, labeled **Writing** in the nav
   and H1 (the URL is deliberately unchanged; GitHub Pages has no server
   redirects)
 - `research.html` — static academic page; the build does not process it, it
   only copies it into `_site`
-- `_drafts/teaching.html` — revised Teaching page draft awaiting publication;
-  underscore directories are not deployed by GitHub Pages
+- `_drafts/teaching.html` — archived, detailed Teaching draft; the public
+  Teaching section is now on the homepage. Underscore directories are not
+  deployed by GitHub Pages.
+- `RCBlenis_CV.pdf` — public CV, dated September 28, 2026; phone and license
+  numbers removed from the supplied original, with the remaining text and
+  hyperlinks preserved. Replace this file when updating the public CV.
+- `RCBlenis_bio.txt` — short third-person biography for editors and event
+  organizers; keep it in sync with the expandable text under Contact.
 - `404.html` — shared manuscript styling with root-relative assets; `/cardiac/` — built teaching artifact, currently
   unlinked from the site
 
@@ -34,14 +40,14 @@ available Node executable.
 The homepage's three selected scholarly publications are maintained by hand;
 keep their citations and links in sync with `research.html`. The selection
 covers nursing education (ANS), memory and communication (JAPNA), and ethics
-(What We Owe). Academic citations display years consistently, retain known
-online publication dates in their `time` elements, and use “View publication”
-links. ORCID appears once per page, in the footer.
+(What We Owe). Academic citations include authors and available publication
+details, retain known online dates in their `time` elements, and use “View
+publication” links. Accepted work is labeled “In press”; manuscripts under
+review remain in the CV. ORCID appears once per page, in the footer.
 
 `site.js` provides publication-list fallbacks. Content and navigation
-work without JavaScript; the navigation remains visible on mobile. If Teaching returns from `_drafts/`, restore its
-nav/footer links on every page and in the build templates, and add it back to
-`publicPaths`.
+work without JavaScript; the navigation remains visible on mobile. Teaching
+links point to `index.html#teaching` across pages and in the essay template.
 
 ### September 2026 refresh
 
@@ -67,6 +73,23 @@ Publication updates verified against publisher records and PubMed on September 1
 
 Other forthcoming entries retain their existing status until publication can
 be confirmed. The Teaching draft remains unpublished.
+
+### September 28 copy and structure update
+
+The homepage uses a shorter professional biography, a concise Teaching section,
+and three creative selections (The Body Knows First, Mechanism of Action, and
+Applied Encounter Design), alongside the Incantations award. The full Writing
+record is unchanged. Contact includes an expandable short bio, a text download,
+and a download of the existing About portrait.
+Research and the shared footer link to the public CV.
+
+Academic metadata was checked against publisher-deposited Crossref records
+on September 28. The Research page now includes Knowing Pain Without Certainty
+(published online September 27), the accepted Journal of Advanced Nursing
+paper, and the 2018 Tiotropium paper. Crossref supplies the 2018 paper's author
+initials and journal name, and the 2015 chapter's published title and pages;
+these differ in small respects from the supplied CV. The PDF's bibliography
+is preserved as supplied.
 
 ### Shared-link image
 
@@ -131,7 +154,8 @@ JavaScript.
 
 ### Headshot
 
-The expected source location is
+Contact currently offers `author-photo.jpg` as a portrait download. For the
+separate, legacy award-specific headshot resources, the expected source is
 `RCBlenis_headshot_4x5_crop.png` in the repository root. Keep that original,
 then add optimized WebP and JPEG derivatives beside it before enabling the
 headshot and download link in the editor-resources section. Do not substitute

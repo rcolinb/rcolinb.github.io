@@ -402,6 +402,7 @@ ${generatedPageMarker}
   <ul class="nav-links" id="navLinks">
     <li><a href="index.html">Home</a></li>
     <li><a href="research.html">Research</a></li>
+    <li><a href="index.html#teaching">Teaching</a></li>
     <li><a href="publications.html">Writing</a></li>
     <li><a href="incantations.html" class="active" aria-current="page">Incantations</a></li>
     <li><a href="index.html#about">About</a></li>
@@ -433,9 +434,10 @@ ${optionalSectionsMarkup}
 <footer>
   <nav class="footer-links" aria-label="Footer">
     <a href="research.html">Research</a>
+    <a href="index.html#teaching">Teaching</a>
     <a href="publications.html">Writing</a>
     <a href="https://orcid.org/0000-0002-8751-9854" target="_blank" rel="noopener">ORCID</a>
-    <!-- CV: add a link here when the sanitized public CV PDF exists. -->
+    <a href="RCBlenis_CV.pdf">CV (PDF)</a>
     <a href="index.html#contact">Contact</a>
   </nav>
   <p>&copy; 2026 R.C. Blenis. All rights reserved. Views expressed here are my own.</p>
@@ -514,6 +516,8 @@ async function copyProductionSnapshot(dedicatedPageEnabled) {
     "publications.html",
     "publications.js",
     "research.html",
+    "RCBlenis_CV.pdf",
+    "RCBlenis_bio.txt",
     "styles.css",
     "site.js",
     "submittable-filter",
@@ -564,8 +568,8 @@ indexHtml = replaceHtmlRegion(
   "INCANTATIONS_HERO",
   visible ? homepageWritingFeature(config, dedicatedPageEnabled) : defaultHeroContent(),
 );
-// The "For Editors & Press" box was removed from the site; keep this region
-// empty so a rebuild does not reinstate it.
+// Legacy award-specific editor resources remain empty. The general short bio
+// and downloads live in the hand-authored Contact section.
 indexHtml = replaceHtmlRegion(indexHtml, "INCANTATIONS_EDITOR_RESOURCES", "");
 indexHtml = updateMetaContent(
   indexHtml,

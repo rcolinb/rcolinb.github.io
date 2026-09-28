@@ -24,7 +24,7 @@ window.PUBLICATIONS = [
   { genre:'poetry', status:'forthcoming', title:'morning coffee', venue:'Presence', date:'Forthcoming, Issue 83', form:'haiku' },
   { genre:'poetry', status:'forthcoming', title:'wildfire smoke', venue:'Modern Haiku', date:'Forthcoming, Issue 57.2', form:'haiku' },
   { genre:'poetry', status:'forthcoming', title:'Archeological Inheritance', venue:'Flyway: Journal of Writing &amp; Environment', date:'Forthcoming, 2026' },
-  { genre:'poetry', status:'published', featured:true, selected:true, title:'Camera Review', venue:'Massachusetts Review', date:'Vol. 67.2, 2026', url:'https://massreview.org/issue/volume-67-issue-2', linkText:'View issue &rarr;' },
+  { genre:'poetry', status:'published', featured:true, title:'Camera Review', venue:'Massachusetts Review', date:'Vol. 67.2, 2026', url:'https://massreview.org/issue/volume-67-issue-2', linkText:'View issue &rarr;' },
   { genre:'poetry', status:'published', featured:true, selected:true, title:'Mechanism of Action', venue:'JAMA', date:'April 2026', url:'https://doi.org/10.1001/jama.2026.1799' },
   { genre:'poetry', status:'published', title:'Disaster North', venue:'Pulse: Voices from the Heart of Medicine', date:'April 2026', url:'https://pulsevoices.org/poems/disaster-north/' },
   { genre:'poetry', status:'published', title:'Rung', venue:'Panorama: Journal of Travel, Place, and Nature', date:'January 2026', url:'https://panoramajournal.org/issues/issue-16-encounters/encounters-rung/' },
@@ -40,7 +40,7 @@ window.PUBLICATIONS = [
   { genre:'cnf', status:'forthcoming', title:'The Net', venue:'River Teeth: A Journal of Nonfiction Narrative', date:'Forthcoming' },
   { genre:'cnf', status:'forthcoming', title:'Holding', venue:'American Journal of Nursing', date:'Forthcoming', note:'Reflections' },
   { genre:'cnf', status:'published', selected:true, title:'The Body Knows First', venue:'American Journal of Nursing', date:'Vol. 126.5, May 2026', url:'https://journals.lww.com/ajnonline/citation/2026/05000/the_body_knows_first.14.aspx' },
-  { genre:'cnf', status:'published', selected:true, title:'The Thread You Follow', venue:'West Trade Review', date:'January 2026', url:'https://www.westtradereview.com/onlineexclusiveW25Blenis.html' },
+  { genre:'cnf', status:'published', title:'The Thread You Follow', venue:'West Trade Review', date:'January 2026', url:'https://www.westtradereview.com/onlineexclusiveW25Blenis.html' },
 
   // ── Fiction ──
   { genre:'fiction', status:'published', selected:true, title:'Applied Encounter Design', venue:'Feign', date:'2026', url:'https://www.feignlit.com/featured/applied-encounter-design-by-rc-blenis' },
@@ -96,7 +96,7 @@ function renderHero(){
 }
 
 /* Homepage — a short curated list, links out to the full page.
-   Essays lead: the collection in progress is nonfiction. */
+   Essays, poetry, and fiction each have one selected work. */
 function renderSelected(){
   const root = document.getElementById('selected-work');
   if (!root) return;
