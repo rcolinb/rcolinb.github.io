@@ -22,7 +22,8 @@ including the custom 404 page. Uses only the Python standard library.
 - `_drafts/teaching.html` — archived, detailed Teaching draft; the public
   Teaching section is now on the homepage. Underscore directories are not
   deployed by GitHub Pages.
-- `RCBlenis_CV.pdf` — public CV, dated September 28, 2026; phone and license
+- `RCBlenis_CV.pdf` — public CV, refreshed October 2, 2026 from the revised
+  September 28 file; phone and license
   numbers removed from the supplied original, with the remaining text and
   hyperlinks preserved. Replace this file when updating the public CV.
 - `RCBlenis_bio.txt` — short third-person biography for editors and event
@@ -37,10 +38,11 @@ The generated regions (`INCANTATIONS_NAV`, `INCANTATIONS_HERO`,
 and homepage selections, then run the build to update both pages. If Node is not on PATH, invoke the script using the absolute path to an
 available Node executable.
 
-The homepage's three selected scholarly publications are maintained by hand;
+The homepage's four selected scholarly publications are maintained by hand;
 keep their citations and links in sync with `research.html`. The selection
-covers nursing education (ANS), memory and communication (JAPNA), and ethics
-(What We Owe). Academic citations include authors and available publication
+covers nursing education (ANS), memory and communication (JAPNA), the
+ethics of care and technology (JAN), and pain recognition (Nursing Philosophy).
+Academic citations include authors and available publication
 details, retain known online dates in their `time` elements, and use “View
 publication” links. Accepted work is labeled “In press”; manuscripts under
 review remain in the CV. ORCID appears once per page, in the footer.
@@ -90,6 +92,21 @@ paper, and the 2018 Tiotropium paper. Crossref supplies the 2018 paper's author
 initials and journal name, and the 2015 chapter's published title and pages;
 these differ in small respects from the supplied CV. The PDF's bibliography
 is preserved as supplied.
+
+### October 2 publication update
+
+The Journal of Advanced Nursing paper, The Functional Requirements of
+Person-Centred Fundamental Care, was published online September 29
+([DOI](https://doi.org/10.1111/jan.70773)). It now has a linked, published entry
+on Research and replaces What We Owe among the homepage selections.
+What We Owe remains on Research. Knowing Pain Without Certainty is added as
+the fourth homepage selection, retaining its September 27 publication date
+and Nursing Philosophy citation.
+
+Dates, publication details, and abstracts for the two recent papers were
+checked against publisher-deposited Crossref records on October 2. The public
+CV was refreshed from the user's revised file with the same contact redactions;
+Teaching now uses its updated “course lead” wording.
 
 ### Shared-link image
 
