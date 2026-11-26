@@ -1,17 +1,37 @@
 {
   "id": "/",
-  "name": "Your Workspace",
-  "short_name": "Workspace",
+  "name": "Stillwater",
+  "short_name": "Stillwater",
   "description": "Your projects, conversations, and next steps in one private workspace.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f5f3ed",
-  "theme_color": "#254d3c",
+  "background_color": "#f8f6f1",
+  "theme_color": "#f8f6f1",
   "icons": [
-    {"src":"/icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
-    {"src":"/icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
-    {"src":"/icons/icon-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"},
-    {"src":"/icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
   ]
 }

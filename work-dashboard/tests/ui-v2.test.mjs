@@ -147,6 +147,7 @@ test('a disconnected saved view disables mutations and omits private source exce
 
 test('global search finds reference material from Home without treating it as ongoing work',async()=>{
   const user=await openWorkspace();
+  await user.click(screen.getByText('Search & filters'));
   const input=screen.getByRole('searchbox');
   await user.type(input,'Book reference');
   assert.ok(await screen.findByText('Book reference notes'));
@@ -261,4 +262,63 @@ test('sign-in expiry preserves an edited sorting draft and returning from sign-i
   await waitFor(()=>assert.equal(within(dialog).getByRole('button',{name:/^Track this/}).disabled,false));
   assert.equal(within(dialog).getByRole('textbox',{name:'Short name'}).value,'Keep this unsaved wording');
   assert.equal(writes.length,0);
+});
+
+test('Stillwater uses one page heading and reflection can be hidden',async()=>{
+  const user=await openWorkspace();
+  assert.equal(screen.getAllByRole('heading',{level:1}).length,1);
+  assert.ok(screen.getByRole('heading',{name:'What matters today'}));
+  assert.equal(screen.queryByText('Clarity across your conversations'),null);
+  await user.click(screen.getByLabelText('Display preferences'));
+  await user.click(screen.getByLabelText('Show a daily reflection'));
+  assert.equal(document.querySelector('.daily-reflection'),null);
+  assert.equal(JSON.parse(localStorage.getItem('work-dashboard.preferences.v1')).showReflection,false);
+});
+
+test('Current holds incoming activity until requested and preserves the selected item',async()=>{
+  const user=await openWorkspace();
+  await user.click(screen.getByRole('button',{name:'Stream',exact:true}));
+  const item=state.tasks.find(t=>t.id==='done');
+  Object.assign(item,{title:'Newly updated worksheet',updatedAt:'2026-11-26T11:00:00Z'});
+  await act(async()=>window.dispatchEvent(new Event('focus')));
+  const reveal=await screen.findByRole('button',{name:'Show new updates'});
+  assert.equal(screen.queryByRole('button',{name:'Show activity: Newly updated worksheet'}),null);
+  assert.ok(screen.getByRole('button',{name:'Show activity: Completed worksheet'}));
+  await user.click(reveal);
+  assert.ok(screen.getByRole('button',{name:'Show activity: Newly updated worksheet'}));
+  assert.ok(within(screen.getByRole('complementary',{name:'Selected activity context'})).getByRole('heading',{name:'Prepare class'}));
+  state.tasks=[item,...state.tasks.filter(t=>t.id!==item.id)];
+  await act(async()=>window.dispatchEvent(new Event('focus')));
+  assert.equal(screen.queryByRole('button',{name:'Show new updates'}),null);
+  assert.equal(writes.length,0);
+});
+
+test('Current review is explicit and never completes an item',async()=>{
+  const user=await openWorkspace();
+  await user.click(screen.getByRole('button',{name:'Stream',exact:true}));
+  await user.click(screen.getByRole('button',{name:'Show activity: Prepare class'}));
+  await user.click(screen.getByRole('button',{name:'Mark update reviewed'}));
+  await waitFor(()=>assert.equal(writes.length,1));
+  assert.deepEqual(writes[0].body,{hasNewActivity:false,revision:1});
+  assert.equal(state.tasks.find(t=>t.id==='work').status,'active');
+});
+
+test('tools retain edited drafts across close and require consent before replacement',async()=>{
+  const user=await openWorkspace();
+  await user.click(screen.getByRole('button',{name:'Tools',exact:true}));
+  await user.type(screen.getByRole('textbox',{name:'Decision',exact:true}),'Choose a recording day');
+  await user.type(screen.getByRole('textbox',{name:'Options · one per line'}),'Monday\nThursday');
+  await user.click(screen.getByRole('button',{name:'Build decision note'}));
+  const result=screen.getByRole('textbox',{name:'Review and edit'});
+  assert.match(result.value,/Choose a recording day/);
+  await user.clear(result);await user.type(result,'My edited note');
+  await user.click(screen.getByRole('button',{name:'Close workspace tools'}));
+  await user.click(screen.getByRole('button',{name:'Tools',exact:true}));
+  assert.equal(screen.getByRole('textbox',{name:'Review and edit'}).value,'My edited note');
+  await user.click(screen.getByRole('button',{name:'Build decision note'}));
+  assert.ok(screen.getByText('Replace your edited result with a new structured draft?'));
+  await user.click(screen.getByRole('button',{name:'Keep current'}));
+  assert.equal(screen.getByRole('textbox',{name:'Review and edit'}).value,'My edited note');
+  assert.equal(writes.length,0);
+  assert.ok(!Object.values(localStorage).join(' ').includes('My edited note'));
 });

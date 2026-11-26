@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test:server": ".venv/bin/python -m unittest discover -s tests -v",
-    "test:ui": "vite build --ssr src/App.jsx --outDir .preview/test-app && node --test tests/dashboard-model.test.mjs tests/ui-v2.test.mjs tests/sw-offline.test.mjs"
+    "test:ui": "vite build --ssr src/App.jsx --outDir .preview/test-app && node --test tests/dashboard-model.test.mjs tests/ui-v2.test.mjs tests/sw-offline.test.mjs tests/workspace-tools.test.mjs"
   },
   "dependencies": {
     "react": "19.3.1",

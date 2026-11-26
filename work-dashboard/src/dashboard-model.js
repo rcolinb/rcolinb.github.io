@@ -28,7 +28,7 @@ export function displayFields(task) {
 
 export function sortingDraft(task) {
   const fields = displayFields(task);
-  return {title: shortTitle(fields.title), project: fields.project.slice(0, 200), recap: fields.recap.slice(0, 1000), nextAction: fields.nextAction.slice(0, 2000)};
+  return {title: task.verifiedAt ? task.title : shortTitle(fields.title), project: fields.project.slice(0, 200), recap: fields.recap.slice(0, 1000), nextAction: fields.nextAction.slice(0, 2000)};
 }
 
 export function classificationChanges(draft, choice) {
@@ -71,6 +71,34 @@ export function projectOverview(tasks) {
     if (task.triage === 'blocking') group.blocking += 1;
   }
   return [...groups.values()];
+}
+
+// Follow the person's chosen attention groups. Waiting and deferred work should
+// never be promoted into today's suggested starting point just because it changed.
+export function attentionOrder(tasks) {
+  const rank = {blocking: 0, review: 1, ready: 2};
+  return tasks.filter(task => isOngoing(task) && task.status !== 'waiting' && task.triage !== 'later')
+    .map((task, index) => ({task, index}))
+    .sort((a, b) => (rank[a.task.triage] ?? 3) - (rank[b.task.triage] ?? 3) || a.index - b.index)
+    .map(entry => entry.task);
+}
+
+export function activityTime(task, sources = new Map()) {
+  const toTime = value => {
+    if (!value) return 0;
+    const time = new Date(typeof value === 'number' && value < 1e12 ? value * 1000 : value).getTime();
+    return Number.isFinite(time) ? time : 0;
+  };
+  return Math.max(toTime(task.updatedAt), ...(task.sourceIds || []).map(id => toTime(sources.get(id)?.updatedAt)));
+}
+
+// A current snapshot per item, not an invented audit trail or a live agent status.
+export function currentEntries(tasks, sources, {includeLibrary = false, attentionOnly = false} = {}) {
+  const sourceMap = new Map(sources.map(source => [source.id, source]));
+  return tasks.filter(task => (includeLibrary || dispositionOf(task) === 'tracked') &&
+    (!attentionOnly || (isOngoing(task) && ['blocking', 'review'].includes(task.triage))))
+    .map((task, index) => ({task, time: activityTime(task, sourceMap), index}))
+    .sort((a, b) => b.time - a.time || a.index - b.index);
 }
 
 // Only small task/source metadata belongs in the offline view. Never store tokens,

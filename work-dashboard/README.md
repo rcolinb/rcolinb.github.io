@@ -1,14 +1,20 @@
-# Your workspace
+# Stillwater
 
-A private, Mac-hosted dashboard for organizing work and returning to its source conversations. Home, Projects, Ideas, Finished, and Library views separate chosen commitments from unsorted conversations and reference material.
+Stillwater is a private, Mac-hosted dashboard for returning to work with less visual noise. Its APA-inspired paper aesthetic uses warm white, charcoal ink, restrained forest accents, serif headings, fine rules, and generous margins. Light is the default; dark, system, and larger-reading preferences remain available.
 
 This repository contains application source and synthetic test fixtures. It does not contain conversation history, task databases, account configuration, credentials, or a deployed dashboard. Publishing the source to GitHub does not expose the local service. GitHub Pages cannot run the Python API or its local history collector.
 
 ## Everyday use
 
-Start with **Sort a few**. Each session presents up to five saved conversations with editable short names, recaps, project suggestions, and next steps. Choose **Track this**, **Keep as reference**, **Save as idea**, or **Already finished**. **Skip for now** makes no change. **Undo last choice** reverses the last choice when its record has not changed elsewhere.
+**Home** begins with the first attention item among work you have chosen to track. An **Across your work** side overview keeps the broader picture nearby and stacks with the page on smaller screens. Projects, Ideas, Finished, and Library offer other ways back into your work. Global search reaches all retained records; search and filters stay collapsed until opened at every screen size.
 
-Home and Projects count only work explicitly chosen for tracking. Library retains unsorted conversations and references; global search can find them from any view. Reading context, acknowledging an update, and completing a task are separate actions. Conflicting edits retain the unsaved draft for comparison and an explicit retry.
+**Current**, available through **Stream**, is an optional view of the latest activity for each item, not a complete event history. Library items are excluded unless you choose **Include Library**. Incoming updates wait behind **Show new updates** so the stream stays still while you read. Reading context, marking an update reviewed, and completing a task are separate actions.
+
+Use **Sort a few** to review up to five saved conversations at a time. Edit a suggested short name, recap, project, or next step, then choose **Track this**, **Keep as reference**, **Save as idea**, or **Already finished**. **Skip for now** changes nothing. **Undo last choice** reverses the last choice when its record has not changed elsewhere. Home and Projects count only chosen work; Library retains unsorted conversations and references. Conflicting edits retain the unsaved draft for comparison and an explicit retry.
+
+**Fieldnotes**, under **A way in**, offers optional prompts to clarify a decision, find the words, or shape a lesson. **Tools** contains five deterministic worksheets: Choose a next step, Write with care, Shape a teaching moment, Review a question, and Improve a recurring process. They organize what you enter without AI calls, sending messages, or changing task status. Worksheet drafts stay in this tab's memory only; use **Copy** to keep the result before reloading or closing the tab.
+
+An optional daily reflection provides a short quotation with a cited source and attribution. It stays still during a visit and can be hidden in the display preferences.
 
 ## Local setup
 
@@ -132,8 +138,10 @@ pnpm test:ui
 pnpm build
 ```
 
-Install `requirements.txt` into `.venv` to include real signed-token authentication tests. The latest recorded validation included 88 Python server/authentication/startup tests and 32 frontend/model/worker tests, for 120 automated checks. Fixtures use synthetic data.
+Install `requirements.txt` into `.venv` to include real signed-token authentication tests. The current redesign passed **49 frontend/model/worker checks and 88 server/authentication/startup checks, 137 total**. The production build passed. Fixtures use synthetic data.
 
-An isolated Chrome fixture reopened a saved view after HTTP 503 responses and a stopped origin, disabled mutations, and reconnected after restart. Reflow checks covered 320, 390, and 1280 CSS pixels. Automated and fixture checks do not establish actual phone, cellular, or assistive-technology compatibility; verify those for the intended installation.
+Before this redesign, the recorded suite passed 88 Python tests and 32 frontend/model/worker checks, 120 total.
+
+Earlier validation used an isolated Chrome fixture that reopened a saved view after HTTP 503 responses and a stopped origin, disabled mutations, and reconnected after restart. Earlier reflow checks covered 320, 390, and 1280 CSS pixels. Current redesign checks covered 320- and 390-pixel widths, 320 pixels with the Largest reading setting (125%) in dark mode, Tools without overflow, the desktop paper layout, and buffered stream updates. Automated and fixture checks do not establish actual phone, cellular, or assistive-technology compatibility; verify those for the intended installation.
 
 The interface targets WCAG 2.2 AA, with large touch controls, labeled state, visible focus, reduced motion, and narrow-screen reflow. No conformance claim is made. Design rationale is in `design-spec.json`; illustrative design studies are in `design-directions.html`.

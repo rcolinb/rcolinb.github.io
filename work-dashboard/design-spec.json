@@ -1,15 +1,15 @@
 {
-  "project": "Personal work dashboard",
-  "stage": "Local dashboard prototype with authenticated remote-access support; deployment and real-device validation are installation-specific",
+  "project": "Stillwater",
+  "stage": "Stillwater paper redesign implemented; 137 automated checks and the production build passed; rendered layout checked. Authenticated remote-access support and real-device validation remain installation-specific.",
   "hostingDecision": "Keep the frontend, API, and private data on a Mac. Optional Tailscale Serve or Cloudflare Access and Tunnel provide authenticated phone access.",
-  "primaryJob": "Help the user recover context, triage what needs attention, choose a next action, and retain a broad project overview.",
+  "primaryJob": "Return to one chosen item that needs attention while keeping the broader work and its source context easy to reach.",
   "triageExploration": {
     "candidateGroups": [
       "Blocking progress",
       "Review next",
       "Ready to continue"
     ],
-    "status": "Illustrative first test, not an agreed priority policy",
+    "status": "User-editable attention groups for confirmed work; recent conversation activity does not establish urgency or completion.",
     "requirements": [
       "Show the reason for suggested priority",
       "Allow manual correction",
@@ -19,24 +19,28 @@
     ]
   },
   "directions": {
-    "Focus": "A calm home view centered on decisions and reviews, with recent changes alongside.",
-    "Overview": "A project library showing recognizable projects, their state, and their next action."
+    "Stillwater": "Primary Home view with the first chosen attention item and a compact Across your work side overview.",
+    "Current": "Optional Stream view of the latest activity per item, with Library excluded by default and incoming changes buffered until requested.",
+    "Fieldnotes": "Optional A way in prompts that open a decision, communication, or teaching worksheet."
   },
   "sharedNavigation": [
     "Home",
+    "Stream",
     "Projects",
     "Ideas",
     "Finished",
-    "Library"
+    "Library",
+    "Tools"
   ],
   "visualPrinciples": [
-    "Warm neutral surfaces and a restrained forest-green accent",
-    "Readable text contrast, including metadata",
-    "Status labels paired with color and iconography",
-    "One main action per project, with context available on demand",
-    "No invented completion percentages, streaks, or urgency",
-    "Preserve user control over priorities and deferment",
-    "Same terminology and controls on phone and laptop"
+    "APA-inspired paper aesthetic, not a claim of formal manuscript-format compliance",
+    "Warm-white default paper, charcoal ink, and a restrained forest accent; preserve dark and system preferences",
+    "Georgia or Times serif typography with readable system-font controls and labels; no external font dependency",
+    "Left alignment, generous margins, fine horizontal rules, and little or no card fill",
+    "Shadows reserved for dialogs; plain-paper print styling",
+    "Short visible summaries with complete source context available on demand",
+    "Collapsed search and filters at every screen size; optional context instead of repeated explanatory text",
+    "Stable content while reading, clear focus, and no reliance on color or motion alone"
   ],
   "accessibilityTargets": {
     "reference": "WCAG 2.2 AA as a baseline, supplemented by universal design and cognitive accessibility guidance; no conformance claim yet",
@@ -55,23 +59,23 @@
     "Mac disconnected with timestamped saved view",
     "No matching items",
     "No pending attention",
-    "Inferred status",
+    "Unconfirmed suggestion",
     "User-corrected status",
     "Deferred item with undo",
-    "Source unavailable"
+    "Source unavailable",
+    "Buffered stream updates awaiting Show new updates",
+    "Empty worksheet with optional source-task context",
+    "Unsaved worksheet retained in tab memory"
   ],
   "prototypeInteractions": [
-    "Switch views",
-    "Search across all retained records",
-    "Sort a stable batch of up to five conversations",
-    "Edit suggested short names, project, recap, and next step",
-    "Track, keep as reference, save as idea, or finish explicitly",
-    "Skip without changing records and undo the last choice",
-    "Reveal source context and draft evidence",
-    "Set aside for later and undo",
-    "Capture an idea without a deadline",
-    "Change reading size and theme",
-    "Read a saved metadata view while disconnected"
+    "Navigate Home, Stream, Projects, Ideas, Finished, Library, and Tools",
+    "Open collapsed global search and filters from any view",
+    "Review up to five suggested classifications and explicitly choose, skip, or undo",
+    "Read original source context without changing completion state",
+    "Select the latest snapshot for an item in Current; optionally include Library and apply buffered updates",
+    "Open a Fieldnotes prompt or one of five deterministic worksheets; edit and explicitly copy the result",
+    "Set light, dark, system, reading-size, and optional-reflection preferences",
+    "Read the dated saved snapshot while disconnected; mutations remain disabled"
   ],
   "productionToolDirection": "Responsive React app, custom CSS design tokens, and React Aria for complex accessible controls; keep native HTML controls where sufficient.",
   "nextValidation": [
@@ -88,7 +92,7 @@
     "https://react-aria.adobe.com/"
   ],
   "implementation": {
-    "home": "Tracked ongoing work only; compact project overview before sorting invitation and attention queue.",
+    "home": "Tracked active or waiting work only. Lead with the first chosen attention item; show compact remaining attention groups and an Across your work side overview that stacks on narrow screens.",
     "storage": "Local SQLite with independent user-confirmed task fields and read-only conversation snapshots.",
     "connection": "Up to 20 recent non-archived local Codex conversations, refreshed every five minutes.",
     "phone": "Optional private HTTPS through Tailscale Serve or a Cloudflare Access-protected named tunnel. Configuration, availability, and device validation are installation-specific.",
@@ -108,7 +112,31 @@
     "library": "Needs sorting, Reference, and All saved. Unsorted/reference items do not inflate active project counts.",
     "sorting": "At most five records per session. Separate suggested fields and source context. Explicit reversible classification, conflict comparison, and preserved unsaved drafts.",
     "suggestions": "Optional reviewed assistant drafts are imported separately from confirmed fields. New records receive conservative starter drafts; source changes mark suggestions stale. No background model calls. No private draft data is included in source.",
-    "completedChecks": [
+    "search": "Global search spans retained tasks and source metadata. Search and filters are collapsed by default at all viewport sizes.",
+    "current": {
+      "navigationLabel": "Stream",
+      "granularity": "One latest-activity snapshot per item, not an event log or proof of completion",
+      "library": "Excluded by default; Include Library is an explicit opt-in",
+      "updates": "Incoming stream updates are buffered until Show new updates is selected; editing remains protected",
+      "context": "Selected item context exposes recap, reason for attention, next step, source access, and a separate Mark update reviewed action"
+    },
+    "fieldnotes": "Optional A way in disclosure offers Clarify a decision, Find the words, and Shape a lesson prompts for the current task.",
+    "dailyReflection": "Optional short, cited quotation with author/work/translation attribution where applicable; stable during the visit and controlled through display preferences.",
+    "worksheets": {
+      "count": 5,
+      "names": [
+        "Choose a next step",
+        "Write with care",
+        "Shape a teaching moment",
+        "Review a question",
+        "Improve a recurring process"
+      ],
+      "behavior": "Deterministic structures assemble and organize user-entered material; no AI calls, sending, or automatic task changes",
+      "storage": "Tab memory only; not stored in the task database, local storage, or offline snapshots",
+      "retention": "Explicit Copy keeps a result elsewhere; reloading or closing the tab loses worksheet drafts",
+      "limits": "Framework-informed prompts do not certify clinical accuracy, permission, priority, or completion"
+    },
+    "priorCompletedChecks": [
       "88 Python server, authentication, and startup tests",
       "32 frontend, presentation-model, and service-worker checks",
       "Synthetic fixtures cover sorting, Undo, conflicting edits, unsaved drafts, and disconnected controls",
@@ -120,7 +148,7 @@
   "privateDomain": {
     "exampleUrl": "https://dashboard.example.com",
     "configurationScope": "Per-installation setup; no account state, credentials, operational deployment status, or private data is published",
-    "hosting": "Mac hosts the API, database, and built frontend. Cloudflare Access and a named Tunnel provide authenticated HTTPS without exposing a listening port on the Mac’s network interface.",
+    "hosting": "Mac hosts the API, database, and built frontend. Cloudflare Access and a named Tunnel provide authenticated HTTPS without exposing a listening port on the Mac\u2019s network interface.",
     "ownerAccess": "Origin verifies a signed JWT with exact issuer, application audience, expiration, RSA signature, and owner email. The tunnel route also enables Protect with Access.",
     "routeRequirements": {
       "origin": "http://127.0.0.1:8767",
@@ -146,5 +174,19 @@
       "deploymentVerification": "Required for each installation; automated checks do not establish live remote access or actual phone compatibility"
     }
   },
-  "designFocus": "Triage levels for what needs attention alongside a broad overview; expect testing and iteration."
+  "designFocus": "A concise APA-inspired printed page: Stillwater Home for chosen attention, an optional Current stream, and Fieldnotes that offer a way into the work.",
+  "redesignValidation": {
+    "status": "Verified: current final automated run and production build passed",
+    "frontendModelWorkerChecks": 49,
+    "serverAuthenticationStartupChecks": 88,
+    "total": 137,
+    "layout": [
+      "320- and 390-pixel widths",
+      "320 pixels with Largest reading size (125%) in dark mode",
+      "Tools without horizontal overflow",
+      "Desktop paper layout",
+      "Buffered stream updates"
+    ],
+    "remaining": "Actual Android device, cellular use, real Mac-off recovery, and assistive-technology validation remain unverified"
+  }
 }
