@@ -1,4 +1,6 @@
 exclude:
+  # Dashboard source is tracked here; its private app runs on the owner's Mac.
+  - work-dashboard
   - _incantations.json
   - _scripts
   - _drafts

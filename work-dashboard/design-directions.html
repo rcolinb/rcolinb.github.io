@@ -1,0 +1,235 @@
+<style>
+#work-designs .design-stage { min-height:760px; }
+#work-designs .work-shell {
+  --work-bg:light-dark(#f5f3ed,#151e1a); --work-surface:light-dark(#fffefa,#1c2922);
+  --work-ink:light-dark(#22372e,#f1f4ee); --work-muted:light-dark(#536158,#b5c4b9);
+  --work-line:light-dark(#cbd2c9,#53665a); --work-control:light-dark(#6f7d72,#8b9e90);
+  --work-primary:light-dark(#254d3c,#bbd7be); --work-on-primary:light-dark(#ffffff,#13261a);
+  --work-soft:light-dark(#e5eee4,#263c2e); --work-wait:light-dark(#744619,#f4d29f);
+  --work-wait-bg:light-dark(#fcf0dc,#3e3020); --work-text:16px; --work-gap:22px;
+  color:var(--work-ink); background:var(--work-bg); border:1px solid var(--work-line);
+  border-radius:18px; font:400 var(--work-text)/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  width:100%; max-width:1024px; margin-inline:auto; container-type:inline-size;
+  overflow-wrap:anywhere; min-height:740px;
+}
+#work-designs .work-shell *, #work-designs .work-shell *::before, #work-designs .work-shell *::after { box-sizing:border-box; }
+#work-designs .work-shell [hidden] { display:none !important; }
+#work-designs .work-shell h1,#work-designs .work-shell h2,#work-designs .work-shell h3,#work-designs .work-shell p { margin:0; }
+#work-designs .work-shell h1 { font-size:2.2em; line-height:1.16; font-weight:550; letter-spacing:-.035em; }
+#work-designs .focus-design h1 { font-family:Georgia,"Times New Roman",serif; font-weight:400; letter-spacing:-.025em; }
+#work-designs .work-shell h2 { font-size:1.16em; line-height:1.35; font-weight:650; letter-spacing:-.015em; }
+#work-designs .work-shell h3 { font-size:1.05em; line-height:1.4; font-weight:600; }
+#work-designs .work-shell button,#work-designs .work-shell input { font:inherit; color:inherit; }
+#work-designs .work-shell button { cursor:inherit; }
+#work-designs .work-shell button:focus-visible,#work-designs .work-shell input:focus-visible,#work-designs .work-shell summary:focus-visible { outline:3px solid var(--work-primary); outline-offset:4px; }
+#work-designs .work-shell button:disabled { opacity:.7; }
+#work-designs .work-header { padding:20px 110px 16px 28px; display:flex; align-items:center; gap:12px; }
+#work-designs .work-wordmark { font-weight:650; font-size:1.05em; letter-spacing:-.025em; }
+#work-designs .work-mark { display:grid; place-items:center; width:34px; height:34px; border-radius:10px; background:var(--work-primary); color:var(--work-on-primary); flex-shrink:0; }
+#work-designs .work-mark i { width:19px; height:19px; }
+#work-designs .work-caption { color:var(--work-muted); font-size:.8em; }
+#work-designs .work-nav { display:flex; gap:8px; padding:0 28px 18px; border-bottom:1px solid var(--work-line); flex-wrap:wrap; }
+#work-designs .work-nav button { min-height:46px; padding:9px 16px; border:1px solid transparent; border-radius:9px; background:transparent; display:flex; align-items:center; gap:8px; }
+#work-designs .work-nav button[aria-pressed=true] { background:var(--work-primary); color:var(--work-on-primary); font-weight:600; }
+#work-designs .work-nav i { width:17px; height:17px; }
+#work-designs .work-body { padding:28px; }
+#work-designs .work-heading-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(210px, .65fr); gap:24px; align-items:end; margin-bottom:26px; }
+#work-designs .work-intro p { color:var(--work-muted); margin-top:10px; }
+#work-designs .work-search { display:grid; gap:6px; }
+#work-designs .work-search label { color:var(--work-muted); font-size:.85em; }
+#work-designs .work-search input { min-width:0; width:100%; min-height:46px; border:1px solid var(--work-control); border-radius:8px; padding:10px 12px; background:var(--work-surface); }
+#work-designs .work-search input::placeholder { color:var(--work-muted); opacity:1; }
+#work-designs .work-section-heading { display:flex; align-items:baseline; gap:12px; justify-content:space-between; flex-wrap:wrap; margin-bottom:14px; }
+#work-designs .work-count { color:var(--work-muted); font-size:.85em; }
+#work-designs .work-grid { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); gap:var(--work-gap); align-items:start; }
+#work-designs .work-stack { display:grid; gap:var(--work-gap); }
+#work-designs .work-triage-group + .work-triage-group { margin-top:26px; }
+#work-designs .work-triage-group .work-section-heading { margin-bottom:10px; }
+#work-designs .work-card { background:var(--work-surface); border:1px solid var(--work-line); border-radius:13px; padding:22px; min-width:0; }
+#work-designs .work-feature { border-top:4px solid var(--work-primary); }
+#work-designs .work-card-top { display:flex; flex-wrap:wrap; gap:7px 12px; align-items:center; justify-content:space-between; margin-bottom:12px; }
+#work-designs .work-domain { color:var(--work-muted); font-size:.85em; }
+#work-designs .work-state { display:inline-flex; align-items:center; gap:6px; font-size:.8em; font-weight:550; border-radius:6px; padding:4px 8px; background:var(--work-soft); color:var(--work-ink); }
+#work-designs .work-state.waiting { color:var(--work-wait); background:var(--work-wait-bg); }
+#work-designs .work-state i { height:14px; width:14px; }
+#work-designs .work-card .work-next { font-size:1.38em; line-height:1.3; margin-top:9px; letter-spacing:-.025em; }
+#work-designs .work-card .work-explanation { color:var(--work-muted); margin-top:10px; }
+#work-designs .work-actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:18px; }
+#work-designs .work-button { min-height:46px; background:var(--work-surface); border:1px solid var(--work-control); border-radius:8px; padding:10px 15px; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+#work-designs .work-button.primary { background:var(--work-primary); color:var(--work-on-primary); border-color:var(--work-primary); font-weight:550; }
+#work-designs .work-button.quiet { border-color:transparent; background:transparent; }
+#work-designs .work-button i { width:16px; height:16px; }
+#work-designs .work-list { margin:0; padding:0; list-style:none; }
+#work-designs .work-update { padding:16px 0; border-bottom:1px solid var(--work-line); }
+#work-designs .work-update:first-child { padding-top:0; }
+#work-designs .work-update:last-child { border-bottom:0; padding-bottom:0; }
+#work-designs .work-update p { color:var(--work-muted); font-size:.9em; margin-top:4px; }
+#work-designs .work-update span { display:block; margin-top:7px; font-size:.78em; color:var(--work-muted); }
+#work-designs .work-context { margin-top:18px; border-top:1px solid var(--work-line); padding-top:16px; }
+#work-designs .work-context dl { margin:12px 0; display:grid; grid-template-columns:90px minmax(0,1fr); gap:9px 15px; font-size:.9em; }
+#work-designs .work-context dt { color:var(--work-muted); }
+#work-designs .work-context dd { margin:0; }
+#work-designs .work-context summary { min-height:44px; padding:10px 0; }
+#work-designs .work-context blockquote { margin:8px 0; border-left:3px solid var(--work-control); padding:0 0 0 14px; font-size:.9em; }
+#work-designs .work-context .work-caption { margin-top:8px; }
+#work-designs .work-toast { display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; background:var(--work-soft); border-radius:9px; padding:12px 16px; margin-bottom:20px; }
+#work-designs .work-library { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--work-gap); }
+#work-designs .work-library .work-card { border-left:4px solid var(--work-line); }
+#work-designs .work-library .work-card:has(.waiting) { border-left-color:var(--work-wait); }
+#work-designs .work-empty { padding:25px 0; max-width:42em; }
+#work-designs .work-empty p { margin-top:10px; color:var(--work-muted); }
+#work-designs .work-idea-form { display:flex; flex-wrap:wrap; align-items:end; gap:12px; padding:20px 0; }
+#work-designs .work-idea-field { flex:1 1 220px; display:grid; gap:7px; }
+#work-designs .work-idea-field input { width:100%; min-width:0; min-height:46px; padding:10px 12px; border:1px solid var(--work-control); background:var(--work-surface); border-radius:8px; }
+#work-designs .work-footer { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; border-top:1px solid var(--work-line); padding:16px 28px; font-size:.8em; color:var(--work-muted); }
+#work-designs .work-sync { display:inline-flex; gap:7px; align-items:center; }
+#work-designs .work-sync i { width:15px; height:15px; }
+#work-designs .work-offline { background:var(--work-wait-bg); color:var(--work-wait); border-radius:8px; padding:12px 16px; margin-bottom:20px; }
+#work-designs .work-feedback { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+@container (max-width:680px) {
+  #work-designs .work-header { padding-left:20px; }
+  #work-designs .work-nav { padding:0 20px 16px; gap:5px; }
+  #work-designs .work-nav button { flex:1 1 110px; justify-content:center; padding:9px 10px; }
+  #work-designs .work-body { padding:22px 20px; }
+  #work-designs .work-heading-row { grid-template-columns:1fr; gap:20px; }
+  #work-designs .work-grid,#work-designs .work-library { grid-template-columns:1fr; }
+  #work-designs .work-card { padding:18px; }
+  #work-designs .work-footer { padding:16px 20px; }
+  #work-designs .work-shell h1 { font-size:1.9em; }
+}
+@container (max-width:390px) {
+  #work-designs .work-body { padding:20px 14px; }
+  #work-designs .work-nav { padding:0 14px 16px; }
+  #work-designs .work-card { padding:16px; }
+  #work-designs .work-actions { display:grid; grid-template-columns:1fr; }
+  #work-designs .work-context dl { grid-template-columns:1fr; gap:3px; }
+  #work-designs .work-context dd { margin-bottom:10px; }
+}
+@media (prefers-reduced-motion:reduce) { #work-designs .work-shell * { scroll-behavior:auto; } }
+</style>
+<div id="work-designs">
+  <div class="viz-carousel" aria-label="Dashboard design directions">
+    <section class="design-stage" data-variant="Focus" aria-label="Focus design">
+      <div class="work-shell focus-design" id="focus-workspace" aria-label="Focus dashboard design"></div>
+    </section>
+    <section class="design-stage" data-variant="Overview" aria-label="Overview design" hidden>
+      <div class="work-shell overview-design" id="overview-workspace" aria-label="Overview dashboard design"></div>
+    </section>
+  </div>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('work-designs');
+  const initial = [
+    {id:'lecture',name:'Lecture refresh',domain:'Teaching',kind:'active',attention:true,state:'Ready for review',action:'Review the practice questions',summary:'The draft is ready. Your review is the next step.',actor:'You',done:'Questions reviewed and the final deck saved.',source:'Example: The revised deck contains five practice questions. The instructor review is still pending.',change:'Practice questions are ready',changeDetail:'A new draft is ready for your review.'},
+    {id:'files',name:'File organization',domain:'Tools & systems',kind:'active',attention:true,state:'Decision needed',action:'Choose a folder layout',summary:'Two options are ready to compare.',actor:'You',done:'A layout chosen, applied, and checked.',source:'Example: Two possible folder structures have been compared. No files have been moved.',change:'Two folder layouts compared',changeDetail:'A choice is needed before any files move.'},
+    {id:'research',name:'Research announcement',domain:'Scholarship',kind:'active',attention:false,state:'Ready to continue',action:'Continue the first draft',summary:'The audience and key points are saved.',actor:'Codex, when you resume',done:'Announcement reviewed and published.',source:'Example: The audience is students. Reading the paper is optional. Drafting has not yet resumed.',change:'The writing brief is saved',changeDetail:'Your next session can start from the agreed outline.'},
+    {id:'library',name:'Student resource library',domain:'Teaching',kind:'idea',attention:false,state:'Idea',action:'Revisit when you have space',summary:'A place for an idea, with no deadline attached.',actor:'No action assigned',done:'Decide whether to turn this idea into a project.',source:'Example: A future resource library was mentioned during planning. It is not a commitment.',change:'An idea was captured',changeDetail:'No task or deadline was created.'},
+    {id:'agenda',name:'Meeting agenda template',domain:'Leadership',kind:'done',attention:false,state:'Complete',action:'Ready to use again',summary:'The final template is saved and reviewed.',actor:'No action needed',done:'Reusable template saved and reviewed.',source:'Example: The final agenda template has been saved and reviewed.',change:'The agenda template is finished',changeDetail:'The reusable result is ready.'}
+  ];
+  let saved = window.openai?.widgetState?.privateContent;
+  let later = new Set(Array.isArray(saved?.later)?saved.later.filter(id=>initial.some(t=>t.id===id)):[]);
+  let ideas = Array.isArray(saved?.ideas)?saved.ideas.filter(s=>typeof s==='string').slice(0,8):[];
+  const configs = [
+    {id:'focus-workspace',view:'home',query:'',open:null,source:null,undo:null,mode:'focus'},
+    {id:'overview-workspace',view:'projects',query:'',open:null,source:null,undo:null,mode:'overview'}
+  ];
+  const settings = {width:'Laptop',textSize:16,spacing:'Comfortable',connection:'Connected'};
+  const words={home:'Home',projects:'Projects',ideas:'Ideas',finished:'Finished'};
+  const icon=(name)=>`<i data-lucide="${name}" aria-hidden="true"></i>`;
+  const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function persist(){
+    if(window.openai?.setWidgetState) window.openai.setWidgetState({modelContent:{designPreview:true},privateContent:{later:[...later],ideas}}).catch(()=>{});
+  }
+  function allTasks(){return [...initial,...ideas.map((name,i)=>({id:'idea-'+i,name,domain:'Unsorted',kind:'idea',attention:false,state:'Idea',action:'Revisit when you have space',summary:'Captured without a deadline.',actor:'No action assigned',done:'Decide whether to make this a project.',source:'Example idea added in this design preview.'}))];}
+  function context(task,cfg){
+    if(cfg.open!==task.id)return '';
+    return `<section class="work-context" id="${cfg.id}-${task.id}-context" aria-label="Context for ${esc(task.name)}"><h3>Where we left off</h3><dl><dt>Next actor</dt><dd>${esc(task.actor)}</dd><dt>Done when</dt><dd>${esc(task.done)}</dd></dl><details><summary>Source excerpt · example</summary><blockquote>${esc(task.source)}</blockquote></details><p class="work-caption">Illustrative content. A connected version would link to the original conversation and files.</p></section>`;
+  }
+  function card(task,cfg,featured=false){
+    const deferred=later.has(task.id);
+    const open=cfg.open===task.id;
+    return `<article class="work-card ${featured?'work-feature':''}"><div class="work-card-top"><span class="work-domain">${esc(task.domain)}</span><span class="work-state ${task.attention&&!deferred?'waiting':''}">${icon(task.kind==='done'?'check':task.kind==='idea'?'lightbulb':deferred?'clock-3':'circle-dot')}${deferred?'Set aside for later':esc(task.state)}</span></div><h3>${esc(task.name)}</h3><p class="${featured?'work-next':'work-explanation'}">${esc(task.action)}</p>${featured?`<p class="work-explanation">${esc(task.summary)}</p>`:''}<div class="work-actions"><button class="work-button ${featured?'primary':''}" type="button" data-open="${task.id}" aria-label="${open?'Hide':'See'} context for ${esc(task.name)}" aria-expanded="${open}" ${open?`aria-controls="${cfg.id}-${task.id}-context"`:''}>${open?'Hide context':'See context'}${icon(open?'chevron-up':'arrow-right')}</button>${task.attention?`<button class="work-button quiet" type="button" ${deferred?'data-bring-back':'data-later'}="${task.id}" aria-label="${deferred?'Bring back':'Set aside'} ${esc(task.name)}${deferred?'':' for later'}" ${settings.connection==='Offline'?'disabled':''}>${icon(deferred?'undo-2':'clock-3')}${deferred?'Bring back':'Later'}</button>`:''}</div>${context(task,cfg)}</article>`;
+  }
+  function renderMain(cfg){
+    const shell=document.getElementById(cfg.id), target=shell.querySelector('[data-content]');
+    const query=cfg.query.trim().toLowerCase();
+    const tasks=allTasks().filter(t=>[t.name,t.domain,t.action].some(s=>s.toLowerCase().includes(query)));
+    const attention=tasks.filter(t=>t.attention&&!later.has(t.id));
+    const titles={home:'Pick up where you left off.',projects:'See the shape of your work.',ideas:'Room for a new idea.',finished:'Work you can return to.'};
+    const intros={home:attention.length?`${attention.length} ${attention.length===1?'item needs':'items need'} your attention.`:'Nothing is waiting for your attention here.',projects:'Your projects, with a clear next step.',ideas:'Capture it now. Decide what to do with it later.',finished:'Completed work and reusable results.'};
+    shell.querySelector('[data-heading]').textContent=titles[cfg.view]; shell.querySelector('[data-intro]').textContent=intros[cfg.view];
+    shell.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===cfg.view)));
+    let markup=settings.connection==='Offline'?'<div class="work-offline" role="status">Mac disconnected. Showing the last saved view. Reconnect to save changes.</div>':'';
+    if(cfg.undo)markup+=`<div class="work-toast" role="status"><span>Set aside for later.</span><button class="work-button quiet" type="button" data-undo ${settings.connection==='Offline'?'disabled':''}>Undo</button></div>`;
+    if(cfg.view==='home'){
+      markup+='<div class="work-grid"><section aria-label="Triage of current work">';
+      const groups=[{label:'Blocking progress',note:'A decision unlocks the next step',items:attention.filter(t=>t.id==='files')},{label:'Review next',note:'Work is ready for your judgment',items:attention.filter(t=>t.id!=='files')},{label:'Ready to continue',note:'Available when you have room',items:tasks.filter(t=>t.kind==='active'&&!t.attention)}];
+      let featured=true;
+      for(const group of groups){if(!group.items.length)continue;markup+=`<section class="work-triage-group"><div class="work-section-heading"><h2>${group.label}</h2></div><p class="work-caption" style="margin-bottom:12px">${group.note}</p><div class="work-stack">`;for(const task of group.items){markup+=card(task,cfg,featured);featured=false;}markup+='</div></section>';}
+      if(!groups.some(g=>g.items.length))markup+=`<div class="work-empty"><h3>${query?'No matching items':'You have room to choose'}</h3><p>${query?'Try another word, or look in Projects.':'Visit Projects to pick up ongoing work. Items set aside remain there.'}</p></div>`;
+      markup+='</section><aside><div class="work-section-heading"><h2>Across your work</h2></div><p class="work-caption">See projects together, including work set aside for later.</p><div class="work-actions" style="margin-bottom:26px"><button class="work-button" type="button" data-overview>View all projects</button></div><div class="work-section-heading"><h2>What changed</h2></div><ul class="work-list">';
+      markup+=tasks.filter(t=>t.kind!=='idea').slice(0,3).map(t=>`<li class="work-update"><h3>${esc(t.change)}</h3><p>${esc(t.changeDetail)}</p><span>${esc(t.domain)} · sample update</span></li>`).join('');
+      markup+='</ul></aside></div>';
+    } else {
+      const subset=tasks.filter(t=>cfg.view==='projects'?t.kind==='active':cfg.view==='ideas'?t.kind==='idea':t.kind==='done');
+      if(cfg.view==='ideas')markup+=`<form class="work-idea-form"><div class="work-idea-field"><label for="${cfg.id}-idea">Capture an idea</label><input id="${cfg.id}-idea" name="idea" maxlength="160" required placeholder="Something to come back to" ${settings.connection==='Offline'?'disabled':''}></div><button type="button" data-save-idea class="work-button primary" ${settings.connection==='Offline'?'disabled':''}>Save idea</button></form>`;
+      markup+=`<div class="work-section-heading"><h2>${cfg.view==='projects'?'Ongoing projects':cfg.view==='ideas'?'Saved ideas':'Completed'}</h2><span class="work-count">${subset.length} ${subset.length===1?'item':'items'}</span></div><div class="work-library">`;
+      markup+=subset.length?subset.map(t=>card(t,cfg)).join(''):'<div class="work-empty"><h3>No matches in this view</h3><p>Try a different search or another view.</p></div>';
+      markup+='</div>';
+    }
+    target.innerHTML=markup;
+    shell.querySelector('[data-overview]')?.addEventListener('click',()=>{const nav=shell.querySelector('[data-view="projects"]');nav.click();nav.focus();});
+    shell.querySelector('[data-sync]').innerHTML=settings.connection==='Offline'?`${icon('cloud-off')}Mac disconnected · example saved at 10:42 AM`:`${icon('check')}Example sync · 2 minutes ago`;
+    shell.querySelectorAll('[data-open]').forEach(button=>button.addEventListener('click',()=>{cfg.open=cfg.open===button.dataset.open?null:button.dataset.open;const id=button.dataset.open;renderMain(cfg);shell.querySelector(`[data-open="${id}"]`).focus({preventScroll:true});}));
+    shell.querySelectorAll('[data-later]').forEach(button=>button.addEventListener('click',()=>{later.add(button.dataset.later);cfg.undo=button.dataset.later;cfg.open=null;configs.forEach(renderMain);persist();shell.querySelector('[data-undo]')?.focus();}));
+    shell.querySelectorAll('[data-bring-back]').forEach(button=>button.addEventListener('click',()=>{const id=button.dataset.bringBack;later.delete(id);configs.forEach(c=>{if(c.undo===id)c.undo=null;renderMain(c);});persist();shell.querySelector(`[data-later="${id}"]`)?.focus({preventScroll:true});}));
+    shell.querySelector('[data-undo]')?.addEventListener('click',()=>{const id=cfg.undo;later.delete(id);cfg.undo=null;configs.forEach(renderMain);persist();shell.querySelector(`[data-later="${id}"]`)?.focus();});
+    function saveIdea(event){event.preventDefault();const field=shell.querySelector('input[name="idea"]');if(settings.connection==='Offline'||!field)return;field.setCustomValidity('');const value=field.value.trim();if(!value){field.setCustomValidity('Enter an idea to save.');field.reportValidity();return;}if(ideas.length>=8){field.setCustomValidity('This preview holds up to eight new ideas.');field.reportValidity();return;}ideas.push(value);cfg.query='';shell.querySelector('input[type="search"]').value='';configs.forEach(renderMain);persist();shell.querySelector('input[name="idea"]')?.focus({preventScroll:true});shell.querySelector('[data-feedback]').textContent='Idea saved: '+value;}
+    shell.querySelector('form')?.addEventListener('submit',saveIdea);
+    shell.querySelector('[data-save-idea]')?.addEventListener('click',saveIdea);
+    shell.querySelector('input[name="idea"]')?.addEventListener('keydown',event=>{if(event.key==='Enter')saveIdea(event);});
+    shell.querySelector('input[name="idea"]')?.addEventListener('input',event=>event.target.setCustomValidity(''));
+    if(window.lucide)lucide.createIcons({attrs:{width:18,height:18}});
+  }
+  for(const cfg of configs){
+    const shell=document.getElementById(cfg.id);
+    shell.innerHTML=`<header class="work-header"><span class="work-mark">${icon('layers-2')}</span><div><div class="work-wordmark">Your workspace</div><p class="work-caption">Design preview · sample content</p></div></header><nav class="work-nav" aria-label="Workspace views">${Object.entries(words).map(([key,label],i)=>`<button type="button" data-view="${key}" aria-pressed="${cfg.view===key}">${icon(['house','folders','lightbulb','circle-check'][i])}${label}</button>`).join('')}</nav><main class="work-body"><div class="work-heading-row"><div class="work-intro"><h1 data-heading></h1><p data-intro></p></div><div class="work-search"><label for="${cfg.id}-search">Search this view</label><input id="${cfg.id}-search" type="search" placeholder="Project, idea, or next step"></div></div><div data-content></div></main><footer class="work-footer"><span class="work-sync" data-sync></span><span>Local design study · no live connection</span></footer>`;
+    shell.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{cfg.view=button.dataset.view;cfg.query='';cfg.open=null;cfg.undo=null;shell.querySelector('input[type="search"]').value='';renderMain(cfg);}));
+    const feedback=document.createElement('p');feedback.className='work-feedback';feedback.dataset.feedback='';feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');shell.append(feedback);
+    shell.querySelector('input[type="search"]').addEventListener('input',event=>{cfg.query=event.target.value;renderMain(cfg);feedback.textContent=shell.querySelectorAll('.work-card').length+' matching items in '+words[cfg.view]+'.';});
+    renderMain(cfg);
+  }
+  function applySettings(){
+    for(const cfg of configs){const shell=document.getElementById(cfg.id);shell.style.maxWidth=settings.width==='Phone'?'390px':'1024px';shell.style.setProperty('--work-text',settings.textSize+'px');shell.style.setProperty('--work-gap',settings.spacing==='Roomy'?'30px':'22px');renderMain(cfg);}
+    equalStages();
+  }
+  let sizing=false;
+  function equalStages(){
+    if(sizing)return;sizing=true;
+    requestAnimationFrame(()=>{const visible=configs.map(c=>document.getElementById(c.id)).find(el=>el.getBoundingClientRect().width>0);if(visible){const height=Math.ceil(visible.getBoundingClientRect().height);root.querySelectorAll('.design-stage').forEach(el=>el.style.minHeight=Math.max(760,height)+'px');}sizing=false;});
+  }
+  const resize=new ResizeObserver(equalStages);configs.forEach(c=>resize.observe(document.getElementById(c.id)));
+  window.addEventListener('openai:set_globals',event=>{
+    const s=event.detail?.globals?.widgetState?.privateContent;if(!s)return;
+    const nextLater=Array.isArray(s.later)?s.later.filter(id=>initial.some(t=>t.id===id)):[...later];
+    const nextIdeas=Array.isArray(s.ideas)?s.ideas.filter(v=>typeof v==='string').slice(0,8):ideas;
+    if(JSON.stringify([...later].sort())===JSON.stringify([...nextLater].sort())&&JSON.stringify(ideas)===JSON.stringify(nextIdeas))return;
+    const active=document.activeElement;
+    const parent=active?.closest('.work-shell');
+    const locator=active?.id?'#'+active.id:active?.dataset.open?'[data-open="'+active.dataset.open+'"]':active?.dataset.later?'[data-later="'+active.dataset.later+'"]':active?.hasAttribute('data-undo')?'[data-undo]':null;
+    const inputValue=active?.tagName==='INPUT'?active.value:null;
+    const selection=active?.tagName==='INPUT'?[active.selectionStart,active.selectionEnd]:null;
+    later=new Set(nextLater);ideas=nextIdeas;configs.forEach(renderMain);
+    const replacement=parent&&locator?parent.querySelector(locator):null;
+    if(replacement){if(inputValue!==null)replacement.value=inputValue;replacement.focus({preventScroll:true});if(selection&&replacement.setSelectionRange)replacement.setSelectionRange(...selection);}
+  });
+  if(globalThis.Tweak){
+    const tweak=new Tweak({container:root,onChange:applySettings});
+    tweak.addSelect(settings,'width',{label:'Preview width',options:['Laptop','Phone']});
+    tweak.addSlider(settings,'textSize',{label:'Reading size',min:16,max:20,step:1,unit:'px'});
+    tweak.addSelect(settings,'spacing',{label:'Spacing',options:['Comfortable','Roomy']});
+    tweak.addSelect(settings,'connection',{label:'Connection example',options:['Connected','Offline']});
+  }
+})();
+</script>

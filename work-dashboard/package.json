@@ -1,0 +1,25 @@
+{
+  "name": "personal-work-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test:server": ".venv/bin/python -m unittest discover -s tests -v",
+    "test:ui": "vite build --ssr src/App.jsx --outDir .preview/test-app && node --test tests/dashboard-model.test.mjs tests/ui-v2.test.mjs tests/sw-offline.test.mjs"
+  },
+  "dependencies": {
+    "react": "19.3.1",
+    "react-aria-components": "1.22.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.13",
+    "jsdom": "^31.0.1",
+    "vite": "8.3.8"
+  }
+}

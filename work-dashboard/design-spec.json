@@ -1,0 +1,150 @@
+{
+  "project": "Personal work dashboard",
+  "stage": "Local dashboard prototype with authenticated remote-access support; deployment and real-device validation are installation-specific",
+  "hostingDecision": "Keep the frontend, API, and private data on a Mac. Optional Tailscale Serve or Cloudflare Access and Tunnel provide authenticated phone access.",
+  "primaryJob": "Help the user recover context, triage what needs attention, choose a next action, and retain a broad project overview.",
+  "triageExploration": {
+    "candidateGroups": [
+      "Blocking progress",
+      "Review next",
+      "Ready to continue"
+    ],
+    "status": "Illustrative first test, not an agreed priority policy",
+    "requirements": [
+      "Show the reason for suggested priority",
+      "Allow manual correction",
+      "Show actual deadlines separately",
+      "Keep broad project overview one tap away",
+      "Do not infer urgency from recent chat activity alone"
+    ]
+  },
+  "directions": {
+    "Focus": "A calm home view centered on decisions and reviews, with recent changes alongside.",
+    "Overview": "A project library showing recognizable projects, their state, and their next action."
+  },
+  "sharedNavigation": [
+    "Home",
+    "Projects",
+    "Ideas",
+    "Finished",
+    "Library"
+  ],
+  "visualPrinciples": [
+    "Warm neutral surfaces and a restrained forest-green accent",
+    "Readable text contrast, including metadata",
+    "Status labels paired with color and iconography",
+    "One main action per project, with context available on demand",
+    "No invented completion percentages, streaks, or urgency",
+    "Preserve user control over priorities and deferment",
+    "Same terminology and controls on phone and laptop"
+  ],
+  "accessibilityTargets": {
+    "reference": "WCAG 2.2 AA as a baseline, supplemented by universal design and cognitive accessibility guidance; no conformance claim yet",
+    "normalTextContrast": "At least 4.5:1",
+    "largeTextContrast": "At least 3:1 where qualifying",
+    "primaryControlSize": "At least 44 by 44 CSS pixels as our preferred touch target",
+    "reflow": "No horizontal scrolling of the main interface at 320 CSS pixels",
+    "textResize": "Retain content and functionality at 200 percent text size",
+    "input": "Keyboard, touch, and pointer access; no drag-only or hover-only action",
+    "focus": "Visible focus, stable reading order, no focus trap",
+    "motion": "Respect reduced-motion preferences; no continuous or decorative animation",
+    "statusUpdates": "Preserve reading position and focus; announce meaningful changes without reordering the active view"
+  },
+  "requiredStates": [
+    "Connected",
+    "Mac disconnected with timestamped saved view",
+    "No matching items",
+    "No pending attention",
+    "Inferred status",
+    "User-corrected status",
+    "Deferred item with undo",
+    "Source unavailable"
+  ],
+  "prototypeInteractions": [
+    "Switch views",
+    "Search across all retained records",
+    "Sort a stable batch of up to five conversations",
+    "Edit suggested short names, project, recap, and next step",
+    "Track, keep as reference, save as idea, or finish explicitly",
+    "Skip without changing records and undo the last choice",
+    "Reveal source context and draft evidence",
+    "Set aside for later and undo",
+    "Capture an idea without a deadline",
+    "Change reading size and theme",
+    "Read a saved metadata view while disconnected"
+  ],
+  "productionToolDirection": "Responsive React app, custom CSS design tokens, and React Aria for complex accessible controls; keep native HTML controls where sufficient.",
+  "nextValidation": [
+    "Owner login and signed-out HTML/API denial on the configured HTTPS route",
+    "Real phone and cellular use, including cached reopening while the Mac is off",
+    "User feedback on triage labels, density, and project overview",
+    "Assistive-technology checks before any conformance claim"
+  ],
+  "sources": [
+    "https://design.ncsu.edu/research/center-for-universal-design/",
+    "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+    "https://www.w3.org/WAI/WCAG22/Understanding/reflow.html",
+    "https://www.w3.org/WAI/WCAG2/supplemental/objectives/o1-understandable/",
+    "https://react-aria.adobe.com/"
+  ],
+  "implementation": {
+    "home": "Tracked ongoing work only; compact project overview before sorting invitation and attention queue.",
+    "storage": "Local SQLite with independent user-confirmed task fields and read-only conversation snapshots.",
+    "connection": "Up to 20 recent non-archived local Codex conversations, refreshed every five minutes.",
+    "phone": "Optional private HTTPS through Tailscale Serve or a Cloudflare Access-protected named tunnel. Configuration, availability, and device validation are installation-specific.",
+    "notYetImplemented": [
+      "Ordinary ChatGPT cloud history",
+      "Reliable running/idle state from the desktop process",
+      "Automatic semantic draft refresh",
+      "Separate deadline and completion-criteria fields",
+      "Push notifications"
+    ],
+    "remainingValidation": [
+      "Owner login and signed-out HTML/API denial on the configured HTTPS route",
+      "Real phone and cellular use, including cached reopening while the Mac is off",
+      "User feedback on triage labels, density, and project overview",
+      "Assistive-technology checks before any conformance claim"
+    ],
+    "library": "Needs sorting, Reference, and All saved. Unsorted/reference items do not inflate active project counts.",
+    "sorting": "At most five records per session. Separate suggested fields and source context. Explicit reversible classification, conflict comparison, and preserved unsaved drafts.",
+    "suggestions": "Optional reviewed assistant drafts are imported separately from confirmed fields. New records receive conservative starter drafts; source changes mark suggestions stale. No background model calls. No private draft data is included in source.",
+    "completedChecks": [
+      "88 Python server, authentication, and startup tests",
+      "32 frontend, presentation-model, and service-worker checks",
+      "Synthetic fixtures cover sorting, Undo, conflicting edits, unsaved drafts, and disconnected controls",
+      "Copied-database migration checks preserve existing task fields",
+      "Isolated Chrome fixture verifies saved-view reopening after HTTP 503 and a stopped origin, disabled mutations, and reconnection",
+      "Reflow checks at 320, 390, and 1280 CSS pixels"
+    ]
+  },
+  "privateDomain": {
+    "exampleUrl": "https://dashboard.example.com",
+    "configurationScope": "Per-installation setup; no account state, credentials, operational deployment status, or private data is published",
+    "hosting": "Mac hosts the API, database, and built frontend. Cloudflare Access and a named Tunnel provide authenticated HTTPS without exposing a listening port on the Mac’s network interface.",
+    "ownerAccess": "Origin verifies a signed JWT with exact issuer, application audience, expiration, RSA signature, and owner email. The tunnel route also enables Protect with Access.",
+    "routeRequirements": {
+      "origin": "http://127.0.0.1:8767",
+      "host": "Preserve the configured public hostname or set httpHostHeader to it",
+      "disableChunkedEncoding": true,
+      "accessBeforeRoute": true,
+      "quickTunnels": false
+    },
+    "offline": "A previously visited trusted browser may reopen a dated, read-only metadata snapshot when the Mac or connection is unavailable. First-time devices and cleared caches require the Mac online. Edits stay disabled until reconnection.",
+    "cacheBoundary": "The snapshot excludes full conversation excerpts, draft evidence, and mutation tokens. The app-shell cache excludes authentication pages and private API responses. Each website address has a separate cache.",
+    "dns": "Before any nameserver migration, reconcile the full authoritative inventory and preserve existing website, mail, verification, subdomain, and DNSSEC settings. Automatic discovery does not prove completeness.",
+    "setupOrder": [
+      "Prepare the domain and identity provider",
+      "Create an entire-hostname Access application and exact-owner Allow policy",
+      "Configure origin JWT verification while retaining loopback binding",
+      "Create a named tunnel and protected route with the expected Host header and non-chunked request bodies",
+      "Start the guarded connector and verify signed-out denial, owner login, cellular access, and offline recovery"
+    ],
+    "validation": {
+      "recordedDate": "2026-11-26",
+      "automatedChecks": 120,
+      "browserFixture": "HTTP 503 and stopped-origin cached reopening, disabled mutations, reconnection, and 320/390/1280 CSS-pixel reflow",
+      "deploymentVerification": "Required for each installation; automated checks do not establish live remote access or actual phone compatibility"
+    }
+  },
+  "designFocus": "Triage levels for what needs attention alongside a broad overview; expect testing and iteration."
+}
