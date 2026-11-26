@@ -405,6 +405,7 @@ ${generatedPageMarker}
     <li><a href="index.html#teaching">Teaching</a></li>
     <li><a href="publications.html">Writing</a></li>
     <li><a href="incantations.html" class="active" aria-current="page">Incantations</a></li>
+    <li><a href="photography/">Photography</a></li>
     <li><a href="index.html#about">About</a></li>
     <li><a href="index.html#contact">Contact</a></li>
   </ul>
@@ -436,6 +437,7 @@ ${optionalSectionsMarkup}
     <a href="research.html">Research</a>
     <a href="index.html#teaching">Teaching</a>
     <a href="publications.html">Writing</a>
+    <a href="photography/">Photography</a>
     <a href="https://orcid.org/0000-0002-8751-9854" target="_blank" rel="noopener">ORCID</a>
     <a href="RCBlenis_CV.pdf">CV (PDF)</a>
     <a href="index.html#contact">Contact</a>
@@ -515,6 +517,7 @@ async function copyProductionSnapshot(dedicatedPageEnabled) {
     "social-card.jpg",
     "publications.html",
     "publications.js",
+    "photography",
     "research.html",
     "RCBlenis_CV.pdf",
     "RCBlenis_bio.txt",
