@@ -221,7 +221,7 @@ p { text-wrap: pretty; }
 .photo-gallery { width: min(940px, calc(100% - 3rem)); margin: 0 auto; }
 .gallery-lead { width: min(100%, 32rem); margin: 0 auto 3rem; }
 .gallery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.65rem 1.8rem; }
-.gallery-closing { grid-column: 1 / -1; width: min(100%, 32rem); margin: 0 auto; }
+.gallery-standalone { grid-column: 1 / -1; width: min(100%, 32rem); margin: 0 auto; }
 .photo-gallery img, .home-photo-feature img { width: 100%; }
 .photo-gallery figcaption, .home-photo-feature figcaption {
   margin-top: 0.55rem;
@@ -344,7 +344,7 @@ footer {
   .photo-gallery { width: calc(100% - 2.8rem); }
   .gallery-lead { margin-bottom: 2.1rem; }
   .gallery-grid { grid-template-columns: 1fr; gap: 2.1rem; }
-  .gallery-closing { width: 100%; }
+  .gallery-standalone { width: 100%; }
   footer { width: calc(100% - 2.5rem); }
 }
 
