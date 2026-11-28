@@ -7,9 +7,11 @@
      title    string
      venue    string
      date     string  (e.g. 'April 2026', 'Forthcoming, Issue 83')
+     id       optional — stable anchor for the entry
      url      optional — makes the title a link and adds a Read link
      linkText optional — overrides the default 'Read →'
      note     optional — small line under the entry (e.g. a column name)
+     awardNote optional — recognition displayed under the entry
      featured optional true — appears in the homepage writing feature, but only while
               the Incantations feature is in the 'hidden' state (the build
               restores the #hero-highlight element renderHero targets)
@@ -37,7 +39,7 @@ window.PUBLICATIONS = [
   {"genre":"cnf","status":"forthcoming","title":"Incantations","awardNote":"Winner of the 2026 Indiana Review Creative Nonfiction Prize, selected by Ross Gay","venue":"Indiana Review","date":"Forthcoming","announcementUrl":"https://www.instagram.com/p/DbGP1PPkadH/?img_index=1"},
   // INCANTATIONS_PUBLICATION:END
   { genre:'cnf', status:'forthcoming', title:'Without Identifiable Antecedent', venue:'Fourth Genre: Explorations in Nonfiction', date:'Forthcoming' },
-  { genre:'cnf', status:'forthcoming', title:'The Net', venue:'River Teeth: A Journal of Nonfiction Narrative', date:'Forthcoming' },
+  { genre:'cnf', status:'forthcoming', id:'the-net', title:'The Net', venue:'River Teeth: A Journal of Nonfiction Narrative', date:'Forthcoming', awardNote:'Nominated for a Pushcart Prize by River Teeth' },
   { genre:'cnf', status:'forthcoming', title:'Holding', venue:'American Journal of Nursing', date:'Forthcoming', note:'Reflections' },
   { genre:'cnf', status:'published', selected:true, title:'The Body Knows First', venue:'American Journal of Nursing', date:'Vol. 126.5, May 2026', url:'https://journals.lww.com/ajnonline/citation/2026/05000/the_body_knows_first.14.aspx' },
   { genre:'cnf', status:'published', title:'The Thread You Follow', venue:'West Trade Review', date:'January 2026', url:'https://www.westtradereview.com/onlineexclusiveW25Blenis.html' },
@@ -51,6 +53,7 @@ window.PUBLICATIONS = [
 function pubItem(p){
   const div = document.createElement('div');
   div.className = 'publication-item';
+  if (p.id) div.id = p.id;
   const titleEnd = p.citation ? '.&rdquo;' : '&rdquo;';
   const titleHtml = p.url
     ? '<span class="pub-title"><a href="' + p.url + '" target="_blank" rel="noopener">&ldquo;' + p.title + titleEnd + '</a></span>'

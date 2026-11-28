@@ -211,6 +211,7 @@ function incantationsPublication(config) {
 }
 
 function publicationItemHtml(publication) {
+  const id = publication.id ? ` id="${escapeHtml(publication.id)}"` : "";
   const titleEnd = publication.citation ? ".&rdquo;" : "&rdquo;";
   const titleText = `&ldquo;${publication.title}${titleEnd}`;
   const titleHtml = publication.url
@@ -240,7 +241,7 @@ function publicationItemHtml(publication) {
     ? `\n        <a class="pub-link" href="${escapeHtml(publication.url)}" target="_blank" rel="noopener" aria-label="${linkLabel}">${linkText}</a>`
     : "";
 
-  return `      <div class="publication-item">
+  return `      <div class="publication-item"${id}>
         ${titleHtml}${separator}${publicationHtml}${note}${awardNote}${announcement}${publicationLink}
       </div>`;
 }
